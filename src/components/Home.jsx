@@ -15,7 +15,7 @@ export function Home() {
             <div className="hero-content">
               <h1>Sua ponte para oportunidades </h1>
               <p>
-                Conectando estudantes a cursos,microempreendedores a clientes
+                Conectando estudantes a cursos, microempreendedores a clientes
                 e empresas a serviços locais.
               </p>
 
