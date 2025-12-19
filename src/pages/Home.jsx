@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import Header from "./Header";
-import { Button } from "./ui/Button";
+import { Button } from "../components/ui/Button";
 import { Card,CardContent,CardDescription,CardHeader,CardTitle} from "../components/ui/card";
 import { GraduationCap,Briefcase,Building2,Award,TrendingUp,Users } from "lucide-react";
 import "./Home.css";
