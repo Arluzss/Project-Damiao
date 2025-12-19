@@ -1,6 +1,8 @@
+import "./card.css";
+
 export function Card({ children, className = "", ...props }) {
   return (
-    <div className={`border border-gray-200 rounded-lg shadow-sm ${className}`} {...props}>
+    <div className={`card ${className}`} {...props}>
       {children}
     </div>
   );
@@ -8,7 +10,7 @@ export function Card({ children, className = "", ...props }) {
 
 export function CardHeader({ children, className = "", ...props }) {
   return (
-    <div className={`p-6 border-b border-gray-200 ${className}`} {...props}>
+    <div className={`card__header ${className}`} {...props}>
       {children}
     </div>
   );
@@ -16,7 +18,7 @@ export function CardHeader({ children, className = "", ...props }) {
 
 export function CardTitle({ children, className = "", ...props }) {
   return (
-    <h3 className={`text-lg font-semibold ${className}`} {...props}>
+    <h3 className={`card__title ${className}`} {...props}>
       {children}
     </h3>
   );
@@ -24,7 +26,7 @@ export function CardTitle({ children, className = "", ...props }) {
 
 export function CardDescription({ children, className = "", ...props }) {
   return (
-    <p className={`text-sm text-gray-600 ${className}`} {...props}>
+    <p className={`card__description ${className}`} {...props}>
       {children}
     </p>
   );
@@ -32,7 +34,7 @@ export function CardDescription({ children, className = "", ...props }) {
 
 export function CardContent({ children, className = "", ...props }) {
   return (
-    <div className={`p-6 ${className}`} {...props}>
+    <div className={`card__content ${className}`} {...props}>
       {children}
     </div>
   );

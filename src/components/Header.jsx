@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Coins, User, LogOut } from "lucide-react";
 import "./Header.css";
+import { Button } from "./ui/Button";
 
 function Header({ user, logout }) {
   const location = useLocation();
@@ -8,6 +9,7 @@ function Header({ user, logout }) {
   const isActive = (path) => location.pathname === path;
 
   return (
+    
     <header className="header">
       <div className="header-container">
         <div className="header-content">
@@ -17,7 +19,6 @@ function Header({ user, logout }) {
             </div>
             <span className="brand-name">Damião</span>
           </Link>
-
           <nav className="nav">
             <Link className={isActive("/") ? "active" : ""} to="/">
               Início
@@ -59,24 +60,24 @@ function Header({ user, logout }) {
                 </div>
 
                 <Link to="/perfil">
-                  {/* <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm">
                     <User />
                     Perfil
-                  </Button> */}
+                  </Button>
                 </Link>
 
-                {/* <Button variant="ghost" size="sm" onClick={logout}>
+                <Button variant="ghost" size="sm" onClick={logout}>
                   <LogOut />
-                </Button> */}
+                </Button>
               </>
             ) : (
               <>
-                {/* <Link to="/login">
+                <Link to="/login">
                   <Button variant="ghost">Entrar</Button>
                 </Link>
                 <Link to="/register">
                   <Button variant="primary">Cadastrar</Button>
-                </Link> */}
+                </Link>
               </>
             )}
           </div>

@@ -1,0 +1,71 @@
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  cursor: pointer;
+  outline: none;
+  background: none;
+}
+
+.btn:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.btn-default {
+  background-color: #18181b;
+  color: #ffffff;
+}
+.btn-default:hover { background-color: rgba(24, 24, 27, 0.9); }
+
+.btn-destructive {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+.btn-destructive:hover { background-color: #dc2626; }
+
+.btn-outline {
+  border-color: #e4e4e7;
+  background-color: transparent;
+  color: #18181b;
+}
+.btn-outline:hover { background-color: #f4f4f5; }
+
+.btn-secondary {
+  background-color: #f4f4f5;
+  color: #18181b;
+}
+.btn-secondary:hover { background-color: #e4e4e7; }
+
+.btn-ghost:hover {
+  background-color: #f4f4f5;
+  color: #18181b;
+}
+
+.btn-link {
+  color: #18181b;
+  text-decoration-line: underline;
+  text-underline-offset: 4px;
+}
+
+.btn-size-default { height: 2.25rem; padding: 0.5rem 1rem; }
+.btn-size-sm { height: 2rem; padding: 0 0.75rem; border-radius: 0.375rem; }
+.btn-size-lg { height: 2.5rem; padding: 0 1.5rem; }
+.btn-size-icon { height: 2.25rem; width: 2.25rem; }
+
+.btn svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
