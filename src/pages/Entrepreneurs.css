@@ -1,0 +1,125 @@
+.entrepreneurs-page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 16px;
+}
+
+.page-header {
+  margin-bottom: 48px;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  color: #111827;
+}
+
+.page-header p {
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
+.tabs-list {
+  max-width: 400px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards-grid {
+  margin-top: 32px;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card-header-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.service {
+  color: #0891b2;
+}
+
+.description {
+  margin-bottom: 16px;
+  color: #4b5563;
+}
+
+.info-list div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.primary-btn {
+  width: 100%;
+  background: #0891b2;
+  color: #fff;
+}
+
+.primary-btn:hover {
+  background: #0e7490;
+}
+
+.demands-list {
+  margin-top: 32px;
+  display: grid;
+  gap: 24px;
+}
+
+.demand-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.company {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.demand-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.apply-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+.apply-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
