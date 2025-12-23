@@ -1,0 +1,141 @@
+/* src/pages/Courses.css */
+
+.courses-page {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.courses-main {
+  padding: 3rem 1rem;
+}
+
+.courses-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.courses-header {
+  margin-bottom: 3rem;
+}
+
+.courses-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.courses-header p {
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+/* Cards */
+.courses-list {
+  display: grid;
+  gap: 2rem;
+}
+
+.course-card {
+  overflow: hidden;
+}
+
+.course-card-header {
+  background: linear-gradient(90deg, #eff6ff, #ecfeff);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.course-title {
+  display: flex;
+  gap: 1rem;
+}
+
+.course-icon {
+  font-size: 2.5rem;
+}
+
+.badge-enrolled {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* Info */
+.course-info {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .course-info {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.course-info h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.shift-list {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.course-time {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+/* Badges */
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Benefits */
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #374151;
+  margin-bottom: 0.4rem;
+}
+
+/* Footer */
+.course-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+}
+
+.certificate {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.btn-enroll {
+  background-color: #2563eb;
+}
+
+.btn-enroll:hover {
+  background-color: #1d4ed8;
+}
