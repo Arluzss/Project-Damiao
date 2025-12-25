@@ -1,0 +1,77 @@
+.companies-page {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.companies-main {
+  padding: 40px 16px;
+}
+
+.companies-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.features {
+  margin-bottom: 24px;
+}
+
+.features h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.features ul {
+  padding-left: 20px;
+}
+
+.features li {
+  margin-bottom: 6px;
+}
+
+.actions {
+  margin-bottom: 24px;
+}
+
+.demand-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.field input,
+.field textarea {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
