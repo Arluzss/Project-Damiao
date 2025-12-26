@@ -72,10 +72,10 @@ function Header({ user, logout }) {
               </>
             ) : (
               <>
-                <Link to="/login">
+                <Link to="/entrar">
                   <Button variant="ghost">Entrar</Button>
                 </Link>
-                <Link to="/register">
+                <Link to="/registro">
                   <Button variant="primary">Cadastrar</Button>
                 </Link>
               </>

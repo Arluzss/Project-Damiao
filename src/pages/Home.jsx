@@ -19,7 +19,7 @@ export function Home() {
               </p>
 
               <div className="hero-buttons">
-                <Link to="/register">
+                <Link to="/resgistro">
                   <Button size="lg" className="btn-primary">
                     Começar Agora
                   </Button>
@@ -129,8 +129,8 @@ export function Home() {
             <p>
               Cadastre-se gratuitamente e comece hoje mesmo.
             </p>
-
-            <Link to="/register">
+              <br/>
+            <Link to="/resgistro">
               <Button size="lg" className="btn-primary">
                 Criar Conta Gratuita
               </Button>
@@ -140,7 +140,7 @@ export function Home() {
       </main>
 
       <footer className="footer">
-        <p>© 2024 Plataforma Damião. Todos os direitos reservados.</p>
+        <p>© 2025 Plataforma Damião. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
