@@ -1,16 +1,17 @@
-const authService = require('../services/AuthService');
+const authService = require('../services/authService');
 
 class AuthController {
     
     async register(req, res) {
         try {
-            const { nome, documento_fiscal, tipo_pessoa, senha } = req.body;
+            const { nome, documento_fiscal, tipo_pessoa, senha, email } = req.body;
 
             const usuarioCriado = await authService.register({
-                nome, 
-                documento_fiscal, 
-                tipo_pessoa, 
-                senha
+                nome,
+                documento_fiscal,
+                tipo_pessoa,
+                senha,
+                email
             });
 
             return res.status(201).json(usuarioCriado);
@@ -25,7 +26,7 @@ class AuthController {
             const { documento_fiscal, senha } = req.body;
 
             if (!documento_fiscal || !senha) {
-                return res.status(400).json({ error: 'Informe documento e senha' });
+                return res.status(400).json({ error: 'Informe email ou documento e senha' });
             }
 
             const resultado = await authService.login(documento_fiscal, senha);

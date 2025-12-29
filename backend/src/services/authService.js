@@ -24,11 +24,24 @@ class AuthService {
             }
         });
 
+        // email é obrigatório para criar a conta de acesso
+        if (!dados.email) {
+            throw new Error('Email é obrigatório para registro.');
+        }
+
+        // evitar email duplicado
+        const contaExistente = await prisma.contaAcesso.findUnique({
+            where: { email: dados.email }
+        });
+        if (contaExistente) {
+            throw new Error('Já existe uma conta com este email.');
+        }
+
         // criar conta de acesso ligada ao usuário
         await prisma.contaAcesso.create({
             data: {
                 usuarioId: novoUsuario.id,
-                documentoFiscal: dados.documento_fiscal,
+                email: dados.email,
                 passwordHash: hashSenha
             }
         });
@@ -40,11 +53,28 @@ class AuthService {
         };
     }
 
-    async login(documento_fiscal, senha) {
-        const conta = await prisma.contaAcesso.findUnique({
-            where: { documentoFiscal: documento_fiscal },
-            include: { usuario: true }
-        });
+    async login(identifier, senha) {
+        let conta = null;
+
+        // se identifier parece um email
+        if (identifier && identifier.includes('@')) {
+            conta = await prisma.contaAcesso.findUnique({
+                where: { email: identifier },
+                include: { usuario: true }
+            });
+        } else {
+            // buscar usuário pelo documento e então uma conta ligada a ele
+            const usuario = await prisma.usuario.findUnique({
+                where: { documentoFiscal: identifier }
+            });
+
+            if (usuario) {
+                conta = await prisma.contaAcesso.findFirst({
+                    where: { usuarioId: usuario.id },
+                    include: { usuario: true }
+                });
+            }
+        }
 
         if (!conta) {
             throw new Error('Credenciais inválidas (Conta não encontrada)');

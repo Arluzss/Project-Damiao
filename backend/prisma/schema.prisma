@@ -12,28 +12,174 @@ enum TipoPessoa {
   JURIDICA
 }
 
-model Usuario {
-  id              Int           @id @default(autoincrement()) @map("usuario_id")
-  nome            String
-  documentoFiscal String        @map("documento_fiscal") @unique
-  tipoPessoa      TipoPessoa    @map("tipo_pessoa")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
+// Observações gerais:
+// - SQLite não tem tipo DECIMAL nativo com precisão; armazenar valores monetários como Int (centavos) é mais seguro.
+// - Para JSON, prefira salvar como String (JSON.stringify) ou usar o tipo Json do Prisma se desejar.
 
-  contaAcesso     ContaAcesso?
+model Usuario {
+  id              Int          @id @default(autoincrement()) @map("usuario_id")
+  nome            String
+  documentoFiscal String       @map("documento_fiscal") @unique
+  tipoPessoa      TipoPessoa   @map("tipo_pessoa")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  contasAcesso       ContaAcesso[]
+  perfis             UsuarioPerfil[]
+  ofertasCriadas     Oferta[]           @relation("AutorOferta")
+  pontos             ExtratoPontos[]
+  conexoes           ConexaoUsuario[]
+  transacoes         TransacaoUsuario[]
+  feedbacksDados     Feedback[]         @relation("Avaliador")
+  feedbacksRecebidos Feedback[]         @relation("Avaliado")
 
   @@map("usuario")
 }
 
 model ContaAcesso {
-  id               Int       @id @default(autoincrement()) @map("conta_id")
-  usuarioId        Int       @unique @map("usuario_id")
-  documentoFiscal  String    @map("documento_fiscal") @unique
-  passwordHash     String    @map("password_hash")
-  ativo            Boolean   @default(true)
-  lastLogin        DateTime? @map("last_login")
+  id           Int       @id @default(autoincrement()) @map("conta_id")
+  usuarioId    Int       @map("usuario_id")
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  ativo        Boolean   @default(true)
+  lastLogin    DateTime? @map("last_login")
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
 
+  @@index([usuarioId])
   @@map("conta_acesso")
+}
+
+model Perfil {
+  id   Int    @id @default(autoincrement()) @map("perfil_id")
+  nome String
+
+  usuarios UsuarioPerfil[]
+
+  @@map("perfil")
+}
+
+model UsuarioPerfil {
+  usuarioId Int @map("usuario_id")
+  perfilId  Int @map("perfil_id")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  perfil  Perfil  @relation(fields: [perfilId], references: [id])
+
+  @@id([usuarioId, perfilId])
+  @@map("usuario_perfil")
+}
+
+model ExtratoPontos {
+  id         Int      @id @default(autoincrement()) @map("ponto_id")
+  usuarioId  Int      @map("usuario_id")
+  quantidade Int
+  motivo     String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("extrato_pontos")
+}
+
+model Categoria {
+  id   Int    @id @default(autoincrement()) @map("categoria_id")
+  nome String
+
+  ofertas Oferta[]
+
+  @@map("categoria")
+}
+
+model Oferta {
+  id             Int      @id @default(autoincrement()) @map("oferta_id")
+  autorUsuarioId Int      @map("autor_usuario_id")
+  categoriaId    Int      @map("categoria_id")
+  titulo         String
+  descricao      String?
+  propriedades   String?  // JSON salvo como string em SQLite
+  ativa          Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  autor     Usuario   @relation("AutorOferta", fields: [autorUsuarioId], references: [id])
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  conexoes  Conexao[]
+
+  @@index([autorUsuarioId])
+  @@index([categoriaId])
+  @@map("oferta")
+}
+
+model Conexao {
+  id        Int      @id @default(autoincrement()) @map("conexao_id")
+  ofertaId  Int      @map("oferta_id")
+  status    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  oferta        Oferta           @relation(fields: [ofertaId], references: [id])
+  participantes ConexaoUsuario[]
+  feedbacks     Feedback[]
+  transacoes    Transacao[]
+
+  @@index([ofertaId])
+  @@map("conexao")
+}
+
+model ConexaoUsuario {
+  id        Int    @id @default(autoincrement()) @map("conexao_usuario_id")
+  conexaoId Int    @map("conexao_id")
+  usuarioId Int    @map("usuario_id")
+  papel     String
+
+  conexao Conexao @relation(fields: [conexaoId], references: [id])
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([conexaoId])
+  @@index([usuarioId])
+  @@map("conexao_usuario")
+}
+
+model Transacao {
+  id        Int      @id @default(autoincrement()) @map("transacao_id")
+  conexaoId Int      @map("conexao_id")
+  // Valor armazenado em centavos como Int para evitar problemas de precisão
+  valor     Int
+  descricao String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  conexao    Conexao            @relation(fields: [conexaoId], references: [id])
+  envolvidos TransacaoUsuario[]
+
+  @@index([conexaoId])
+  @@map("transacao")
+}
+
+model TransacaoUsuario {
+  transacaoId Int    @map("transacao_id")
+  usuarioId   Int    @map("usuario_id")
+  papel       String
+
+  transacao Transacao @relation(fields: [transacaoId], references: [id])
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@id([transacaoId, usuarioId])
+  @@map("transacao_usuario")
+}
+
+model Feedback {
+  id                 Int      @id @default(autoincrement()) @map("feedback_id")
+  conexaoId          Int      @map("conexao_id")
+  avaliadorUsuarioId Int      @map("avaliador_usuario_id")
+  avaliadoUsuarioId  Int      @map("avaliado_usuario_id")
+  nota               Int
+  comentario         String?
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  conexao   Conexao @relation(fields: [conexaoId], references: [id])
+  avaliador Usuario @relation("Avaliador", fields: [avaliadorUsuarioId], references: [id])
+  avaliado  Usuario @relation("Avaliado", fields: [avaliadoUsuarioId], references: [id])
+
+  @@index([conexaoId])
+  @@map("feedback")
 }
