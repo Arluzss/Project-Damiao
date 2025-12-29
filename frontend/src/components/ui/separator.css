@@ -1,0 +1,16 @@
+.separator-root {
+  background-color: var(--border);
+  flex-shrink: 0;
+}
+
+/* Horizontal */
+.separator-root[data-orientation="horizontal"] {
+  height: 1px;
+  width: 100%;
+}
+
+/* Vertical */
+.separator-root[data-orientation="vertical"] {
+  width: 1px;
+  height: 100%;
+}

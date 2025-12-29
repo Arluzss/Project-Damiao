@@ -1,0 +1,177 @@
+.entrepreneurs {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.page {
+  padding: 3rem 1rem;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 3rem;
+}
+
+.page-header h1 {
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+/* Tabs */
+.tabs-list {
+  max-width: 400px;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.tab-content {
+  margin-top: 2rem;
+}
+
+/* Grids */
+.grid-3 {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-1 {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Cards */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.star {
+  width: 16px;
+  height: 16px;
+  color: #facc15;
+  fill: #facc15;
+}
+
+.service {
+  color: #0891b2;
+}
+
+.description {
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.info span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Buttons */
+.full {
+  width: 100%;
+}
+
+.btn-cyan {
+  background: #06b6d4;
+}
+
+.btn-cyan:hover {
+  background: #0891b2;
+}
+
+.btn-blue {
+  background: #2563eb;
+}
+
+.btn-blue:hover {
+  background: #1d4ed8;
+}
+
+.btn-white {
+  background: white;
+  color: #0891b2;
+}
+
+/* CTA */
+.cta-entrepreneur {
+  margin-top: 2rem;
+  background: linear-gradient(90deg, #06b6d4, #2563eb);
+  color: white;
+}
+
+/* Demands */
+.demand-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.company {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.demand-info {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .demand-info {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: end;
+  }
+}
+
+.price {
+  color: #16a34a;
+  font-size: 1.125rem;
+}
+
+/* How it works */
+.how-it-works {
+  margin-top: 2rem;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  color: white;
+}

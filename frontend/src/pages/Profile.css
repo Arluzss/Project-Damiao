@@ -1,0 +1,95 @@
+.profile-page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.profile-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 3rem 1rem;
+}
+
+.profile-header h1 {
+  font-size: 2.5rem;
+}
+
+.profile-header p {
+  color: #6b7280;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.profile-user {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: white;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profile-info p {
+  margin-bottom: 0.5rem;
+}
+
+.profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card-balance {
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  color: white;
+  text-align: center;
+}
+
+.course-card {
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-light {
+  background: white;
+  color: #2563eb;
+}
+
+.btn-purple {
+  background: #7c3aed;
+  color: white;
+}
+
+.mt {
+  margin-top: 1.5rem;
+}
