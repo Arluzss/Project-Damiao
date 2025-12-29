@@ -8,6 +8,7 @@ import { Entrepreneurs } from "./pages/Entrepreneurs";
 import {Companies} from "./pages/Companies";
 import { Courses } from "./pages/Courses";
 import { Profile } from "./pages/Profile";
+import { Store } from "./pages/Store";
 
 
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/empresas" element={<Companies/>} /> 
         <Route path="/cursos" element= {<Courses/>} />
         <Route path= "/perfil" element={<Profile/>} />
+        <Route path="/loja" element={<Store/>} />
       </Routes>
     </>
   );

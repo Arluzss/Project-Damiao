@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/Button";
-// import { Badge } from "../components/ui/badge";
+import { useAuth } from "../context/AuthContext";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/Badge";
 import { Clock, MapPin, Calendar, Award, Star, Users } from "lucide-react";
-
-
+import { toast } from "sonner";
+import { Toaster } from "../components/ui/Sonner";
 
 import "./Courses.css";
 
@@ -64,119 +71,125 @@ const courses = [
     image: "🎨",
   },
 ];
+
 export function Courses() {
-  
-  const [enrolled, setEnrolled] = useState(courses || []);
 
-  const handleEnroll = (courseId, courseName) => {
-     if (!user) {
-       toast.error("Faça login para se inscrever em cursos");
-       return;
-     }
+  const { user, updateUser } = useAuth();
+  const [enrolled, setEnrolled] = useState(user?.courses || []);
 
-     if (enrolled.includes(courseId)) {
-       toast.info("Você já está inscrito neste curso");
-       return;
-     }
+  function handleEnroll(courseId, courseName) {
+    if (!user) {
+      toast.error("Faça login para se inscrever em cursos");
+      return;
+    }
 
-     const newEnrolled = [...enrolled, courseId];
-     setEnrolled(newEnrolled);
-     updateUser({ courses: newEnrolled });
-      toast.success(`Inscrição realizada em ${courseName}!`);
-   };
+    if (enrolled.includes(courseId)) {
+      toast.info("Você já está inscrito neste curso");
+      return;
+    }
+
+    const newEnrolled = [...enrolled, courseId];
+    setEnrolled(newEnrolled);
+    updateUser({ courses: newEnrolled });
+
+    toast.success(`Inscrição realizada em ${courseName}!`);
+  }
+
   return (
     <div className="courses-page">
-       {/* <Header />  */}
-      {/* <Toaster />   */}
+      
+      <Toaster />
 
       <main className="courses-main">
-        <div className="courses-container">
-          <header className="courses-header">
+        <div className="container">
+          <div className="courses-header">
             <h1>Cursos Disponíveis</h1>
             <p>
               Capacitação profissional com benefícios e reconhecimento. Invista no seu futuro!
             </p>
-          </header>
+          </div>
 
           <div className="courses-list">
             {courses.map((course) => (
               <Card key={course.id} className="course-card">
-                 <CardHeader className="course-card-header">
-                   <div className="course-title">
-                     <span className="course-icon">{course.image}</span>
+                <CardHeader className="course-card-header">
+                  <div className="course-header-content">
                     <div>
-                      <CardTitle>{course.title}</CardTitle>
-                       <CardDescription>{course.description}</CardDescription>
-                   </div>
-                   </div>
+                      <div className="course-title">
+                        <span className="course-icon">{course.image}</span>
+                        <CardTitle>{course.title}</CardTitle>
+                      </div>
+                      <CardDescription>{course.description}</CardDescription>
+                    </div>
 
-                   
-                 </CardHeader>
+                    {enrolled.includes(course.id) && (
+                      <Badge className="badge-success">Inscrito</Badge>
+                    )}
+                  </div>
+                </CardHeader>
 
-               <CardContent>
-                   <div className="course-info">
-                     <div>
-                       <h3>Informações do Curso</h3>
+                <CardContent>
+                  <div className="course-info-grid">
+                    <div>
+                      <h3>Informações do Curso</h3>
 
-                     <div className="info-item">
-                         <Clock size={16} />
-                         <span>{course.hours} horas totais</span>
-                       </div>
+                      <div className="course-info">
+                        <span><Clock size={16} /> {course.hours} horas</span>
+                        <span><MapPin size={16} /> {course.location}</span>
+                        <span><Calendar size={16} /> {course.schedule}</span>
 
-                      <div className="info-item">
-                        <MapPin size={16} />
-                         <span>{course.location}</span>
-                       </div>
+                        <div className="course-shifts">
+                          <Users size={16} />
+                          {course.shifts.map((shift) => (
+                            <Badge key={shift} variant="outline">
+                              {shift}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
 
-                       <div className="info-item">
-                         <Calendar size={16} />
-                         <span>{course.schedule}</span>
-                       </div>
-
-                       <div className="info-item">
-                         <Users size={16} />
-                        
-                       </div>
-
-                       <h4>Horários Disponíveis</h4>
-                       {course.times.map((time) => (
-                         <p key={time} className="course-time">
-                           • {time}
-                         </p>
-                       ))}
-                     </div>
-
-                     <div>
-                       <h3>Disciplinas</h3>
-                       
-
-                       <h3>Benefícios</h3>
-                      {course.benefits.map((benefit) => (
-                         <div key={benefit} className="benefit-item">
-                           <Award size={16} />
-                           <span>{benefit}</span>
-                         </div>
+                      <h4>Horários:</h4>
+                      {course.times.map((time) => (
+                        <p key={time}>• {time}</p>
                       ))}
-                     </div>
+                    </div>
+
+                    <div>
+                      <h3>Disciplinas</h3>
+                      <div className="course-tags">
+                        {course.subjects.map((subject) => (
+                          <Badge key={subject} variant="secondary">
+                            {subject}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      <h3>Benefícios</h3>
+                      {course.benefits.map((benefit) => (
+                        <div key={benefit} className="benefit-item">
+                          <Award size={16} />
+                          <span>{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="course-footer">
                     <div className="certificate">
                       <Star size={16} />
-                       <span>Certificado reconhecido nacionalmente</span>
-                     </div>
+                      <span>Certificado reconhecido nacionalmente</span>
+                    </div>
 
-                     <Button
-                      className="btn-enroll"
+                    <Button
                       onClick={() => handleEnroll(course.id, course.title)}
-                     disabled={enrolled.includes(course.id)}
-                     >
-                       {enrolled.includes(course.id) ? "Já Inscrito" : "Inscrever-se"}
-              </Button>
+                      disabled={enrolled.includes(course.id)}
+                    >
+                      {enrolled.includes(course.id) ? "Já Inscrito" : "Inscrever-se"}
+                    </Button>
                   </div>
-                 </CardContent>
-               </Card>
-            ))} 
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </main>
