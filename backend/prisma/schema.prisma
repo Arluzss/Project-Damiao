@@ -3,6 +3,37 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum TipoPessoa {
+  FISICA
+  JURIDICA
+}
+
+model Usuario {
+  id              Int           @id @default(autoincrement()) @map("usuario_id")
+  nome            String
+  documentoFiscal String        @map("documento_fiscal") @unique
+  tipoPessoa      TipoPessoa    @map("tipo_pessoa")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  contaAcesso     ContaAcesso?
+
+  @@map("usuario")
+}
+
+model ContaAcesso {
+  id               Int       @id @default(autoincrement()) @map("conta_id")
+  usuarioId        Int       @unique @map("usuario_id")
+  documentoFiscal  String    @map("documento_fiscal") @unique
+  passwordHash     String    @map("password_hash")
+  ativo            Boolean   @default(true)
+  lastLogin        DateTime? @map("last_login")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("conta_acesso")
 }
