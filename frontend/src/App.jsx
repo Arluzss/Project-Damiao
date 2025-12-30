@@ -9,7 +9,8 @@ import {Companies} from "./pages/Companies";
 import { Courses } from "./pages/Courses";
 import { Profile } from "./pages/Profile";
 import { Store } from "./pages/Store";
-
+import { PersonalityTest } from "./pages/PersonalityTest";
+import {Feedback} from "./pages/Feedback";
 
 
 function App() {
@@ -43,6 +44,8 @@ function App() {
         <Route path="/cursos" element= {<Courses/>} />
         <Route path= "/perfil" element={<Profile/>} />
         <Route path="/loja" element={<Store/>} />
+        <Route path="/teste-perfil" element={<PersonalityTest/>}/> 
+         <Route path="/avaliacoes" element={<Feedback/>} /> 
       </Routes>
     </>
   );
