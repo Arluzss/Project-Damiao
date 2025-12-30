@@ -136,4 +136,11 @@
 
 .budget {
   color: #16a34a;
+  font-size: 1.125rem;
+}
+
+.how-it-works {
+  margin-top: 2rem;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  color: white;
 }

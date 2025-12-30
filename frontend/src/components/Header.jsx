@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Coins, User, LogOut } from "lucide-react";
 import "./Header.css";
-import { Button } from "./ui/button";
+import { Button } from "./ui/Button";
 
 function Header({ user, logout }) {
   const location = useLocation();
