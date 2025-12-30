@@ -19,7 +19,7 @@ export function Home() {
               </p>
 
               <div className="hero-buttons">
-                <Link to="/resgistro">
+                <Link to="/registro">
                   <Button size="lg" className="btn-primary">
                     Começar Agora
                   </Button>
