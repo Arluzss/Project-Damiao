@@ -1,6 +1,7 @@
 // src/pages/Register.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import "./Register.css";
 
 export function Register() {
@@ -13,7 +14,19 @@ export function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    register(name, email, password, userType);
+    const newUser = {
+      name,
+      email,
+      type: userType,
+      damiao: 0,
+      courses: [],
+    };
+    try {
+      localStorage.setItem("user", JSON.stringify(newUser));
+    } catch (err) {
+      // ignore
+    }
+    toast.success("Conta criada");
     navigate("/perfil");
   };
 
@@ -85,7 +98,7 @@ export function Register() {
 
                 <p className="login-link">
                   Já tem uma conta?{" "}
-                  <Link to="/login">Entrar</Link>
+                  <Link to="/entrar">Entrar</Link>
                 </p>
               </form>
             </div>
