@@ -8,8 +8,9 @@ datasource db {
 }
 
 enum TipoPessoa {
-  FISICA
-  JURIDICA
+  student
+  entrepreneur
+  company
 }
 
 // Observações gerais:
