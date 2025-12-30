@@ -1,77 +1,125 @@
 .companies-page {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background: #f9fafb;
 }
 
 .companies-main {
-  padding: 40px 16px;
+  padding: 3rem 1rem;
 }
 
-.companies-container {
-  max-width: 800px;
+.container {
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.subtitle {
-  font-size: 14px;
+.page-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5rem;
+}
+
+.icon.blue {
+  color: #2563eb;
+}
+
+.icon.cyan {
+  color: #06b6d4;
+}
+
+.icon.gray {
   color: #6b7280;
 }
 
-.features {
-  margin-bottom: 24px;
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-.features h2 {
-  font-size: 18px;
-  margin-bottom: 8px;
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-.features ul {
-  padding-left: 20px;
+.form-card {
+  margin-bottom: 2rem;
 }
 
-.features li {
-  margin-bottom: 6px;
-}
-
-.actions {
-  margin-bottom: 24px;
-}
-
-.demand-form {
+.form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
-.field label {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.field input,
-.field textarea {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  resize: vertical;
-}
-
-.field input:focus,
-.field textarea:focus {
-  outline: none;
-  border-color: #2563eb;
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .form-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.cta-card {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+}
+
+.cta-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.cta-grid h3 {
+  margin-bottom: 0.25rem;
+}
+
+.btn-light {
+  background: #fff;
+  color: #2563eb;
 }

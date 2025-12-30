@@ -15,7 +15,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // keep user in sync if token exists
     if (token && !user) {
       const stored = localStorage.getItem('user');
       if (stored) setUser(JSON.parse(stored));
