@@ -2,8 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import { Coins, User, LogOut } from "lucide-react";
 import "./Header.css";
 import { Button } from "./ui/Button";
+import { useAuth } from "../context/AuthContext";
 
-function Header({ user, logout }) {
+function Header() {
+  const { user, logout } = useAuth();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
