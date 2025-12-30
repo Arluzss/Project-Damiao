@@ -1,63 +1,90 @@
-.entrepreneurs-page {
+.entrepreneurs {
   min-height: 100vh;
   background: #f9fafb;
 }
 
+.page {
+  padding: 3rem 1rem;
+}
+
 .container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 48px 16px;
 }
 
 .page-header {
-  margin-bottom: 48px;
+  margin-bottom: 3rem;
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
-  color: #111827;
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .page-header p {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: #6b7280;
 }
 
+/* Tabs */
 .tabs-list {
   max-width: 400px;
+  margin-bottom: 2rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-.cards-grid {
-  margin-top: 32px;
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.tab-content {
+  margin-top: 2rem;
 }
 
-.card-header-top {
+/* Grids */
+.grid-3 {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-1 {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Cards */
+.card-top {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 0.5rem;
 }
 
 .avatar {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
+  border-radius: 999px;
   background: linear-gradient(135deg, #06b6d4, #2563eb);
-  color: #fff;
-  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  font-size: 1.5rem;
 }
 
 .rating {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
+}
+
+.star {
+  width: 16px;
+  height: 16px;
+  color: #facc15;
+  fill: #facc15;
 }
 
 .service {
@@ -65,61 +92,85 @@
 }
 
 .description {
-  margin-bottom: 16px;
   color: #4b5563;
+  margin-bottom: 1rem;
 }
 
-.info-list div {
+.info span {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
+  font-size: 0.875rem;
   color: #6b7280;
-  margin-bottom: 8px;
 }
 
-.primary-btn {
+/* Buttons */
+.full {
   width: 100%;
+}
+
+.btn-cyan {
+  background: #06b6d4;
+}
+
+.btn-cyan:hover {
   background: #0891b2;
-  color: #fff;
 }
 
-.primary-btn:hover {
-  background: #0e7490;
+.btn-blue {
+  background: #2563eb;
 }
 
-.demands-list {
-  margin-top: 32px;
-  display: grid;
-  gap: 24px;
+.btn-blue:hover {
+  background: #1d4ed8;
 }
 
+.btn-white {
+  background: white;
+  color: #0891b2;
+}
+
+/* CTA */
+.cta-entrepreneur {
+  margin-top: 2rem;
+  background: linear-gradient(90deg, #06b6d4, #2563eb);
+  color: white;
+}
+
+/* Demands */
 .demand-header {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .company {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.25rem;
+  font-size: 0.875rem;
   color: #6b7280;
-  margin-bottom: 8px;
 }
 
-.demand-footer {
+.demand-info {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  align-items: end;
+  gap: 1rem;
 }
 
-.apply-btn {
-  background: #2563eb;
-  color: #fff;
+@media (min-width: 768px) {
+  .demand-info {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: end;
+  }
 }
 
-.apply-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
+.price {
+  color: #16a34a;
+  font-size: 1.125rem;
+}
+
+.how-it-works {
+  margin-top: 2rem;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  color: white;
 }

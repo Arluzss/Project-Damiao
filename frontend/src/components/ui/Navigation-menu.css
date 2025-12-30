@@ -1,0 +1,133 @@
+/* ROOT */
+.navigation-menu-root {
+  position: relative;
+  display: flex;
+  flex: 1;
+  max-width: max-content;
+  align-items: center;
+  justify-content: center;
+}
+
+/* LIST */
+.navigation-menu-list {
+  display: flex;
+  flex: 1;
+  list-style: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+/* ITEM */
+.navigation-menu-item {
+  position: relative;
+}
+
+/* TRIGGER */
+.navigation-menu-trigger {
+  display: inline-flex;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 6px;
+  background: var(--background);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.navigation-menu-trigger:hover,
+.navigation-menu-trigger:focus,
+.navigation-menu-trigger[data-state="open"] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* CHEVRON */
+.navigation-menu-chevron {
+  margin-left: 4px;
+  height: 12px;
+  width: 12px;
+  transition: transform 0.3s ease;
+}
+
+.navigation-menu-trigger[data-state="open"] .navigation-menu-chevron {
+  transform: rotate(180deg);
+}
+
+/* CONTENT */
+.navigation-menu-content {
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 8px;
+}
+
+[data-viewport="false"] .navigation-menu-content {
+  position: absolute;
+  top: 100%;
+  margin-top: 6px;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+
+/* VIEWPORT */
+.navigation-menu-viewport-wrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+}
+
+.navigation-menu-viewport {
+  margin-top: 6px;
+  background: var(--popover);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* LINK */
+.navigation-menu-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.navigation-menu-link:hover,
+.navigation-menu-link:focus,
+.navigation-menu-link[data-active="true"] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* INDICATOR */
+.navigation-menu-indicator {
+  position: absolute;
+  top: 100%;
+  z-index: 1;
+  display: flex;
+  height: 6px;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.navigation-menu-indicator-arrow {
+  width: 8px;
+  height: 8px;
+  background: var(--border);
+  transform: rotate(45deg);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+}
