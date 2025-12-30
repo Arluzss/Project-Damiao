@@ -1,34 +1,40 @@
 // src/pages/Register.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext";
 import "./Register.css";
 
 export function Register() {
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const [name, setName] = useState("");
+  const [documento, setDocumento] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("student");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser = {
-      name,
-      email,
-      type: userType,
-      damiao: 0,
-      courses: [],
-    };
+    setError("");
+
     try {
-      localStorage.setItem("user", JSON.stringify(newUser));
+      await register({
+        nome: name,
+        documento_fiscal: documento,
+        tipo_pessoa: userType,
+        senha: password,
+        email
+      });
+
+      // registro bem sucedido — direcionar para tela de entrar
+      navigate('/entrar');
+
     } catch (err) {
-      // ignore
+      setError(err.message || 'Falha no cadastro');
     }
-    toast.success("Conta criada");
-    navigate("/perfil");
-  };
+  }; 
 
   return (
     <div className="register-page">
@@ -56,6 +62,18 @@ export function Register() {
                 </div>
 
                 <div className="form-group">
+                  <label htmlFor="documento">Documento (CPF/CNPJ)</label>
+                  <input
+                    id="documento"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    value={documento}
+                    onChange={(e) => setDocumento(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
                   <label htmlFor="email">E-mail</label>
                   <input
                     id="email"
@@ -65,7 +83,7 @@ export function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                </div>
+                </div> 
 
                 <div className="form-group">
                   <label htmlFor="password">Senha</label>
@@ -92,6 +110,8 @@ export function Register() {
                   </select>
                 </div>
 
+                {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>}
+
                 <button type="submit" className="btn-primary">
                   Criar Conta
                 </button>
@@ -99,7 +119,7 @@ export function Register() {
                 <p className="login-link">
                   Já tem uma conta?{" "}
                   <Link to="/entrar">Entrar</Link>
-                </p>
+                </p> 
               </form>
             </div>
           </div>

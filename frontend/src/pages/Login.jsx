@@ -1,28 +1,32 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { useAuth } from "../context/AuthContext";
-// import { Header } from "./components/Header";
+import { useAuth } from "../context/AuthContext";
 
 import "./Login.css"
 
 export function Login() {
   const navigate = useNavigate();
-//   const { login } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("student");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, password, userType);
-    navigate("/perfil");
-  };
+    setError("");
+
+    try {
+      await login(email, password);
+      navigate('/perfil');
+    } catch (err) {
+      setError(err.message || 'Falha no login');
+    }
+  }; 
 
   return (
     <div className="login-page">
-      {/* <Header /> */}
 
       <main className="login-main">
         <div className="login-container">
@@ -70,6 +74,8 @@ export function Login() {
                     <option value="company">Empresa</option>
                   </select>
                 </div>
+
+                {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>}
 
                 <button type="submit" className="btn-login">
                   Entrar

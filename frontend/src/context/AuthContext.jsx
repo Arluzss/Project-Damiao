@@ -1,57 +1,97 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user'));
+    } catch {
+      return null;
+    }
+  });
+
+  const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("user");
-      if (raw) setUser(JSON.parse(raw));
-    } catch (e) {
-      // ignore
+    if (token && !user) {
+      const stored = localStorage.getItem('user');
+      if (stored) setUser(JSON.parse(stored));
     }
-  }, []);
+  }, [token, user]);
 
-  const updateUser = (patch) => {
-    setUser((prev) => {
-      const next = { ...(prev || {}), ...patch };
-      try {
-        localStorage.setItem("user", JSON.stringify(next));
-      } catch (e) {
-        // ignore
-      }
-      return next;
-    });
+  const login = async (identifier, senha) => {
+    setLoading(true);
+    try {
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documento_fiscal: identifier, senha })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha no login');
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.usuario));
+      setToken(data.token);
+      setUser(data.usuario);
+
+      return data;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const login = (payload) => {
-    const u = typeof payload === "object" ? payload : null;
-    if (u) {
-      setUser(u);
-      try {
-        localStorage.setItem("user", JSON.stringify(u));
-      } catch (e) {}
+  const register = async ({ nome, documento_fiscal, tipo_pessoa, senha, email }) => {
+    setLoading(true);
+    try {
+      const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, documento_fiscal, tipo_pessoa, senha, email })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha no cadastro');
+
+      return data;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
-    try {
-      localStorage.removeItem("user");
-    } catch (e) {}
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
     setUser(null);
   };
 
+  const authFetch = async (url, options = {}) => {
+    const headers = options.headers ? { ...options.headers } : {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401) {
+      logout();
+      throw new Error('Não autorizado');
+    }
+
+    return response;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, updateUser, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  return useContext(AuthContext);
 }
