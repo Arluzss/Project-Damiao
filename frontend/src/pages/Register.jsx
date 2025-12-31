@@ -1,7 +1,25 @@
-// src/pages/Register.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
+
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/Input";
+import { Label } from "../components/ui/Label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/Select";
+
 import "./Register.css";
 
 export function Register() {
@@ -9,49 +27,42 @@ export function Register() {
   const { register } = useAuth();
 
   const [name, setName] = useState("");
-  const [documento, setDocumento] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("student");
-  const [error, setError] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const handleSubmit = async (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-    setError("");
 
-    try {
-      await register({
-        nome: name,
-        documento_fiscal: documento,
-        tipo_pessoa: userType,
-        senha: password,
-        email
-      });
-
-      // registro bem sucedido — direcionar para tela de entrar
-      navigate('/entrar');
-
-    } catch (err) {
-      setError(err.message || 'Falha no cadastro');
+    if (userType !== "student" && !cnpj) {
+      return;
     }
-  }; 
+
+    register(name, email, password, userType, cnpj, phone);
+    navigate("/perfil");
+  }
 
   return (
     <div className="register-page">
+      
 
       <main className="register-main">
         <div className="register-container">
-          <div className="card">
-            <div className="card-header">
-              <h1>Criar Conta</h1>
-              <p>Cadastre-se gratuitamente e comece sua jornada</p>
-            </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Criar Conta</CardTitle>
+              <CardDescription>
+                Cadastre-se gratuitamente e comece sua jornada
+              </CardDescription>
+            </CardHeader>
 
-            <div className="card-content">
-              <form onSubmit={handleSubmit}>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="register-form">
                 <div className="form-group">
-                  <label htmlFor="name">Nome Completo</label>
-                  <input
+                  <Label htmlFor="name">Nome Completo</Label>
+                  <Input
                     id="name"
                     type="text"
                     placeholder="Seu nome"
@@ -62,20 +73,8 @@ export function Register() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="documento">Documento (CPF/CNPJ)</label>
-                  <input
-                    id="documento"
-                    type="text"
-                    placeholder="000.000.000-00"
-                    value={documento}
-                    onChange={(e) => setDocumento(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="email">E-mail</label>
-                  <input
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
                     id="email"
                     type="email"
                     placeholder="seu@email.com"
@@ -83,11 +82,52 @@ export function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                </div> 
+                </div>
 
                 <div className="form-group">
-                  <label htmlFor="password">Senha</label>
-                  <input
+                  <Label>Tipo de Conta</Label>
+                  <Select value={userType} onValueChange={setUserType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="student">Estudante</SelectItem>
+                      <SelectItem value="entrepreneur">
+                        Microempreendedor
+                      </SelectItem>
+                      <SelectItem value="company">Empresa</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {userType !== "student" && (
+                  <div className="form-group">
+                    <Label htmlFor="cnpj">CNPJ *</Label>
+                    <Input
+                      id="cnpj"
+                      type="text"
+                      placeholder="00.000.000/0000-00"
+                      value={cnpj}
+                      onChange={(e) => setCnpj(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <Label htmlFor="phone">Telefone / WhatsApp</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="(00) 00000-0000"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <Label htmlFor="password">Senha</Label>
+                  <Input
                     id="password"
                     type="password"
                     placeholder="••••••••"
@@ -97,32 +137,17 @@ export function Register() {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="type">Tipo de Conta</label>
-                  <select
-                    id="type"
-                    value={userType}
-                    onChange={(e) => setUserType(e.target.value)}
-                  >
-                    <option value="student">Estudante</option>
-                    <option value="entrepreneur">Microempreendedor</option>
-                    <option value="company">Empresa</option>
-                  </select>
-                </div>
-
-                {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>}
-
-                <button type="submit" className="btn-primary">
+                <Button type="submit" className="register-button">
                   Criar Conta
-                </button>
+                </Button>
 
-                <p className="login-link">
+                <p className="register-footer">
                   Já tem uma conta?{" "}
-                  <Link to="/entrar">Entrar</Link>
-                </p> 
+                  <Link to="/login">Entrar</Link>
+                </p>
               </form>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
