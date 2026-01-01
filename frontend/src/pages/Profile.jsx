@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { toast } from "sonner";
-import "./Profile.css";
+import { useState } from "react";
+import { Link } from "react-router";
 
+import { useAuth } from "../context/AuthContext";
 import {
   Card,
   CardContent,
@@ -15,8 +14,6 @@ import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Progress } from "../components/ui/Progress";
 import { Badge } from "../components/ui/Badge";
-import { Toaster } from "../components/ui/Sonner";
-
 import {
   User,
   Coins,
@@ -27,105 +24,27 @@ import {
   Brain,
 } from "lucide-react";
 
+import { Toaster } from "../components/ui/sonner";
 
+import "./Profile.css";
 
 export function Profile() {
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({ name: "", email: "" });
+  const [editData, setEditData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+  });
 
-  // Fallback local user state when no AuthContext is provided
-  const [userState, setUserState] = useState(null);
-
-  // load user from localStorage if available (non-blocking)
-  useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
-      if (raw) setUserState(JSON.parse(raw));
-    } catch (e) {
-      // ignore
-    }
-  }, []);
-
-  // initialize edit form when userState changes
-  useEffect(() => {
-    if (userState) {
-      setEditData({ name: userState.name || "", email: userState.email || "" });
-    }
-  }, [userState]);
-
-  // fallback updateUser to keep local state in sync
-  const updateUser = (data) => {
-    setUserState((prev) => {
-      const next = { ...(prev || {}), ...data };
-      try {
-        localStorage.setItem("user", JSON.stringify(next));
-      } catch (e) {
-        // ignore
-      }
-      return next;
-    });
-  };
-
-  // quick-login state (inline fallback when no AuthContext)
-  const [loginName, setLoginName] = useState("");
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginType, setLoginType] = useState("student");
-
-  const handleQuickLogin = (e) => {
-    e.preventDefault();
-    const newUser = {
-      name: loginName,
-      email: loginEmail,
-      type: loginType,
-      damiao: 0,
-      courses: [],
-    };
-    updateUser(newUser);
-    toast.success("Login realizado");
-  };
-
-  if (!userState) {
+  if (!user) {
     return (
-      <div className="profile-page">
+      <div className="profile-container">
+        
         <main className="profile-center">
-          <User className="icon-large" />
+          <User className="profile-icon" />
           <h1>Você precisa estar logado</h1>
-          <p>Faça um login rápido (dados salvos localmente)</p>
-
-          <form className="profile-quick-login" onSubmit={handleQuickLogin}>
-            <Label>Nome</Label>
-            <Input
-              value={loginName}
-              onChange={(e) => setLoginName(e.target.value)}
-              required
-            />
-
-            <Label>E-mail</Label>
-            <Input
-              type="email"
-              value={loginEmail}
-              onChange={(e) => setLoginEmail(e.target.value)}
-              required
-            />
-
-            <Label>Tipo de Conta</Label>
-            <select
-              value={loginType}
-              onChange={(e) => setLoginType(e.target.value)}
-            >
-              <option value="student">Estudante</option>
-              <option value="entrepreneur">Microempreendedor</option>
-              <option value="company">Empresa</option>
-            </select>
-
-            <div style={{ marginTop: 12 }}>
-              <Button type="submit" className="btn-primary">Entrar</Button>
-            </div>
-          </form>
-
-          <p style={{ marginTop: 12 }}>ou</p>
           <Link to="/entrar">
-            <Button className="btn-light">Ir para tela de login</Button>
+            <Button className="btn-primary">Fazer Login</Button>
           </Link>
         </main>
       </div>
@@ -133,7 +52,7 @@ export function Profile() {
   }
 
   const handleSave = () => {
-    if (typeof updateUser === "function") updateUser(editData);
+    updateUser(editData);
     setIsEditing(false);
     toast.success("Perfil atualizado com sucesso!");
   };
@@ -145,21 +64,21 @@ export function Profile() {
   };
 
   return (
-    <div className="profile-page">
-     
+    <div className="profile-container">
+      
       <Toaster />
 
-      <main className="profile-container">
+      <main className="profile-main">
         <header className="profile-header">
           <h1>Meu Perfil</h1>
           <p>Gerencie suas informações e acompanhe seu progresso</p>
         </header>
 
         <div className="profile-grid">
-          {/* COLUNA PRINCIPAL */}
-          <div className="profile-main">
+          {/* Conteúdo principal */}
+          <div className="profile-content">
             <Card>
-              <CardHeader className="card-header-flex">
+              <CardHeader className="card-header-between">
                 <CardTitle>Informações Pessoais</CardTitle>
                 <Button
                   variant="ghost"
@@ -174,32 +93,37 @@ export function Profile() {
               <CardContent>
                 <div className="profile-user">
                   <div className="profile-avatar">
-                      {userState?.name?.charAt(0) || "U"}
+                    {user.name.charAt(0)}
                   </div>
+
                   <div>
-                      <Badge>{userTypeLabel[userState?.type] || "Visitante"}</Badge>
-                      {!isEditing && <h2>{userState?.name || "Usuário"}</h2>}
+                    <Badge>{userTypeLabel[user.type]}</Badge>
+                    {!isEditing && <h2>{user.name}</h2>}
                   </div>
                 </div>
 
                 {isEditing ? (
-                  <div className="form-group">
-                    <Label>Nome</Label>
-                    <Input
-                      value={editData.name}
-                      onChange={(e) =>
-                        setEditData({ ...editData, name: e.target.value })
-                      }
-                    />
+                  <div className="form">
+                    <div>
+                      <Label>Nome</Label>
+                      <Input
+                        value={editData.name}
+                        onChange={(e) =>
+                          setEditData({ ...editData, name: e.target.value })
+                        }
+                      />
+                    </div>
 
-                    <Label>E-mail</Label>
-                    <Input
-                      type="email"
-                      value={editData.email}
-                      onChange={(e) =>
-                        setEditData({ ...editData, email: e.target.value })
-                      }
-                    />
+                    <div>
+                      <Label>E-mail</Label>
+                      <Input
+                        type="email"
+                        value={editData.email}
+                        onChange={(e) =>
+                          setEditData({ ...editData, email: e.target.value })
+                        }
+                      />
+                    </div>
 
                     <Button className="btn-primary" onClick={handleSave}>
                       Salvar Alterações
@@ -207,36 +131,40 @@ export function Profile() {
                   </div>
                 ) : (
                   <div className="profile-info">
-                    <p><strong>E-mail:</strong> {userState?.email || "-"}</p>
-                    <p><strong>Tipo:</strong> {userTypeLabel[userState?.type] || "-"}</p>
+                    <p><strong>E-mail:</strong> {user.email}</p>
+                    <p><strong>Tipo:</strong> {userTypeLabel[user.type]}</p>
                     <p><strong>Membro desde:</strong> Dezembro 2024</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {(userState?.type === "student" || userState?.type === "entrepreneur") && (
+            {(user.type === "student" || user.type === "entrepreneur") && (
               <Card className="mt">
                 <CardHeader>
                   <CardTitle>
-                    <GraduationCap /> Meus Cursos
+                    <GraduationCap size={18} /> Meus Cursos
                   </CardTitle>
-                  <CardDescription>Cursos em andamento</CardDescription>
+                  <CardDescription>
+                    Cursos em que você está inscrito
+                  </CardDescription>
                 </CardHeader>
 
                 <CardContent>
-                  {userState?.courses?.length ? (
-                    userState.courses.map((id) => (
+                  {user.courses?.length ? (
+                    user.courses.map((id) => (
                       <div key={id} className="course-card">
-                        <h3>Curso #{id}</h3>
+                        <div className="course-header">
+                          <span>Curso #{id}</span>
+                          <Badge variant="outline">Em andamento</Badge>
+                        </div>
                         <Progress value={45} />
-                        <span>45% concluído</span>
                       </div>
                     ))
                   ) : (
                     <div className="empty-state">
                       <GraduationCap size={40} />
-                      <p>Nenhum curso inscrito</p>
+                      <p>Nenhum curso encontrado</p>
                       <Link to="/cursos">
                         <Button className="btn-primary">Ver Cursos</Button>
                       </Link>
@@ -245,26 +173,43 @@ export function Profile() {
                 </CardContent>
               </Card>
             )}
+
+            {user.type === "entrepreneur" && (
+              <Card className="mt">
+                <CardHeader>
+                  <CardTitle>
+                    <Briefcase size={18} /> Meus Serviços
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/meus-servicos">
+                    <Button className="btn-secondary">
+                      Gerenciar Serviços
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          {/* SIDEBAR */}
+          {/* Sidebar */}
           <aside className="profile-sidebar">
-            <Card className="card-balance">
+            <Card className="balance-card">
               <CardContent>
                 <Coins size={32} />
                 <p>Saldo Damião</p>
-                <h2>{userState?.damiao ?? 0}</h2>
+                <h2>{user.damiao}</h2>
                 <Link to="/loja">
                   <Button className="btn-light">Usar Damiões</Button>
                 </Link>
               </CardContent>
             </Card>
 
-            {userState?.type !== "company" && (
+            {user.type !== "company" && (
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    <Brain /> Teste de Perfil
+                    <Brain size={18} /> Teste de Perfil
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
