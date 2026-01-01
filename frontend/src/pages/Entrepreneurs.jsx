@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { useAuth } from "../context/AuthContext";
 import {
   Card,
@@ -10,21 +9,10 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/Badge";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/Tabs";
-import {
-  Briefcase,
-  MapPin,
-  Star,
-  Building2,
-  DollarSign,
-} from "lucide-react";
+import {Tabs,TabsContent,TabsList,TabsTrigger,} from "../components/ui/Tabs";
+import {Briefcase,MapPin,Star,Building2,DollarSign,MessageCircle,Instagram,Linkedin,} from "lucide-react";
 import { toast } from "sonner";
-import { Toaster } from "../components/ui/Sonner";
+import { Toaster } from "../components/ui/sonner";
 
 import "./Entrepreneurs.css";
 
@@ -33,31 +21,29 @@ const entrepreneurs = [
     id: "1",
     name: "Maria Silva",
     service: "Design Gráfico",
-    description: "Criação de identidades visuais, logos e materiais de marketing",
+    description:
+      "Criação de identidades visuais, logos e materiais de marketing",
     location: "São Paulo, SP",
     rating: 4.9,
     projects: 45,
     price: "R$ 500 - R$ 2.000",
+    whatsapp: "(11) 98765-4321",
+    instagram: "@mariadesigner",
+    linkedin: "https://linkedin.com/in/mariasilva",
   },
   {
     id: "2",
     name: "João Santos",
     service: "Desenvolvimento Web",
-    description: "Sites responsivos, lojas virtuais e aplicativos web",
+    description:
+      "Sites responsivos, lojas virtuais e aplicativos web",
     location: "Rio de Janeiro, RJ",
     rating: 4.8,
     projects: 32,
     price: "R$ 1.500 - R$ 5.000",
-  },
-  {
-    id: "3",
-    name: "Ana Costa",
-    service: "Marketing Digital",
-    description: "Gestão de redes sociais, anúncios e estratégias digitais",
-    location: "Belo Horizonte, MG",
-    rating: 5.0,
-    projects: 68,
-    price: "R$ 800 - R$ 3.000",
+    whatsapp: "(21) 99876-5432",
+    instagram: "@joaodev",
+    linkedin: "https://linkedin.com/in/joaosantos",
   },
 ];
 
@@ -67,30 +53,10 @@ const demands = [
     company: "Tech Solutions Ltda",
     title: "Desenvolvimento de Landing Page",
     description:
-      "Precisamos de uma landing page moderna e responsiva para nova campanha de marketing",
+      "Precisamos de uma landing page moderna e responsiva",
     budget: "R$ 2.500",
     deadline: "30 dias",
     category: "Desenvolvimento Web",
-  },
-  {
-    id: "2",
-    company: "Moda & Estilo",
-    title: "Identidade Visual Completa",
-    description:
-      "Criação de logo, cartão de visita e materiais para loja de moda feminina",
-    budget: "R$ 1.800",
-    deadline: "20 dias",
-    category: "Design Gráfico",
-  },
-  {
-    id: "3",
-    company: "Alimentos Naturais SA",
-    title: "Gestão de Redes Sociais",
-    description:
-      "Gerenciamento mensal de Instagram, Facebook e criação de conteúdo",
-    budget: "R$ 2.000/mês",
-    deadline: "Início imediato",
-    category: "Marketing Digital",
   },
 ];
 
@@ -98,7 +64,7 @@ export function Entrepreneurs() {
   const { user } = useAuth();
   const [applied, setApplied] = useState([]);
 
-  function handleApply(demandId, title) {
+  function handleApply(id, title) {
     if (!user) {
       toast.error("Faça login para se candidatar");
       return;
@@ -109,13 +75,29 @@ export function Entrepreneurs() {
       return;
     }
 
-    if (applied.includes(demandId)) {
-      toast.info("Você já se candidatou a esta demanda");
+    if (applied.includes(id)) {
+      toast.info("Você já se candidatou");
       return;
     }
 
-    setApplied([...applied, demandId]);
-    toast.success(`Candidatura enviada para: ${title}`);
+    setApplied([...applied, id]);
+    toast.success(`Candidatura enviada: ${title}`);
+  }
+
+  function openWhatsApp(phone) {
+    const clean = phone.replace(/\D/g, "");
+    window.open(`https://wa.me/55${clean}`, "_blank");
+  }
+
+  function openInstagram(user) {
+    window.open(
+      `https://instagram.com/${user.replace("@", "")}`,
+      "_blank"
+    );
+  }
+
+  function openLinkedIn(url) {
+    window.open(url, "_blank");
   }
 
   return (
@@ -124,130 +106,130 @@ export function Entrepreneurs() {
       <Toaster />
 
       <main className="entrepreneurs-main">
-        <div className="container">
-          <header className="page-header">
+        <div className="entrepreneurs-container">
+          <header className="entrepreneurs-header">
             <h1>Microempreendedores</h1>
             <p>
-              Divulgue seus serviços e conecte-se com oportunidades reais de
-              negócios
+              Divulgue seus serviços e conecte-se com oportunidades
             </p>
           </header>
 
           <Tabs defaultValue="services">
             <TabsList className="tabs-list">
-              <TabsTrigger value="services">Profissionais</TabsTrigger>
-              <TabsTrigger value="demands">Demandas</TabsTrigger>
+              <TabsTrigger value="services">
+                Profissionais
+              </TabsTrigger>
+              <TabsTrigger value="demands">
+                Demandas
+              </TabsTrigger>
             </TabsList>
 
-            {/* PROFISSIONAIS */}
             <TabsContent value="services">
-              <div className="entrepreneurs-grid">
+              <div className="cards-grid">
                 {entrepreneurs.map((e) => (
-                  <Card key={e.id} className="entrepreneur-card">
+                  <Card key={e.id}>
                     <CardHeader>
-                      <div className="card-header-top">
-                        <div className="avatar">{e.name.charAt(0)}</div>
-                        <div className="rating">
-                          <Star size={16} />
-                          <span>{e.rating}</span>
-                        </div>
+                      <div className="card-avatar">
+                        {e.name.charAt(0)}
                       </div>
 
                       <CardTitle>{e.name}</CardTitle>
-                      <CardDescription className="service">
+                      <CardDescription>
                         {e.service}
                       </CardDescription>
-                    </CardHeader>
 
-                    <CardContent>
-                      <p className="description">{e.description}</p>
-
-                      <div className="info-list">
-                        <span>
-                          <MapPin size={16} /> {e.location}
-                        </span>
-                        <span>
-                          <Briefcase size={16} /> {e.projects} projetos
-                        </span>
-                        <span>
-                          <DollarSign size={16} /> {e.price}
-                        </span>
-                      </div>
-
-                      <Button className="btn-primary full">
-                        Ver Perfil
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {user?.type === "entrepreneur" && (
-                <Card className="cta-card">
-                  <CardContent>
-                    <h2>Divulgue Seu Serviço</h2>
-                    <p>
-                      Crie seu perfil profissional e seja encontrado por
-                      empresas que buscam seus serviços.
-                    </p>
-                    <Button className="btn-light">
-                      Criar Meu Perfil
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
-
-            {/* DEMANDAS */}
-            <TabsContent value="demands">
-              <div className="demands-list">
-                {demands.map((d) => (
-                  <Card key={d.id}>
-                    <CardHeader>
-                      <div className="demand-header">
-                        <div>
-                          <span className="company">
-                            <Building2 size={16} /> {d.company}
-                          </span>
-                          <CardTitle>{d.title}</CardTitle>
-                          <CardDescription>
-                            {d.description}
-                          </CardDescription>
-                        </div>
-                        <Badge className="category">
-                          {d.category}
-                        </Badge>
+                      <div className="rating">
+                        <Star size={16} />
+                        {e.rating}
                       </div>
                     </CardHeader>
 
                     <CardContent>
-                      <div className="demand-info">
-                        <div>
-                          <small>Orçamento</small>
-                          <strong className="budget">
-                            {d.budget}
-                          </strong>
-                        </div>
-                        <div>
-                          <small>Prazo</small>
-                          <strong>{d.deadline}</strong>
-                        </div>
+                      <p className="description">
+                        {e.description}
+                      </p>
+
+                      <div className="info">
+                        <span>
+                          <MapPin size={14} />
+                          {e.location}
+                        </span>
+                        <span>
+                          <Briefcase size={14} />
+                          {e.projects} projetos
+                        </span>
+                        <span>
+                          <DollarSign size={14} />
+                          {e.price}
+                        </span>
+                      </div>
+
+                      <div className="contact">
                         <Button
-                          className="btn-secondary"
+                          variant="outline"
                           onClick={() =>
-                            handleApply(d.id, d.title)
+                            openWhatsApp(e.whatsapp)
                           }
-                          disabled={applied.includes(d.id)}
                         >
-                          {applied.includes(d.id)
-                            ? "Candidatura Enviada"
-                            : "Candidatar-se"}
+                          <MessageCircle size={16} />
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            openInstagram(e.instagram)
+                          }
+                        >
+                          <Instagram size={16} />
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            openLinkedIn(e.linkedin)
+                          }
+                        >
+                          <Linkedin size={16} />
                         </Button>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
+            </TabsContent>
+
+            <TabsContent value="demands">
+              {demands.map((d) => (
+                <Card key={d.id}>
+                  <CardHeader>
+                    <CardTitle>{d.title}</CardTitle>
+                    <Badge>{d.category}</Badge>
+                    <CardDescription>
+                      {d.description}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="demand-footer">
+                    <div>
+                      <strong>Orçamento:</strong> {d.budget}
+                    </div>
+                    <div>
+                      <strong>Prazo:</strong> {d.deadline}
+                    </div>
+
+                    <Button
+                      onClick={() =>
+                        handleApply(d.id, d.title)
+                      }
+                      disabled={applied.includes(d.id)}
+                    >
+                      {applied.includes(d.id)
+                        ? "Candidatura Enviada"
+                        : "Candidatar-se"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </TabsContent>
           </Tabs>
         </div>
