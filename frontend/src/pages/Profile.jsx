@@ -33,10 +33,8 @@ export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ name: "", email: "" });
 
-  // Fallback local user state when no AuthContext is provided
   const [userState, setUserState] = useState(null);
 
-  // load user from localStorage if available (non-blocking)
   useEffect(() => {
     try {
       const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
@@ -46,14 +44,12 @@ export function Profile() {
     }
   }, []);
 
-  // initialize edit form when userState changes
   useEffect(() => {
     if (userState) {
       setEditData({ name: userState.name || "", email: userState.email || "" });
     }
   }, [userState]);
 
-  // fallback updateUser to keep local state in sync
   const updateUser = (data) => {
     setUserState((prev) => {
       const next = { ...(prev || {}), ...data };
@@ -66,7 +62,6 @@ export function Profile() {
     });
   };
 
-  // quick-login state (inline fallback when no AuthContext)
   const [loginName, setLoginName] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginType, setLoginType] = useState("student");
@@ -247,7 +242,6 @@ export function Profile() {
             )}
           </div>
 
-          {/* SIDEBAR */}
           <aside className="profile-sidebar">
             <Card className="card-balance">
               <CardContent>
