@@ -34,9 +34,7 @@ export function AuthProvider({ children }) {
       if (!res.ok) throw new Error(data.error || 'Falha no login');
 
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.usuario));
       setToken(data.token);
-      setUser(data.usuario);
 
       return data;
     } finally {
@@ -71,9 +69,8 @@ export function AuthProvider({ children }) {
 
   const authFetch = async (url, options = {}) => {
     const headers = options.headers ? { ...options.headers } : {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    const currentToken = token || localStorage.getItem('token');
+    if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
 
     const response = await fetch(url, { ...options, headers });
 
@@ -85,8 +82,56 @@ export function AuthProvider({ children }) {
     return response;
   };
 
+  const getPoints = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/moedas', { method: 'GET' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao buscar pontos');
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addPoints = async (motivo) => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/moedas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motivo })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao adicionar pontos');
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const profile = async () => {
+    setLoading(true);
+    try {
+      const currentToken = token || localStorage.getItem('token');
+      if (!currentToken) throw new Error('Sem token de autenticação');
+
+      const res = await authFetch('/profile/me', { method: 'GET' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Falha ao buscar perfil');
+
+      const userData = data.usuario ?? data;
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      if (!token) setToken(currentToken);
+      return userData;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile }}>
       {children}
     </AuthContext.Provider>
   );
