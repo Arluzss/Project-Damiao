@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const offerController = require('../controller/offer.controller');
-const authMiddleware = require('../middlewares/auth.middleware'); 
+const OfertaController = require('../controller/ofertaController');
 
-router.post('/', authMiddleware, offerController.create);
-router.get('/', offerController.index);
-router.get('/:id', offerController.show);
+router.get('/', OfertaController.list);
+router.get('/:id', OfertaController.getById);
+router.post('/', OfertaController.create);
+router.put('/:id', OfertaController.update);
+router.delete('/:id', OfertaController.remove);
 
 module.exports = router;
