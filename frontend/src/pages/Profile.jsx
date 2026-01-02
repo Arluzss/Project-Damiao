@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import "./Profile.css";
+import { useAuth } from "../context/AuthContext";
 
 import {
   Card,
@@ -27,22 +28,31 @@ import {
   Brain,
 } from "lucide-react";
 
-
-
 export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ name: "", email: "" });
 
   const [userState, setUserState] = useState(null);
 
+  const { user, profile, authFetch, token } = useAuth();
+
   useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
-      if (raw) setUserState(JSON.parse(raw));
-    } catch (e) {
-      // ignore
+    if (user) {
+      setUserState(user);
+      return;
     }
-  }, []);
+
+    profile().then((data) => {
+      console.log("Fetched profile:", data);
+      if (data) setUserState(data);
+    }).catch(() => {
+      try {
+        const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+        if (raw) setUserState(JSON.parse(raw));
+      } catch (e) {
+      }
+    });
+  }, [user, profile]);
 
   useEffect(() => {
     if (userState) {
@@ -56,7 +66,6 @@ export function Profile() {
       try {
         localStorage.setItem("user", JSON.stringify(next));
       } catch (e) {
-        // ignore
       }
       return next;
     });
@@ -127,10 +136,33 @@ export function Profile() {
     );
   }
 
-  const handleSave = () => {
-    if (typeof updateUser === "function") updateUser(editData);
+  const handleSave = async () => {
     setIsEditing(false);
-    toast.success("Perfil atualizado com sucesso!");
+    try {
+      const currentToken = token || (typeof window !== 'undefined' && localStorage.getItem('token'));
+      if (authFetch && currentToken) {
+        const res = await authFetch('/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: editData.name, email: editData.email })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'Falha ao atualizar perfil');
+
+        const refreshed = await profile();
+        if (refreshed) setUserState(refreshed);
+        toast.success('Perfil atualizado com sucesso!');
+        return;
+      }
+
+      if (typeof updateUser === 'function') updateUser(editData);
+      toast.success('Perfil atualizado localmente');
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || 'Erro ao atualizar perfil');
+      setIsEditing(true);
+    }
   };
 
   const userTypeLabel = {
@@ -151,7 +183,6 @@ export function Profile() {
         </header>
 
         <div className="profile-grid">
-          {/* COLUNA PRINCIPAL */}
           <div className="profile-main">
             <Card>
               <CardHeader className="card-header-flex">
