@@ -10,9 +10,13 @@ export default defineConfig({
         target: 'http://localhost:3333',
         changeOrigin: true,
         secure: false
-      }
-      ,
+      },
       '/moedas': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
+      },
+      '/profile': {
         target: 'http://localhost:3333',
         changeOrigin: true,
         secure: false

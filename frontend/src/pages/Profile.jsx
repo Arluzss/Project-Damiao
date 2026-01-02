@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import "./Profile.css";
+import { useAuth } from "../context/AuthContext";
 
 import {
   Card,
@@ -27,46 +28,49 @@ import {
   Brain,
 } from "lucide-react";
 
-
-
 export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ name: "", email: "" });
 
-  // Fallback local user state when no AuthContext is provided
   const [userState, setUserState] = useState(null);
 
-  // load user from localStorage if available (non-blocking)
-  useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
-      if (raw) setUserState(JSON.parse(raw));
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  const { user, profile, authFetch, token } = useAuth();
 
-  // initialize edit form when userState changes
+  useEffect(() => {
+    if (user) {
+      setUserState(user);
+      return;
+    }
+
+    profile().then((data) => {
+      console.log("Fetched profile:", data);
+      if (data) setUserState(data);
+    }).catch(() => {
+      try {
+        const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+        if (raw) setUserState(JSON.parse(raw));
+      } catch (e) {
+      }
+    });
+  }, [user, profile]);
+
   useEffect(() => {
     if (userState) {
       setEditData({ name: userState.name || "", email: userState.email || "" });
     }
   }, [userState]);
 
-  // fallback updateUser to keep local state in sync
   const updateUser = (data) => {
     setUserState((prev) => {
       const next = { ...(prev || {}), ...data };
       try {
         localStorage.setItem("user", JSON.stringify(next));
       } catch (e) {
-        // ignore
       }
       return next;
     });
   };
 
-  // quick-login state (inline fallback when no AuthContext)
   const [loginName, setLoginName] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginType, setLoginType] = useState("student");
@@ -132,10 +136,33 @@ export function Profile() {
     );
   }
 
-  const handleSave = () => {
-    if (typeof updateUser === "function") updateUser(editData);
+  const handleSave = async () => {
     setIsEditing(false);
-    toast.success("Perfil atualizado com sucesso!");
+    try {
+      const currentToken = token || (typeof window !== 'undefined' && localStorage.getItem('token'));
+      if (authFetch && currentToken) {
+        const res = await authFetch('/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: editData.name, email: editData.email })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'Falha ao atualizar perfil');
+
+        const refreshed = await profile();
+        if (refreshed) setUserState(refreshed);
+        toast.success('Perfil atualizado com sucesso!');
+        return;
+      }
+
+      if (typeof updateUser === 'function') updateUser(editData);
+      toast.success('Perfil atualizado localmente');
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || 'Erro ao atualizar perfil');
+      setIsEditing(true);
+    }
   };
 
   const userTypeLabel = {
@@ -156,7 +183,6 @@ export function Profile() {
         </header>
 
         <div className="profile-grid">
-          {/* COLUNA PRINCIPAL */}
           <div className="profile-main">
             <Card>
               <CardHeader className="card-header-flex">
@@ -247,7 +273,6 @@ export function Profile() {
             )}
           </div>
 
-          {/* SIDEBAR */}
           <aside className="profile-sidebar">
             <Card className="card-balance">
               <CardContent>
