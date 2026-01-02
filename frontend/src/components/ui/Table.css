@@ -1,0 +1,90 @@
+/* Container */
+.table-container {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  caption-side: bottom;
+  font-size: 0.875rem;
+}
+
+/* Header */
+.table-header tr {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Body */
+.table-body tr:last-child {
+  border-bottom: 0;
+}
+
+/* Footer */
+.table-footer {
+  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+  border-top: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.table-footer > tr:last-child {
+  border-bottom: 0;
+}
+
+/* Row */
+.table-row {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+}
+
+.table-row[data-state="selected"] {
+  background-color: var(--muted);
+}
+
+/* Head */
+.table-head {
+  height: 2.5rem;
+  padding: 0.5rem;
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--foreground);
+}
+
+.table-head:has([role="checkbox"]) {
+  padding-right: 0;
+}
+
+.table-head > [role="checkbox"] {
+  transform: translate-y(2px);
+}
+
+/* Cell */
+.table-cell {
+  padding: 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table-cell:has([role="checkbox"]) {
+  padding-right: 0;
+}
+
+.table-cell > [role="checkbox"] {
+  transform: translate-y(2px);
+}
+
+/* Caption */
+.table-caption {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}

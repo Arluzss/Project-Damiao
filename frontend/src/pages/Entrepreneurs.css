@@ -3,123 +3,137 @@
   background: #f9fafb;
 }
 
+.entrepreneurs-main {
+  padding: 3rem 1rem;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 16px;
-}
-
-.page-header {
-  margin-bottom: 48px;
 }
 
 .page-header h1 {
   font-size: 2.5rem;
-  color: #111827;
+  margin-bottom: 0.5rem;
 }
 
 .page-header p {
-  font-size: 1.2rem;
-  color: #6b7280;
+  color: #555;
+  font-size: 1.1rem;
 }
 
 .tabs-list {
-  max-width: 400px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 400px;
+  margin-bottom: 2rem;
 }
 
-.cards-grid {
-  margin-top: 32px;
+.entrepreneurs-grid {
   display: grid;
-  gap: 24px;
+  gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-.card-header-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.avatar {
+.entrepreneur-card .avatar {
   width: 64px;
   height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, #06b6d4, #2563eb);
   color: #fff;
-  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
+}
+
+.card-header-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
 }
 
 .rating {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
+  color: #facc15;
 }
 
 .service {
-  color: #0891b2;
+  color: #06b6d4;
 }
 
 .description {
-  margin-bottom: 16px;
-  color: #4b5563;
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
-.info-list div {
+.info-list span {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #6b7280;
-  margin-bottom: 8px;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.4rem;
 }
 
-.primary-btn {
+.full {
   width: 100%;
-  background: #0891b2;
+}
+
+.btn-primary {
+  background: #06b6d4;
   color: #fff;
 }
 
-.primary-btn:hover {
-  background: #0e7490;
+.btn-secondary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-light {
+  background: #fff;
+  color: #06b6d4;
+}
+
+.cta-card {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  color: #fff;
 }
 
 .demands-list {
-  margin-top: 32px;
   display: grid;
-  gap: 24px;
+  gap: 1.5rem;
 }
 
 .demand-header {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .company {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #6b7280;
-  margin-bottom: 8px;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #666;
 }
 
-.demand-footer {
+.category {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.demand-info {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  align-items: end;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
-.apply-btn {
-  background: #2563eb;
-  color: #fff;
-}
-
-.apply-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
+.budget {
+  color: #16a34a;
 }

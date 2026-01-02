@@ -15,7 +15,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // keep user in sync if token exists
     if (token && !user) {
       const stored = localStorage.getItem('user');
       if (stored) setUser(JSON.parse(stored));
@@ -70,8 +69,24 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const authFetch = async (url, options = {}) => {
+    const headers = options.headers ? { ...options.headers } : {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401) {
+      logout();
+      throw new Error('Não autorizado');
+    }
+
+    return response;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch }}>
       {children}
     </AuthContext.Provider>
   );
