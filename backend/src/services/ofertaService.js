@@ -1,4 +1,4 @@
-const prisma = require('../../lib/prisma');
+const prisma = require('../lib/prisma');
 
 class OfertaService {
   async criar(data, autorId) {

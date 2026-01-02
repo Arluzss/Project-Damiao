@@ -85,8 +85,36 @@ export function AuthProvider({ children }) {
     return response;
   };
 
+  const getPoints = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/moedas', { method: 'GET' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao buscar pontos');
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addPoints = async (motivo) => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/moedas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motivo })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao adicionar pontos');
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints }}>
       {children}
     </AuthContext.Provider>
   );

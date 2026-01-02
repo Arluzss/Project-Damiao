@@ -1,40 +1,50 @@
-const prisma = require('../../lib/prisma');
+const prisma = require('../lib/prisma');
 
-class moedaService {
-    VALORES_POR_MOTIVO = {
-        'feedback': {valor: 25, descrica: 'Feedback enviado'},
-        'cadastro_completo': {valor: 50, descricao: 'Perfil completado'}
-    };
+class MoedaService {
+    constructor() {
+        this.VALORES_POR_MOTIVO = {
+            feedback: { valor: 25, descricao: 'Feedback enviado' },
+            cadastro_completo: { valor: 50, descricao: 'Perfil completado' }
+        };
+    }
 
     async getTotalPoints(usuarioId) {
         const agregacao = await prisma.extratoPontos.aggregate({
-            where: {usarioId},
-            _sum: {quantdade: true}
+            where: { usuarioId },
+            _sum: { quantidade: true }
         });
-        return await prisma.extratoPontos.findMany({
-            where: {usuarioId},
-            orderBy: {createdAt: 'desc'}
-        });
-    }
-    async addPoints(usarioId){
-        const config =this.VALORES_POR_MOTIVO[motivoChave]; //nessa regra os motivos não permitidos retornaram nulo que será tratado como 400 no controller
 
+        const total = (agregacao && agregacao._sum && agregacao._sum.quantidade) || 0;
+
+        const extrato = await prisma.extratoPontos.findMany({
+            where: { usuarioId },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        return { total, extrato };
+    }
+
+    async addPoints(usuarioId, motivoChave) {
+        const config = this.VALORES_POR_MOTIVO[motivoChave];
+        if (!config) return null;
+
+        // anti-abuso: feedback somente 1 vez por dia
         if (motivoChave === 'feedback') {
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
-            const jaRecebeuHoje =await prisma.ExtraPontos.findForst({  // neste bloco foi criado uma regra de segurança ou anti-abuso que bloquea créditos repetidos, como por exemplo: 1 feedback por dia.
+            const jaRecebeuHoje = await prisma.extratoPontos.findFirst({
                 where: {
                     usuarioId,
-                    motivo:config.descricao,
-                    creatAt: {gte: hoje}
+                    motivo: config.descricao,
+                    createdAt: { gte: hoje }
                 }
-            }); //
+            });
 
             if (jaRecebeuHoje) throw new Error('Limite diário para este motivo atingido');
-        };
+        }
 
-        const entry = await prisma.extratoPontos.create({    // essa foi mais uma linha de extrato 
+        const entry = await prisma.extratoPontos.create({
             data: {
                 usuarioId,
                 quantidade: config.valor,
@@ -42,9 +52,9 @@ class moedaService {
             }
         });
 
-        const total = await this.getTotalPoints(usuariaId); // esse bloco vai retornar o novo total calculado
-        return {entry, total};
+        const totals = await this.getTotalPoints(usuarioId);
+        return { entry, total: totals.total };
     }
 }
 
-MediaSourceHandle.exports =  new moedaService();
+module.exports = new MoedaService();

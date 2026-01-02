@@ -1,11 +1,10 @@
 const express = require('express');
-const router = express.router();
-const moedaController = require ('../controller/moedaController');
-const authMiddleware = require('../middlewares/auth.middleware');
+const router = express.Router();
+const moedaController = require('../controller/moedaController');
+const { authenticateToken } = require('../middleware/authMiddleware');
 
-// ambos iram exigir autorização de  (token)
-
-router.get('/', authMiddleware, moedaController.getUserPoints);
-router.post('/', authMiddleware, moedaController.addPoints);
+// rotas de moedas exigem autenticação
+router.get('/', authenticateToken, moedaController.getUserPoints);
+router.post('/', authenticateToken, moedaController.addPoints);
 
 module.exports = router;
