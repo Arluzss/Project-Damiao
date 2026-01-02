@@ -1,0 +1,57 @@
+/* Root */
+.switch-root {
+  display: inline-flex;
+  align-items: center;
+  width: 2rem;
+  height: 1.15rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  background-color: var(--switch-background, #e5e7eb);
+}
+
+/* Estados */
+.switch-root[data-state="checked"] {
+  background-color: var(--primary, #2563eb);
+}
+
+.switch-root[data-state="unchecked"] {
+  background-color: var(--switch-background, #e5e7eb);
+}
+
+/* Focus */
+.switch-root:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+/* Disabled */
+.switch-root:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Thumb */
+.switch-thumb {
+  pointer-events: none;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--card, #ffffff);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  transform: translateX(0);
+}
+
+/* Thumb - checked */
+.switch-root[data-state="checked"] .switch-thumb {
+  transform: translateX(calc(100% - 2px));
+  background-color: var(--primary-foreground, #ffffff);
+}
+
+/* Thumb - unchecked (dark mode opcional) */
+.switch-root[data-state="unchecked"] .switch-thumb {
+  background-color: var(--card, #ffffff);
+}

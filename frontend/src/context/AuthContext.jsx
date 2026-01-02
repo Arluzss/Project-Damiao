@@ -15,7 +15,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // keep user in sync if token exists
     if (token && !user) {
       const stored = localStorage.getItem('user');
       if (stored) setUser(JSON.parse(stored));
@@ -70,8 +69,52 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const authFetch = async (url, options = {}) => {
+    const headers = options.headers ? { ...options.headers } : {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401) {
+      logout();
+      throw new Error('Não autorizado');
+    }
+
+    return response;
+  };
+
+  const getPoints = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/moedas', { method: 'GET' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao buscar pontos');
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addPoints = async (motivo) => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/moedas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motivo })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao adicionar pontos');
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints }}>
       {children}
     </AuthContext.Provider>
   );

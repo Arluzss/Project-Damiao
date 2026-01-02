@@ -1,0 +1,24 @@
+/* Root */
+.collapsible-root {
+  width: 100%;
+}
+
+/* Trigger */
+.collapsible-trigger {
+  cursor: pointer;
+}
+
+/* Content */
+.collapsible-content {
+  overflow: hidden;
+  transition: height 0.2s ease, opacity 0.2s ease;
+}
+
+/* Optional: animação simples */
+.collapsible-content[data-state="open"] {
+  opacity: 1;
+}
+
+.collapsible-content[data-state="closed"] {
+  opacity: 0;
+}

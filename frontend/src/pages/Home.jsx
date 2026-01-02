@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { Card,CardContent,CardDescription,CardHeader,CardTitle} from "../components/ui/card";
 import { GraduationCap,Briefcase,Building2,Award,TrendingUp,Users } from "lucide-react";
 import "./Home.css";
@@ -19,7 +19,7 @@ export function Home() {
               </p>
 
               <div className="hero-buttons">
-                <Link to="/resgistro">
+                <Link to="/registro">
                   <Button size="lg" className="btn-primary">
                     Começar Agora
                   </Button>

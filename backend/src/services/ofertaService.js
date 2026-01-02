@@ -1,4 +1,4 @@
-const OfertaService = require('../services/ofertaService');
+const prisma = require('../lib/prisma');
 
 async function list(req, res) {
   try {
