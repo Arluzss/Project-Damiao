@@ -58,6 +58,7 @@ CREATE TABLE "oferta" (
     "categoria_id" INTEGER NOT NULL,
     "titulo" TEXT NOT NULL,
     "descricao" TEXT,
+    "tipo" TEXT NOT NULL,
     "propriedades" TEXT,
     "ativa" BOOLEAN NOT NULL DEFAULT true,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
