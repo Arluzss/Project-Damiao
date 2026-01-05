@@ -104,10 +104,26 @@ export function AuthProvider({ children }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Falha ao adicionar pontos');
+      if (data && typeof data.total === 'number') {
+        setUser((prev) => {
+          const next = { ...(prev || {}), damiao: data.total };
+          try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+          return next;
+        });
+      }
+
       return data;
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateUser = (data) => {
+    setUser((prev) => {
+      const next = { ...(prev || {}), ...data };
+      try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
   };
 
   const profile = async () => {
@@ -131,7 +147,7 @@ export function AuthProvider({ children }) {
   };
   
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

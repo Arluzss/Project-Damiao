@@ -25,10 +25,13 @@ const highlights = [
 
 export function Feedback() {
   const { user, updateUser } = useAuth();
+  const { authFetch, addPoints } = useAuth();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [conexaoId, setConexaoId] = useState("");
+  const [avaliadoUsuarioId, setAvaliadoUsuarioId] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       toast.error("Faça login para enviar feedback");
@@ -39,15 +42,42 @@ export function Feedback() {
       return;
     }
 
-    updateUser({ damiao: user.damiao + 25 });
-    toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
-    setRating(0);
-    setComment("");
+    try {
+      if (conexaoId && avaliadoUsuarioId) {
+        const res = await authFetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            conexaoId: Number(conexaoId),
+            avaliadoUsuarioId: Number(avaliadoUsuarioId),
+            nota: rating,
+            comentario: comment
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao enviar feedback');
+      }
+
+      await addPoints('feedback');
+
+      
+      if (typeof updateUser === 'function' && user && typeof user.damiao === 'number') {
+        updateUser({ damiao: user.damiao + 25 });
+      }
+
+      toast.success('Feedback enviado! Você ganhou 25 Damiões 🎉');
+      setRating(0);
+      setComment('');
+      setConexaoId('');
+      setAvaliadoUsuarioId('');
+    } catch (err) {
+      toast.error(err.message || 'Erro ao enviar feedback');
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
       <Toaster />
 
       <main className="py-12 px-4">
@@ -61,7 +91,7 @@ export function Feedback() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2 space-y-6">
-              {/* Submit Feedback */}
+              
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
@@ -111,7 +141,7 @@ export function Feedback() {
                 </CardContent>
               </Card>
 
-              {/* Recent Feedback */}
+              
               <div>
                 <h2 className="text-2xl mb-4 text-gray-900">Avaliações Recentes</h2>
                 <div className="space-y-4">
@@ -138,9 +168,9 @@ export function Feedback() {
               </div>
             </div>
 
-            {/* Sidebar */}
+            
             <div className="space-y-6">
-              {/* Highlights */}
+              
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
@@ -169,7 +199,7 @@ export function Feedback() {
                 </CardContent>
               </Card>
 
-              {/* Stats */}
+              
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">

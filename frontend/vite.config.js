@@ -21,6 +21,17 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       }
+      ,
+      '/ofertas': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
+      },
+      '/feedback': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
+      }
     }
   }
 })

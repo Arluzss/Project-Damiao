@@ -4,6 +4,7 @@ class OfertaService {
   async getAllOffers(filters = {}) {
     const where = {};
     if (filters.categoriaId) where.categoriaId = Number(filters.categoriaId);
+    if (filters.tipo) where.tipo = filters.tipo;
 
     const ofertas = await prisma.oferta.findMany({
       where,
@@ -11,7 +12,10 @@ class OfertaService {
       orderBy: { createdAt: 'desc' }
     });
 
-    return ofertas;
+    return ofertas.map((o) => ({
+      ...o,
+      propriedades: o.propriedades ? JSON.parse(o.propriedades) : null
+    }));
   }
 
   async getOfferById(id) {
@@ -22,8 +26,14 @@ class OfertaService {
   }
 
   async createOffer(payload) {
-    const { titulo, categoriaId, autorUsuarioId, descricao, propriedades } = payload;
-    if (!titulo || !categoriaId || !autorUsuarioId) throw new Error('Campos obrigatórios ausentes');
+    const { titulo, categoriaId, autorUsuarioId, descricao, propriedades, tipo } = payload;
+    if (!titulo || !categoriaId || !autorUsuarioId || !tipo) throw new Error('Campos obrigatórios ausentes');
+
+    const usuario = await prisma.usuario.findUnique({ where: { id: Number(autorUsuarioId) } });
+    if (!usuario) throw new Error('AutorUsuario não encontrado');
+
+    const categoria = await prisma.categoria.findUnique({ where: { id: Number(categoriaId) } });
+    if (!categoria) throw new Error('Categoria não encontrada');
 
     const data = {
       titulo,
@@ -31,10 +41,12 @@ class OfertaService {
       categoriaId: Number(categoriaId),
       autorUsuarioId: Number(autorUsuarioId),
       propriedades: propriedades ? JSON.stringify(propriedades) : null,
-      ativa: true
+      ativa: true,
+      tipo
     };
 
-    return await prisma.oferta.create({ data });
+    const created = await prisma.oferta.create({ data });
+    return { ...created, propriedades: created.propriedades ? JSON.parse(created.propriedades) : null };
   }
 
   async updateOffer(id, payload, autorUsuarioId) {
@@ -48,8 +60,10 @@ class OfertaService {
     if (payload.propriedades !== undefined) data.propriedades = JSON.stringify(payload.propriedades);
     if (payload.ativa !== undefined) data.ativa = payload.ativa;
     if (payload.categoriaId !== undefined) data.categoriaId = Number(payload.categoriaId);
+    if (payload.tipo !== undefined) data.tipo = payload.tipo;
 
-    return await prisma.oferta.update({ where: { id: Number(id) }, data });
+    const updated = await prisma.oferta.update({ where: { id: Number(id) }, data });
+    return { ...updated, propriedades: updated.propriedades ? JSON.parse(updated.propriedades) : null };
   }
 
   async deleteOffer(id, autorUsuarioId) {
