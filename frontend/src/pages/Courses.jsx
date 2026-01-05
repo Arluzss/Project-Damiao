@@ -15,68 +15,35 @@ import { Toaster } from "../components/ui/Sonner";
 
 import "./Courses.css";
 
-const courses = [
-  {
-    id: "1",
-    title: "Desenvolvimento Web Full Stack",
-    description: "Aprenda a desenvolver aplicações web completas do zero",
-    hours: 320,
-    subjects: ["HTML/CSS", "JavaScript", "React", "Node.js", "Banco de Dados"],
-    location: "Rua das Flores, 123 - Centro",
-    schedule: "Segunda a Sexta",
-    times: ["08:00 - 12:00", "14:00 - 18:00", "19:00 - 22:00"],
-    shifts: ["Manhã", "Tarde", "Noite"],
-    benefits: [
-      "Vale-transporte",
-      "Material didático gratuito",
-      "Certificado reconhecido",
-      "100 Damiões por mês de frequência",
-    ],
-    image: "💻",
-  },
-  {
-    id: "2",
-    title: "Gestão de Negócios e Empreendedorismo",
-    description: "Desenvolva habilidades para gerir e expandir seu negócio",
-    hours: 160,
-    subjects: ["Planejamento Estratégico", "Marketing Digital", "Finanças", "Vendas"],
-    location: "Av. Principal, 456 - Bairro Norte",
-    schedule: "Terça e Quinta",
-    times: ["18:30 - 22:00"],
-    shifts: ["Noite"],
-    benefits: [
-      "Mentoria individual",
-      "Networking com empresários",
-      "Kit empreendedor",
-      "150 Damiões por conclusão",
-    ],
-    image: "📊",
-  },
-  {
-    id: "3",
-    title: "Design Gráfico e UX/UI",
-    description: "Crie experiências visuais incríveis e interfaces intuitivas",
-    hours: 240,
-    subjects: ["Photoshop", "Illustrator", "Figma", "UX Design", "Branding"],
-    location: "Rua Criativa, 789 - Centro Cultural",
-    schedule: "Segunda a Quarta",
-    times: ["09:00 - 12:00", "19:00 - 22:00"],
-    shifts: ["Manhã", "Noite"],
-    benefits: [
-      "Licença de softwares",
-      "Projeto real com empresas parceiras",
-      "Portfolio profissional",
-      "120 Damiões mensais",
-    ],
-    image: "🎨",
-  },
-];
+import { useEffect } from 'react';
+
+const courses = [];
 
 export function Courses() {
-
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, authFetch } = useAuth();
   const [enrolled, setEnrolled] = useState(user?.courses || []);
+  const [fetchedCourses, setFetchedCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/ofertas?tipo=CURSO');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao buscar cursos');
+        if (mounted) setFetchedCourses(data || []);
+      } catch (err) {
+        console.error('Erro ao carregar cursos:', err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    load();
+    return () => { mounted = false; };
+  }, []);
   function handleEnroll(courseId, courseName) {
     if (!user) {
       toast.error("Faça login para se inscrever em cursos");
@@ -110,19 +77,19 @@ export function Courses() {
           </div>
 
           <div className="courses-list">
-            {courses.map((course) => (
+            {(loading ? [] : (fetchedCourses.length ? fetchedCourses : courses)).map((course) => (
               <Card key={course.id} className="course-card">
                 <CardHeader className="course-card-header">
                   <div className="course-header-content">
                     <div>
                       <div className="course-title">
-                        <span className="course-icon">{course.image}</span>
-                        <CardTitle>{course.title}</CardTitle>
+                        <span className="course-icon">{course.propriedades?.image || course.image}</span>
+                        <CardTitle>{course.titulo || course.title}</CardTitle>
                       </div>
-                      <CardDescription>{course.description}</CardDescription>
+                      <CardDescription>{course.descricao || course.description}</CardDescription>
                     </div>
 
-                    {enrolled.includes(course.id) && (
+                    {enrolled.includes(String(course.id)) && (
                       <Badge className="badge-success">Inscrito</Badge>
                     )}
                   </div>
@@ -134,13 +101,13 @@ export function Courses() {
                       <h3>Informações do Curso</h3>
 
                       <div className="course-info">
-                        <span><Clock size={16} /> {course.hours} horas</span>
-                        <span><MapPin size={16} /> {course.location}</span>
-                        <span><Calendar size={16} /> {course.schedule}</span>
+                        <span><Clock size={16} /> {course.propriedades?.hours || course.hours} horas</span>
+                        <span><MapPin size={16} /> {course.propriedades?.location || course.location}</span>
+                        <span><Calendar size={16} /> {course.propriedades?.schedule || course.schedule}</span>
 
                         <div className="course-shifts">
                           <Users size={16} />
-                          {course.shifts.map((shift) => (
+                          {(course.propriedades?.shifts || course.shifts || []).map((shift) => (
                             <Badge key={shift} variant="outline">
                               {shift}
                             </Badge>
@@ -149,7 +116,7 @@ export function Courses() {
                       </div>
 
                       <h4>Horários:</h4>
-                      {course.times.map((time) => (
+                      {(course.propriedades?.times || course.times || []).map((time) => (
                         <p key={time}>• {time}</p>
                       ))}
                     </div>
@@ -157,7 +124,7 @@ export function Courses() {
                     <div>
                       <h3>Disciplinas</h3>
                       <div className="course-tags">
-                        {course.subjects.map((subject) => (
+                        {(course.propriedades?.subjects || course.subjects || []).map((subject) => (
                           <Badge key={subject} variant="secondary">
                             {subject}
                           </Badge>
@@ -165,7 +132,7 @@ export function Courses() {
                       </div>
 
                       <h3>Benefícios</h3>
-                      {course.benefits.map((benefit) => (
+                      {(course.propriedades?.benefits || course.benefits || []).map((benefit) => (
                         <div key={benefit} className="benefit-item">
                           <Award size={16} />
                           <span>{benefit}</span>
@@ -181,10 +148,10 @@ export function Courses() {
                     </div>
 
                     <Button
-                      onClick={() => handleEnroll(course.id, course.title)}
-                      disabled={enrolled.includes(course.id)}
+                      onClick={() => handleEnroll(String(course.id), course.titulo || course.title)}
+                      disabled={enrolled.includes(String(course.id))}
                     >
-                      {enrolled.includes(course.id) ? "Já Inscrito" : "Inscrever-se"}
+                      {enrolled.includes(String(course.id)) ? "Já Inscrito" : "Inscrever-se"}
                     </Button>
                   </div>
                 </CardContent>
