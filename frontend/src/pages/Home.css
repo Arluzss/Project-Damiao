@@ -37,6 +37,21 @@
   gap: 16px;
 }
 
+.hero .btn-primary,
+.hero .btn-outline {
+  background: white;
+  color: #111827;
+  border: 2px solid white;
+  transition: all 0.3s ease;
+}
+
+.hero .btn-primary:hover,
+.hero .btn-outline:hover {
+  background: #111827;
+  color: white;
+  border: 2px solid white;
+}
+
 /* Sections */
 .section {
   padding: 64px 0;
@@ -85,12 +100,14 @@
 
 .btn-primary {
   background: white;
-  color: #2563eb;
+  color: #111827;
+  border: none;
 }
 
 .btn-outline {
+  background: white;
+  color: #111827;
   border: 2px solid white;
-  color: white;
 }
 
 .btn-blue {
@@ -125,6 +142,22 @@
 .cta-content {
   max-width: 700px;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cta .btn-primary {
+  background: white;
+  color: #111827;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.cta .btn-primary:hover {
+  background: #111827;
+  color: white;
+  border: 2px solid white;
 }
 
 /* Footer */

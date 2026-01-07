@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card,CardContent,CardDescription,CardHeader,CardTitle} from "../components/ui/card";
 import { GraduationCap,Briefcase,Building2,Award,TrendingUp,Users } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import "./Home.css";
 
 export function Home() {
+  const { user } = useAuth();
+  
   return (
     <div className="home">
       <main>
@@ -18,19 +21,21 @@ export function Home() {
                 e empresas a serviços locais.
               </p>
 
-              <div className="hero-buttons">
-                <Link to="/registro">
-                  <Button size="lg" className="btn-primary">
-                    Começar Agora
-                  </Button>
-                </Link>
+              {!user && (
+                <div className="hero-buttons">
+                  <Link to="/registro">
+                    <Button size="lg" className="btn-primary">
+                      Começar Agora
+                    </Button>
+                  </Link>
 
-                <Link to="/cursos">
-                  <Button size="lg" variant="outline" className="btn-outline">
-                    Ver Cursos
-                  </Button>
-                </Link>
-              </div>
+                  <Link to="/cursos">
+                    <Button size="lg" variant="outline" className="btn-outline">
+                      Ver Cursos
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -123,20 +128,22 @@ export function Home() {
         </section>
 
         {/* CTA */}
-        <section className="cta">
-          <div className="cta-content">
-            <h2>Pronto para transformar seu futuro?</h2>
-            <p>
-              Cadastre-se gratuitamente e comece hoje mesmo.
-            </p>
-              <br/>
-            <Link to="/resgistro">
-              <Button size="lg" className="btn-primary">
-                Criar Conta Gratuita
-              </Button>
-            </Link>
-          </div>
-        </section>
+        {!user && (
+          <section className="cta">
+            <div className="cta-content">
+              <h2>Pronto para transformar seu futuro?</h2>
+              <p>
+                Cadastre-se gratuitamente e comece hoje mesmo.
+              </p>
+                <br/>
+              <Link to="/resgistro">
+                <Button size="lg" className="btn-primary">
+                  Criar Conta Gratuita
+                </Button>
+              </Link>
+            </div>
+          </section>
+        )}
       </main>
 
       <footer className="footer">

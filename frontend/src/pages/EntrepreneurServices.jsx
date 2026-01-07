@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import {
@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 
 
-import { Toaster } from "../components/ui/sonner";
+import { Toaster } from "../components/ui/Sonner";
 
 import "./EntrepreneurServices.css";
 

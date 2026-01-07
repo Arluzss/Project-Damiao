@@ -12,7 +12,7 @@ import { Badge } from "../components/ui/Badge";
 import {Tabs,TabsContent,TabsList,TabsTrigger,} from "../components/ui/Tabs";
 import {Briefcase,MapPin,Star,Building2,DollarSign,MessageCircle,Instagram,Linkedin,} from "lucide-react";
 import { toast } from "sonner";
-import { Toaster } from "../components/ui/sonner";
+import { Toaster } from "../components/ui/Sonner";
 
 import "./Entrepreneurs.css";
 

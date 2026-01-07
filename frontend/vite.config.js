@@ -10,6 +10,31 @@ export default defineConfig({
         target: 'http://localhost:3333',
         changeOrigin: true,
         secure: false
+      },
+      '/moedas': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
+      },
+      '/profile': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
+      },
+      // '/loja': {
+      //   target: 'http://localhost:3333',
+      //   changeOrigin: true,
+      //   secure: false
+      // },
+      '/ofertas': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
+      },
+      '/feedback': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
       }
     }
   }

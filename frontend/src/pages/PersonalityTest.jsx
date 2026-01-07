@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -9,7 +9,7 @@ import { Progress } from "../components/ui/Progress";
 import { Brain, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
-import "./PersonalityTest.css"; // Importa o CSS separado
+import "./PersonalityTest.css";
 
 const questions = [
   { id: 1, question: "Você prefere trabalhar com:", options: [
