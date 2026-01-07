@@ -19,5 +19,5 @@ app.use('/loja', lojaRoutes);
 app.use('/moedas', moedaRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/ofertas', ofertaRoutes);
-
+app.use('/loja', lojaRoutes);
 module.exports = app; 
