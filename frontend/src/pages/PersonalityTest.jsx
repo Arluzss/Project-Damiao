@@ -182,7 +182,8 @@ export function PersonalityTest() {
     setShowResult(true);
 
     // Recompensa de 50 Damiões por completar o teste
-    updateUser({ damiao: user.damiao + 50 });
+    const currentDamiao = user.damiao || 0;
+    updateUser({ damiao: currentDamiao + 50 });
     toast.success("Teste concluído! Você ganhou 50 Damiões 🎉");
   };
 

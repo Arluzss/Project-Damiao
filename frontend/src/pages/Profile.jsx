@@ -204,7 +204,7 @@ export function Profile() {
                     <Coins className="profile-damiao-icon" />
                     <div>
                       <p className="profile-damiao-label">Saldo Damião</p>
-                      <p className="profile-damiao-value">{user.damiao}</p>
+                      <p className="profile-damiao-value">{user.damiao || 0}</p>
                     </div>
                   </div>
                   <Link to="/loja">

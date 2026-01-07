@@ -44,12 +44,14 @@ export function Store() {
       return;
     }
 
-    if (user.damiao < cost) {
+    const currentDamiao = user.damiao || 0;
+
+    if (currentDamiao < cost) {
       toast.error("Você não tem Damiões suficientes");
       return;
     }
 
-    updateUser({ damiao: user.damiao - cost });
+    updateUser({ damiao: currentDamiao - cost });
     toast.success(`${itemName} resgatado com sucesso!`);
   }
 
@@ -72,7 +74,7 @@ export function Store() {
                     <Coins className="icon" />
                     <div>
                       <p>Seu Saldo</p>
-                      <p>{user.damiao}</p>
+                      <p>{user.damiao || 0}</p>
                     </div>
                   </div>
                 </CardContent>

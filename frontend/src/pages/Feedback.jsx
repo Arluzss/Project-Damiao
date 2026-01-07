@@ -74,7 +74,8 @@ export function Feedback() {
     }
 
     // Recompensa de 25 Damiões por feedback
-    updateUser({ damiao: user.damiao + 25 });
+    const currentDamiao = user.damiao || 0;
+    updateUser({ damiao: currentDamiao + 25 });
     toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
     setRating(0);
     setComment("");
