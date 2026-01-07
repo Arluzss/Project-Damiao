@@ -179,7 +179,7 @@ export function Register() {
 
                 <p className="register-footer">
                   Já tem uma conta?{" "}
-                  <Link to="/login">Entrar</Link>
+                  <Link to="/entrar">Entrar</Link>
                 </p>
               </form>
             </CardContent>

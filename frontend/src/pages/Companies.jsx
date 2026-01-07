@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+import { Link } from "react-router-dom"; //adção para o funcionamento do botao da linha 262
+
+
 import { useAuth } from "../context/AuthContext";
 import {
   Card,
@@ -307,9 +310,15 @@ export function Companies() {
                     </div>
                   </div>
 
-                  <Button className="btn-light" size="lg">
-                    Cadastrar Empresa
+                   {/* Alteraçao nessa parte do codigo  */}
+
+                  {/* ---------------------------------------- */}
+                  <Button asChild className="btn-light" size="lg">
+                     <Link to="/registro">Cadastrar Empresa</Link>
                   </Button>
+
+                  {/* ---------------------------------------- */}
+
                 </div>
               </CardContent>
             </Card>

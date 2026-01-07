@@ -136,7 +136,7 @@ export function Home() {
                 Cadastre-se gratuitamente e comece hoje mesmo.
               </p>
                 <br/>
-              <Link to="/resgistro">
+              <Link to="/registro">
                 <Button size="lg" className="btn-primary">
                   Criar Conta Gratuita
                 </Button>
