@@ -95,9 +95,9 @@ export function Store() {
                       <div className="emoji">{prize.image}</div>
                       <CardTitle>{prize.name}</CardTitle>
                       <CardDescription>
-                        <div className="cost">
+                        <span className="cost">
                           <Coins /> <span>{prize.cost} Damiões</span>
-                        </div>
+                        </span>
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -122,9 +122,9 @@ export function Store() {
                       <CardTitle>{discount.partner}</CardTitle>
                       <CardDescription>
                         <Badge>{discount.discount}</Badge>
-                        <div className="cost">
+                        <span className="cost">
                           <Coins /> <span>{discount.cost} Damiões</span>
-                        </div>
+                        </span>
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -150,11 +150,11 @@ export function Store() {
                         <div className="mentorship-info">
                           <CardTitle>{mentorship.topic}</CardTitle>
                           <CardDescription>
-                            <p>{mentorship.mentor}</p>
-                            <div className="cost">
+                            <span>{mentorship.mentor}</span>
+                            <span className="cost">
                               <Badge>{mentorship.duration}</Badge>
                               <Coins /> <span>{mentorship.cost} Damiões</span>
-                            </div>
+                            </span>
                           </CardDescription>
                         </div>
                       </div>

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import "./Profile.css";
 import { useAuth } from "../context/AuthContext";
-
 import {
   Card,
   CardContent,
@@ -16,8 +15,6 @@ import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Progress } from "../components/ui/Progress";
 import { Badge } from "../components/ui/Badge";
-import { Toaster } from "../components/ui/Sonner";
-
 import {
   User,
   Coins,
@@ -28,13 +25,19 @@ import {
   Brain,
 } from "lucide-react";
 
+import { Toaster } from "../components/ui/Sonner";
+
+import "./Profile.css";
+
 export function Profile() {
+  const { user, profile, authFetch, token } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({ name: "", email: "" });
+  const [editData, setEditData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+  });
 
   const [userState, setUserState] = useState(null);
-
-  const { user, profile, authFetch, token } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -90,46 +93,13 @@ export function Profile() {
 
   if (!userState) {
     return (
-      <div className="profile-page">
+      <div className="profile-container">
+        
         <main className="profile-center">
-          <User className="icon-large" />
+          <User className="profile-icon" />
           <h1>Você precisa estar logado</h1>
-          <p>Faça um login rápido (dados salvos localmente)</p>
-
-          <form className="profile-quick-login" onSubmit={handleQuickLogin}>
-            <Label>Nome</Label>
-            <Input
-              value={loginName}
-              onChange={(e) => setLoginName(e.target.value)}
-              required
-            />
-
-            <Label>E-mail</Label>
-            <Input
-              type="email"
-              value={loginEmail}
-              onChange={(e) => setLoginEmail(e.target.value)}
-              required
-            />
-
-            <Label>Tipo de Conta</Label>
-            <select
-              value={loginType}
-              onChange={(e) => setLoginType(e.target.value)}
-            >
-              <option value="student">Estudante</option>
-              <option value="entrepreneur">Microempreendedor</option>
-              <option value="company">Empresa</option>
-            </select>
-
-            <div style={{ marginTop: 12 }}>
-              <Button type="submit" className="btn-primary">Entrar</Button>
-            </div>
-          </form>
-
-          <p style={{ marginTop: 12 }}>ou</p>
           <Link to="/entrar">
-            <Button className="btn-light">Ir para tela de login</Button>
+            <Button className="btn-primary">Fazer Login</Button>
           </Link>
         </main>
       </div>
@@ -172,11 +142,11 @@ export function Profile() {
   };
 
   return (
-    <div className="profile-page">
-     
+    <div className="profile-container">
+      
       <Toaster />
 
-      <main className="profile-container">
+      <main className="profile-main">
         <header className="profile-header">
           <h1>Meu Perfil</h1>
           <p>Gerencie suas informações e acompanhe seu progresso</p>
@@ -185,7 +155,7 @@ export function Profile() {
         <div className="profile-grid">
           <div className="profile-main">
             <Card>
-              <CardHeader className="card-header-flex">
+              <CardHeader className="card-header-between">
                 <CardTitle>Informações Pessoais</CardTitle>
                 <Button
                   variant="ghost"
@@ -200,32 +170,37 @@ export function Profile() {
               <CardContent>
                 <div className="profile-user">
                   <div className="profile-avatar">
-                      {userState?.name?.charAt(0) || "U"}
+                    {user.name.charAt(0)}
                   </div>
+
                   <div>
-                      <Badge>{userTypeLabel[userState?.type] || "Visitante"}</Badge>
-                      {!isEditing && <h2>{userState?.name || "Usuário"}</h2>}
+                    <Badge>{userTypeLabel[user.type]}</Badge>
+                    {!isEditing && <h2>{user.name}</h2>}
                   </div>
                 </div>
 
                 {isEditing ? (
-                  <div className="form-group">
-                    <Label>Nome</Label>
-                    <Input
-                      value={editData.name}
-                      onChange={(e) =>
-                        setEditData({ ...editData, name: e.target.value })
-                      }
-                    />
+                  <div className="form">
+                    <div>
+                      <Label>Nome</Label>
+                      <Input
+                        value={editData.name}
+                        onChange={(e) =>
+                          setEditData({ ...editData, name: e.target.value })
+                        }
+                      />
+                    </div>
 
-                    <Label>E-mail</Label>
-                    <Input
-                      type="email"
-                      value={editData.email}
-                      onChange={(e) =>
-                        setEditData({ ...editData, email: e.target.value })
-                      }
-                    />
+                    <div>
+                      <Label>E-mail</Label>
+                      <Input
+                        type="email"
+                        value={editData.email}
+                        onChange={(e) =>
+                          setEditData({ ...editData, email: e.target.value })
+                        }
+                      />
+                    </div>
 
                     <Button className="btn-primary" onClick={handleSave}>
                       Salvar Alterações
@@ -233,36 +208,40 @@ export function Profile() {
                   </div>
                 ) : (
                   <div className="profile-info">
-                    <p><strong>E-mail:</strong> {userState?.email || "-"}</p>
-                    <p><strong>Tipo:</strong> {userTypeLabel[userState?.type] || "-"}</p>
+                    <p><strong>E-mail:</strong> {user.email}</p>
+                    <p><strong>Tipo:</strong> {userTypeLabel[user.type]}</p>
                     <p><strong>Membro desde:</strong> Dezembro 2024</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {(userState?.type === "student" || userState?.type === "entrepreneur") && (
+            {(user.type === "student" || user.type === "entrepreneur") && (
               <Card className="mt">
                 <CardHeader>
                   <CardTitle>
-                    <GraduationCap /> Meus Cursos
+                    <GraduationCap size={18} /> Meus Cursos
                   </CardTitle>
-                  <CardDescription>Cursos em andamento</CardDescription>
+                  <CardDescription>
+                    Cursos em que você está inscrito
+                  </CardDescription>
                 </CardHeader>
 
                 <CardContent>
-                  {userState?.courses?.length ? (
-                    userState.courses.map((id) => (
+                  {user.courses?.length ? (
+                    user.courses.map((id) => (
                       <div key={id} className="course-card">
-                        <h3>Curso #{id}</h3>
+                        <div className="course-header">
+                          <span>Curso #{id}</span>
+                          <Badge variant="outline">Em andamento</Badge>
+                        </div>
                         <Progress value={45} />
-                        <span>45% concluído</span>
                       </div>
                     ))
                   ) : (
                     <div className="empty-state">
                       <GraduationCap size={40} />
-                      <p>Nenhum curso inscrito</p>
+                      <p>Nenhum curso encontrado</p>
                       <Link to="/cursos">
                         <Button className="btn-primary">Ver Cursos</Button>
                       </Link>
@@ -271,25 +250,42 @@ export function Profile() {
                 </CardContent>
               </Card>
             )}
+
+            {user.type === "entrepreneur" && (
+              <Card className="mt">
+                <CardHeader>
+                  <CardTitle>
+                    <Briefcase size={18} /> Meus Serviços
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/meus-servicos">
+                    <Button className="btn-secondary">
+                      Gerenciar Serviços
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <aside className="profile-sidebar">
-            <Card className="card-balance">
+            <Card className="balance-card">
               <CardContent>
                 <Coins size={32} />
                 <p>Saldo Damião</p>
-                <h2>{userState?.damiao ?? 0}</h2>
+                <h2>{user.damiao}</h2>
                 <Link to="/loja">
                   <Button className="btn-light">Usar Damiões</Button>
                 </Link>
               </CardContent>
             </Card>
 
-            {userState?.type !== "company" && (
+            {user.type !== "company" && (
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    <Brain /> Teste de Perfil
+                    <Brain size={18} /> Teste de Perfil
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

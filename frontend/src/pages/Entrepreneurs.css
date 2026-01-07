@@ -1,139 +1,223 @@
+/* ===== Página ===== */
 .entrepreneurs-page {
   min-height: 100vh;
-  background: #f9fafb;
+  background-color: #f9fafb;
 }
 
 .entrepreneurs-main {
-  padding: 3rem 1rem;
+  padding: 3rem 1.5rem;
 }
 
-.container {
+
+.entrepreneurs-container {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.page-header p {
-  color: #555;
-  font-size: 1.1rem;
-}
-
-.tabs-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 400px;
+/* ===== Header ===== */
+.entrepreneurs-header {
   margin-bottom: 2rem;
+  background-color: #f9fafb;
+  border-bottom: 0;
+  position: relative;
+  z-index: 1;
 }
 
-.entrepreneurs-grid {
+.entrepreneurs-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.entrepreneurs-header p {
+  margin-top: 0.5rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* ===== Tabs (Profissionais / Demandas) ===== */
+.tabs-list {
+  margin: 2rem 0 2.5rem;
+  display: flex;
+  justify-content: flex-start;
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  max-width: 214px;
+}
+
+.tabs-list button {
+  flex: 1;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #475569;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.tabs-list button[data-state="active"] {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/* ===== Grid ===== */
+.cards-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-.entrepreneur-card .avatar {
-  width: 64px;
-  height: 64px;
+/* ===== Card ===== */
+.cards-grid > div {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  padding: 1.25rem;
+}
+
+/* ===== Card Header ===== */
+.card-avatar {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #06b6d4, #2563eb);
-  color: #fff;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
 }
 
-.card-header-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
+.cards-grid h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
 }
 
+.cards-grid p {
+  font-size: 0.9rem;
+  color: #2563eb;
+}
+
+/* ===== Rating ===== */
 .rating {
+  margin-top: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #111827;
+}
+
+.rating svg {
   color: #facc15;
 }
 
-.service {
-  color: #06b6d4;
-}
-
+/* ===== Descrição ===== */
 .description {
-  color: #555;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin: 0.75rem 0 1rem;
+  line-height: 1.4;
 }
 
-.info-list span {
+/* ===== Infos ===== */
+.info {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 0.4rem;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #4b5563;
 }
 
-.full {
-  width: 100%;
-}
-
-.btn-primary {
-  background: #06b6d4;
-  color: #fff;
-}
-
-.btn-secondary {
-  background: #2563eb;
-  color: #fff;
-}
-
-.btn-light {
-  background: #fff;
-  color: #06b6d4;
-}
-
-.cta-card {
-  margin-top: 2rem;
-  background: linear-gradient(135deg, #06b6d4, #2563eb);
-  color: #fff;
-}
-
-.demands-list {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.demand-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.company {
+.info span {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.85rem;
-  color: #666;
 }
 
-.category {
-  background: #dbeafe;
-  color: #1e40af;
+/* ===== Contato ===== */
+.contact {
+  margin-top: 1.2rem;
+  display: flex;
+  gap: 0.75rem;
 }
 
-.demand-info {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.contact button {
+  flex: 1;
+  border-radius: 8px;
+  padding: 0.45rem 0;
+  transition: all 0.2s ease;
 }
 
-.budget {
+/* WhatsApp */
+.contact button:nth-child(1) {
+  background-color: #ecfdf5;
+  border: 1px solid #86efac;
   color: #16a34a;
+}
+
+.contact button:nth-child(1):hover {
+  background-color: #dcfce7;
+}
+
+/* Instagram */
+.contact button:nth-child(2) {
+  background-color: #fdf2f8;
+  border: 1px solid #f9a8d4;
+  color: #db2777;
+}
+
+.contact button:nth-child(2):hover {
+  background-color: #fce7f3;
+}
+
+/* LinkedIn */
+.contact button:nth-child(3) {
+  background-color: #eff6ff;
+  border: 1px solid #93c5fd;
+  color: #2563eb;
+}
+
+.contact button:nth-child(3):hover {
+  background-color: #dbeafe;
+}
+
+/* ===== Demandas ===== */
+.demand-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.demand-footer strong {
+  color: #111827;
+}
+
+.demand-footer button {
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 640px) {
+  .entrepreneurs-main {
+    padding: 2rem 1rem;
+  }
+
+  .entrepreneurs-header h1 {
+    font-size: 1.7rem;
+  }
+
+  .tabs-list {
+    max-width: 100%;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
 }

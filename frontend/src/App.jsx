@@ -11,6 +11,7 @@ import { Profile } from "./pages/Profile";
 import { Store } from "./pages/Store";
 import { PersonalityTest } from "./pages/PersonalityTest";
 import {Feedback} from "./pages/Feedback";
+import { EntrepreneurServices } from "./pages/EntrepreneurServices";
 
 
 function App() {
@@ -45,7 +46,9 @@ function App() {
         <Route path= "/perfil" element={<Profile/>} />
         <Route path="/loja" element={<Store/>} />
         <Route path="/teste-perfil" element={<PersonalityTest/>}/> 
-         <Route path="/avaliacoes" element={<Feedback/>} /> 
+        <Route path="/avaliacoes" element={<Feedback/>} /> 
+        <Route path="/meus-servicos" element={<EntrepreneurServices />}/>
+        
       </Routes>
     </>
   );

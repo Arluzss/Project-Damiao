@@ -1,27 +1,23 @@
-const lojaService = require ('../services/lojaServices');
+const lojaService = require('../services/lojaServices');
 
-class lojaController {
-    async redeem (req, res) {
-        try{
-            const{ itemId } = req.body;
-            const usuarioId = req.user.id;
+const service = new lojaService();
 
-            if (!itemId) {
-                return res.status (400).json({error: 'O ID é obrigatório.'});
-            }
+exports.redeem = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const usuarioId = req.user && req.user.id; // vem do authMiddleware
 
-            const resultado = await lojaService.redeemItem(usuarioId, itemId);
-            return res.status(201).json(resultado);
+        if (!usuarioId) {
+            return res.status(400).json({ error: 'Usuário não autenticado' });
         }
-        catch (error) {
-            const status = error.message.includes('insuficiente') || error.message.includes('não encontrado')
 
-            ? 400
-            : 500;
+        if (!itemId) {
+            return res.status(400).json({ error: 'itemId é obrigatório' });
+        }
 
-            return res.status(status).json({error: error.message});
-        };
-    };
+        const result = await service.redeeItem(usuarioId, itemId);
+        return res.json(result);
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
 };
-
-module.exports = new lojaController();

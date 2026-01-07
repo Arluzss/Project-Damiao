@@ -81,8 +81,8 @@ export function Feedback() {
       <Toaster />
 
       <main className="py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-12">
+        <div className="feedback-container">
+          <div className="mb-12 feedback-header">
             <h1 className="text-4xl mb-4 text-gray-900">Avaliações e Destaques</h1>
             <p className="text-xl text-gray-600">
               Compartilhe sua experiência e inspire outros alunos. Reconheça quem se destaca!
