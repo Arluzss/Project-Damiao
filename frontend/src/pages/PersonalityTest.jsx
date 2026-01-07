@@ -193,7 +193,6 @@ export function PersonalityTest() {
 
     return (
       <div className="test-page">
-        <Header />
         <Toaster />
 
         <main className="test-main">
