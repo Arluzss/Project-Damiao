@@ -1,5 +1,5 @@
-const prisma = require('../../lib/prisma');
-const  moedasService = require('./moedaService');
+const prisma = require('../lib/prisma');
+const moedasService = require('./moedaService');
 
 class lojaService {  // É um catálogo estático que pode ser movido para o banco futuramente 
 
@@ -23,7 +23,7 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
 
         return await prisma.$transaction(async (tx) => {
 
-            const lancamento = await tx.extratoPontos.creat({ // serve para criar lançamento negativo no extrato 
+            const lancamento = await tx.extratoPontos.create({ // serve para criar lançamento negativo no extrato 
                 data: {
                     usuarioId,
                     quantidade: -item.custo, // será valor negativo para débito
@@ -31,7 +31,7 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
                 }
             });
 
-            const agragacaoo = await tx.extratoPontos.aggregate({ //vai calcular saldo fina atualizado
+            const agregacao = await tx.extratoPontos.aggregate({ //vai calcular saldo final atualizado
                 where: {usuarioId},
                 _sum: {quantidade: true}
             });
@@ -50,4 +50,4 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
     }
 }
 
-MediaSourceHandle.exports = new lojaService();
+module.exports = new lojaService();

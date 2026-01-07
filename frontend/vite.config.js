@@ -31,6 +31,11 @@ export default defineConfig({
         target: 'http://localhost:3333',
         changeOrigin: true,
         secure: false
+      },
+      '/loja': {
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        secure: false
       }
     }
   }
