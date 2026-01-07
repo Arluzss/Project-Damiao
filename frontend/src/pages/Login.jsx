@@ -8,7 +8,7 @@ export function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("student");
   const [error, setError] = useState("");
@@ -18,7 +18,7 @@ export function Login() {
     setError("");
 
     try {
-      await login(email, password);
+      await login(identifier, password);
       navigate('/perfil');
     } catch (err) {
       setError(err.message || 'Falha no login');
@@ -39,13 +39,13 @@ export function Login() {
             <div className="login-card-content">
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label htmlFor="email">E-mail</label>
+                  <label htmlFor="identifier">E-mail ou CPF/CNPJ</label>
                   <input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="identifier"
+                    type="text"
+                    placeholder="seu@email.com ou CPF/CNPJ"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     required
                   />
                 </div>

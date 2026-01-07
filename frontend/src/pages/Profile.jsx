@@ -17,7 +17,7 @@ export function Profile() {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
-    name: user?.name || "",
+    nome: user?.nome || "",
     email: user?.email || "",
   });
 
@@ -81,11 +81,11 @@ export function Profile() {
                 <CardContent>
                   <div className="profile-user-info">
                     <div className="profile-avatar">
-                      {user.name.charAt(0)}
+                      {user.nome?.charAt(0)}
                     </div>
                     <div>
-                      <Badge className="profile-badge">{userTypeLabel[user.type]}</Badge>
-                      {!isEditing && <h2 className="profile-user-name">{user.name}</h2>}
+                      <Badge className="profile-badge">{userTypeLabel[user.tipo]}</Badge>
+                      {!isEditing && <h2 className="profile-user-name">{user.nome}</h2>}
                     </div>
                   </div>
 
@@ -95,8 +95,8 @@ export function Profile() {
                         <Label htmlFor="name">Nome</Label>
                         <Input
                           id="name"
-                          value={editData.name}
-                          onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                          value={editData.nome}
+                          onChange={(e) => setEditData({ ...editData, nome: e.target.value })}
                         />
                       </div>
                       <div className="profile-form-group">
@@ -116,11 +116,11 @@ export function Profile() {
                     <div className="profile-info-list">
                       <div className="profile-info-item">
                         <p className="profile-info-label">E-mail</p>
-                        <p className="profile-info-value">{user.email}</p>
+                        <p className="profile-info-value">{user.email || 'Não informado'}</p>
                       </div>
                       <div className="profile-info-item">
                         <p className="profile-info-label">Tipo de Conta</p>
-                        <p className="profile-info-value">{userTypeLabel[user.type]}</p>
+                        <p className="profile-info-value">{userTypeLabel[user.tipo] || 'Não definido'}</p>
                       </div>
                       <div className="profile-info-item">
                         <p className="profile-info-label">Membro desde</p>
@@ -132,7 +132,7 @@ export function Profile() {
               </Card>
 
               {/* Courses/Services Card */}
-              {(user.type === "student" || user.type === "entrepreneur") && (
+              {(user.tipo === "student" || user.tipo === "entrepreneur") && (
                 <Card className="profile-courses-card">
                   <CardHeader>
                     <div className="profile-section-header">
@@ -172,7 +172,7 @@ export function Profile() {
                 </Card>
               )}
 
-              {user.type === "entrepreneur" && (
+              {user.tipo === "entrepreneur" && (
                 <Card className="profile-services-card">
                   <CardHeader>
                     <div className="profile-section-header">
@@ -216,7 +216,7 @@ export function Profile() {
               </Card>
 
               {/* Personality Test */}
-              {user.type !== "company" && (
+              {user.tipo !== "company" && (
                 <Card>
                   <CardHeader>
                     <div className="profile-section-header">

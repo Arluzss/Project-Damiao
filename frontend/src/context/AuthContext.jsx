@@ -36,6 +36,11 @@ export function AuthProvider({ children }) {
       localStorage.setItem('token', data.token);
       setToken(data.token);
 
+      if (data.usuario) {
+        localStorage.setItem('user', JSON.stringify(data.usuario));
+        setUser(data.usuario);
+      }
+
       return data;
     } finally {
       setLoading(false);

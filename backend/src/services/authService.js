@@ -106,7 +106,8 @@ class AuthService {
             usuario: {
                 id: conta.usuario.id,
                 nome: conta.usuario.nome,
-                tipo: conta.usuario.tipoPessoa
+                tipo: conta.usuario.tipoPessoa,
+                email: conta.email
             }
         };
     }

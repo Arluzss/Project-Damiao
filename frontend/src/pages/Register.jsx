@@ -30,18 +30,42 @@ export function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("student");
+  const [cpf, setCpf] = useState("");
   const [cnpj, setCnpj] = useState("");
   const [phone, setPhone] = useState("");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    if (userType !== "student" && !cnpj) {
-      return;
+    let documento = "";
+    
+    if (userType === "student") {
+      if (!cpf) {
+        alert("CPF é obrigatório para estudantes");
+        return;
+      }
+      documento = cpf;
+    } else {
+      if (!cnpj) {
+        alert("CNPJ é obrigatório para este tipo de conta");
+        return;
+      }
+      documento = cnpj;
     }
 
-    register(name, email, password, userType, cnpj, phone);
-    navigate("/perfil");
+    try {
+      await register({ 
+        nome: name, 
+        documento_fiscal: documento, 
+        tipo_pessoa: userType, 
+        senha: password, 
+        email 
+      });
+      alert("Cadastro realizado com sucesso! Faça login para continuar.");
+      navigate("/login");
+    } catch (err) {
+      alert(err.message || "Erro ao cadastrar");
+    }
   }
 
   return (
@@ -100,7 +124,19 @@ export function Register() {
                   </Select>
                 </div>
 
-                {userType !== "student" && (
+                {userType === "student" ? (
+                  <div className="form-group">
+                    <Label htmlFor="cpf">CPF *</Label>
+                    <Input
+                      id="cpf"
+                      type="text"
+                      placeholder="000.000.000-00"
+                      value={cpf}
+                      onChange={(e) => setCpf(e.target.value)}
+                      required
+                    />
+                  </div>
+                ) : (
                   <div className="form-group">
                     <Label htmlFor="cnpj">CNPJ *</Label>
                     <Input
