@@ -1,6 +1,4 @@
-const lojaService = require('../services/lojaServices');
-
-const service = new lojaService();
+const service = require('../services/lojaServices');
 
 exports.redeem = async (req, res) => {
     try {

@@ -19,27 +19,68 @@ import { Toaster } from "../components/ui/Sonner";
 import "./Companies.css";
 
 export function Companies() {
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    budget: "",
-    deadline: "",
-    category: "",
-  });
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    toast.success("Demanda publicada com sucesso!");
-    setFormData({
-      title: "",
-      description: "",
+    titulo: "",
+    descricao: "",
+    categoriaId: "",
+    propriedades: {
       budget: "",
       deadline: "",
-      category: "",
-    });
-    setShowForm(false);
+    },
+  });
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    
+    if (!user) {
+      toast.error("Faça login para publicar demandas");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        autorUsuarioId: user.id,
+        categoriaId: parseInt(formData.categoriaId) || 1,
+        titulo: formData.titulo,
+        descricao: formData.descricao,
+        tipo: "DEMANDA",
+        propriedades: {
+          budget: formData.propriedades.budget,
+          deadline: formData.propriedades.deadline,
+        },
+        ativa: true,
+      };
+
+      const res = await authFetch("/ofertas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Falha ao publicar demanda");
+
+      toast.success("Demanda publicada com sucesso!");
+      setFormData({
+        titulo: "",
+        descricao: "",
+        categoriaId: "",
+        propriedades: {
+          budget: "",
+          deadline: "",
+        },
+      });
+      setShowForm(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Erro ao publicar demanda");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -116,14 +157,14 @@ export function Companies() {
                   <CardContent>
                     <form onSubmit={handleSubmit} className="form">
                       <div className="field">
-                        <Label htmlFor="title">Título do Projeto</Label>
+                        <Label htmlFor="titulo">Título do Projeto</Label>
                         <Input
-                          id="title"
-                          value={formData.title}
+                          id="titulo"
+                          value={formData.titulo}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              title: e.target.value,
+                              titulo: e.target.value,
                             })
                           }
                           required
@@ -131,15 +172,15 @@ export function Companies() {
                       </div>
 
                       <div className="field">
-                        <Label htmlFor="description">Descrição</Label>
+                        <Label htmlFor="descricao">Descrição</Label>
                         <Textarea
-                          id="description"
+                          id="descricao"
                           rows={4}
-                          value={formData.description}
+                          value={formData.descricao}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              description: e.target.value,
+                              descricao: e.target.value,
                             })
                           }
                           required
@@ -148,14 +189,35 @@ export function Companies() {
 
                       <div className="grid-3">
                         <div className="field">
-                          <Label htmlFor="budget">Orçamento</Label>
+                          <Label htmlFor="categoriaId">Categoria</Label>
                           <Input
-                            id="budget"
-                            value={formData.budget}
+                            id="categoriaId"
+                            type="number"
+                            placeholder="ID da categoria"
+                            value={formData.categoriaId}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                budget: e.target.value,
+                                categoriaId: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+
+                        <div className="field">
+                          <Label htmlFor="budget">Orçamento</Label>
+                          <Input
+                            id="budget"
+                            placeholder="R$ 2.500"
+                            value={formData.propriedades.budget}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                propriedades: {
+                                  ...formData.propriedades,
+                                  budget: e.target.value,
+                                },
                               })
                             }
                             required
@@ -166,26 +228,15 @@ export function Companies() {
                           <Label htmlFor="deadline">Prazo</Label>
                           <Input
                             id="deadline"
-                            value={formData.deadline}
+                            placeholder="30 dias"
+                            value={formData.propriedades.deadline}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                deadline: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-
-                        <div className="field">
-                          <Label htmlFor="category">Categoria</Label>
-                          <Input
-                            id="category"
-                            value={formData.category}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                category: e.target.value,
+                                propriedades: {
+                                  ...formData.propriedades,
+                                  deadline: e.target.value,
+                                },
                               })
                             }
                             required
@@ -194,13 +245,18 @@ export function Companies() {
                       </div>
 
                       <div className="form-actions">
-                        <Button type="submit" className="btn-primary">
-                          Publicar Demanda
+                        <Button 
+                          type="submit" 
+                          className="btn-primary"
+                          disabled={loading}
+                        >
+                          {loading ? "Publicando..." : "Publicar Demanda"}
                         </Button>
                         <Button
                           type="button"
                           variant="outline"
                           onClick={() => setShowForm(false)}
+                          disabled={loading}
                         >
                           Cancelar
                         </Button>
