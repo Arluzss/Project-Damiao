@@ -251,7 +251,6 @@ export function PersonalityTest() {
 
   return (
     <div className="test-page">
-      <Header />
       <Toaster />
 
       <main className="test-main">
@@ -280,12 +279,16 @@ export function PersonalityTest() {
                 className="test-radio-group"
               >
                 {questions[currentQuestion].options.map((option) => (
-                  <div key={option.value} className="test-option">
+                  <Label 
+                    key={option.value} 
+                    htmlFor={option.value} 
+                    className="test-option"
+                  >
                     <RadioGroupItem value={option.value} id={option.value} />
-                    <Label htmlFor={option.value} className="test-option-label">
+                    <span className="test-option-label">
                       {option.label}
-                    </Label>
-                  </div>
+                    </span>
+                  </Label>
                 ))}
               </RadioGroup>
 
