@@ -45,6 +45,20 @@ const entrepreneurs = [
     instagram: "@joaodev",
     linkedin: "https://linkedin.com/in/joaosantos",
   },
+  {
+    id: "3",
+    name: "Ana Costa",
+    service: "Marketing Digital",
+    description:
+      "Gestão de redes sociais, campanhas e estratégias de conteúdo",
+    location: "Belo Horizonte, MG",
+    rating: 4.7,
+    projects: 28,
+    price: "R$ 800 - R$ 3.000",
+    whatsapp: "(31) 98888-7777",
+    instagram: "@anacosta.mkt",
+    linkedin: "https://linkedin.com/in/anacosta",
+  },
 ];
 
 const demands = [
