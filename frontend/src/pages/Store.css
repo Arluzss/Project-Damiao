@@ -18,6 +18,11 @@
   position: relative;
   z-index: 1;
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .store-header h1 {
@@ -47,6 +52,22 @@
 .balance .icon {
   width: 2rem;
   height: 2rem;
+  color: #fff;
+}
+
+.balance p {
+  color: #fff;
+  margin: 0;
+}
+
+.balance p:first-of-type {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.balance p:last-of-type {
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .tabs {
