@@ -4,6 +4,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/AuthRoutes');
 const profileRoutes = require('./routes/ProfileRoutes');
 
+const lojaRoutes = require('./routes/lojaRoutes');
 const moedaRoutes = require('./routes/moedaRoutes');
 const feedbackRoutes = require('./routes/FeedbackRoutes');
 const ofertaRoutes = require('./routes/ofertaRoutes');
@@ -18,5 +19,5 @@ app.use('/profile', profileRoutes);
 app.use('/moedas', moedaRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/ofertas', ofertaRoutes);
-
+app.use('/loja', lojaRoutes);
 module.exports = app; 
