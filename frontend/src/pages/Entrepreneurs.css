@@ -48,7 +48,7 @@
 .entrepreneurs-tabs-list button {
   flex: 1;
   border-radius: 999px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #475569;
   transition: all 0.2s ease;
