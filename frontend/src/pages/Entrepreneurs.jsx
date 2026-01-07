@@ -129,7 +129,7 @@ export function Entrepreneurs() {
           </header>
 
           <Tabs defaultValue="services">
-            <TabsList className="tabs-list">
+            <TabsList className="entrepreneurs-tabs-list">
               <TabsTrigger value="services">
                 Profissionais
               </TabsTrigger>

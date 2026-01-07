@@ -53,11 +53,30 @@
   width: 100%;
 }
 
-.tabs-list {
+.store-tabs-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   max-width: 500px;
+  margin-bottom: 2rem;
+  background-color: #e2e8f0;
+  padding: 0.25rem;
+  border-radius: 999px;
+}
+
+.store-tabs-list button {
+  border-radius: 999px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+}
+
+.store-tabs-list button[data-state="active"] {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .grid-3 {

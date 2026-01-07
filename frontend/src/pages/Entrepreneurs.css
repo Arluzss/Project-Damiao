@@ -36,7 +36,7 @@
 }
 
 /* ===== Tabs (Profissionais / Demandas) ===== */
-.tabs-list {
+.entrepreneurs-tabs-list {
   margin: 2rem 0 2.5rem;
   display: flex;
   justify-content: flex-start;
@@ -45,7 +45,7 @@
   max-width: 214px;
 }
 
-.tabs-list button {
+.entrepreneurs-tabs-list button {
   flex: 1;
   border-radius: 999px;
   font-size: 1rem;
@@ -55,7 +55,7 @@
   border: none;
 }
 
-.tabs-list button[data-state="active"] {
+.entrepreneurs-tabs-list button[data-state="active"] {
   background-color: #ffffff;
   color: #0f172a;
 }
@@ -213,7 +213,7 @@
     font-size: 1.7rem;
   }
 
-  .tabs-list {
+  .entrepreneurs-tabs-list {
     max-width: 100%;
   }
 

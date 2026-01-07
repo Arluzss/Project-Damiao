@@ -81,7 +81,7 @@ export function Store() {
           </header>
 
           <Tabs defaultValue="prizes" className="tabs">
-            <TabsList className="tabs-list">
+            <TabsList className="store-tabs-list">
               <TabsTrigger value="prizes"><Gift /> Brindes</TabsTrigger>
               <TabsTrigger value="discounts"><ShoppingBag /> Descontos</TabsTrigger>
               <TabsTrigger value="mentorships"><GraduationCap /> Mentorias</TabsTrigger>
