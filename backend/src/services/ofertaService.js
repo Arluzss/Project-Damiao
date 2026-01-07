@@ -1,65 +1,78 @@
-const OfertaService = require('../services/ofertaService');
+const prisma = require('../lib/prisma');
 
-async function list(req, res) {
-  try {
-    const ofertas = await OfertaService.getAllOffers();
-    res.json(ofertas);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao listar ofertas' });
+class OfertaService {
+  async getAllOffers(filters = {}) {
+    const where = {};
+    if (filters.categoriaId) where.categoriaId = Number(filters.categoriaId);
+    if (filters.tipo) where.tipo = filters.tipo;
+
+    const ofertas = await prisma.oferta.findMany({
+      where,
+      include: { autor: { select: { id: true, nome: true } }, categoria: true },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return ofertas.map((o) => ({
+      ...o,
+      propriedades: o.propriedades ? JSON.parse(o.propriedades) : null
+    }));
+  }
+
+  async getOfferById(id) {
+    return await prisma.oferta.findUnique({
+      where: { id: Number(id) },
+      include: { autor: { select: { id: true, nome: true } }, categoria: true }
+    });
+  }
+
+  async createOffer(payload) {
+    const { titulo, categoriaId, autorUsuarioId, descricao, propriedades, tipo } = payload;
+    if (!titulo || !categoriaId || !autorUsuarioId || !tipo) throw new Error('Campos obrigatórios ausentes');
+
+    const usuario = await prisma.usuario.findUnique({ where: { id: Number(autorUsuarioId) } });
+    if (!usuario) throw new Error('AutorUsuario não encontrado');
+
+    const categoria = await prisma.categoria.findUnique({ where: { id: Number(categoriaId) } });
+    if (!categoria) throw new Error('Categoria não encontrada');
+
+    const data = {
+      titulo,
+      descricao: descricao || null,
+      categoriaId: Number(categoriaId),
+      autorUsuarioId: Number(autorUsuarioId),
+      propriedades: propriedades ? JSON.stringify(propriedades) : null,
+      ativa: true,
+      tipo
+    };
+
+    const created = await prisma.oferta.create({ data });
+    return { ...created, propriedades: created.propriedades ? JSON.parse(created.propriedades) : null };
+  }
+
+  async updateOffer(id, payload, autorUsuarioId) {
+    const oferta = await prisma.oferta.findUnique({ where: { id: Number(id) } });
+    if (!oferta) throw new Error('Oferta não encontrada');
+    if (autorUsuarioId && oferta.autorUsuarioId !== Number(autorUsuarioId)) throw new Error('Não autorizado');
+
+    const data = {};
+    if (payload.titulo !== undefined) data.titulo = payload.titulo;
+    if (payload.descricao !== undefined) data.descricao = payload.descricao;
+    if (payload.propriedades !== undefined) data.propriedades = JSON.stringify(payload.propriedades);
+    if (payload.ativa !== undefined) data.ativa = payload.ativa;
+    if (payload.categoriaId !== undefined) data.categoriaId = Number(payload.categoriaId);
+    if (payload.tipo !== undefined) data.tipo = payload.tipo;
+
+    const updated = await prisma.oferta.update({ where: { id: Number(id) }, data });
+    return { ...updated, propriedades: updated.propriedades ? JSON.parse(updated.propriedades) : null };
+  }
+
+  async deleteOffer(id, autorUsuarioId) {
+    const oferta = await prisma.oferta.findUnique({ where: { id: Number(id) } });
+    if (!oferta) throw new Error('Oferta não encontrada');
+    if (autorUsuarioId && oferta.autorUsuarioId !== Number(autorUsuarioId)) throw new Error('Não autorizado');
+
+    await prisma.oferta.delete({ where: { id: Number(id) } });
   }
 }
 
-async function getById(req, res) {
-  try {
-    const oferta = await OfertaService.getOfferById(req.params.id);
-    if (!oferta) return res.status(404).json({ error: 'Oferta não encontrada' });
-    res.json(oferta);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao buscar oferta' });
-  }
-}
-
-async function create(req, res) {
-  try {
-    const payload = req.body;
-    const created = await OfertaService.createOffer(payload);
-    res.status(201).json(created);
-  } catch (err) {
-    console.error(err);
-    // validar erros de negócio retornam 400 com a mensagem
-    if (err && err.message) {
-      return res.status(400).json({ error: err.message });
-    }
-    res.status(500).json({ error: 'Erro ao criar oferta' });
-  }
-}
-
-async function update(req, res) {
-  try {
-    const updated = await OfertaService.updateOffer(req.params.id, req.body);
-    res.json(updated);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao atualizar oferta' });
-  }
-}
-
-async function remove(req, res) {
-  try {
-    await OfertaService.deleteOffer(req.params.id);
-    res.status(204).send();
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao deletar oferta' });
-  }
-}
-
-module.exports = {
-  list,
-  getById,
-  create,
-  update,
-  remove,
-};
+module.exports = new OfertaService();

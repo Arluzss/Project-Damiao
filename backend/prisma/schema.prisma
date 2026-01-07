@@ -7,23 +7,27 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+// Enum para tipos de usuário
 enum TipoPessoa {
   student
   entrepreneur
   company
 }
 
-// Observações gerais:
-// - SQLite não tem tipo DECIMAL nativo com precisão; armazenar valores monetários como Int (centavos) é mais seguro.
-// - Para JSON, prefira salvar como String (JSON.stringify) ou usar o tipo Json do Prisma se desejar.
+// --- NOVO: Enum para diferenciar o que está sendo ofertado ---
+enum TipoOferta {
+  CURSO     // Ex: Curso Web Full Stack
+  SERVICO   // Ex: Freelancer Design
+  DEMANDA   // Ex: Vaga de emprego / Projeto
+}
 
 model Usuario {
-  id              Int          @id @default(autoincrement()) @map("usuario_id")
+  id              Int      @id @default(autoincrement()) @map("usuario_id")
   nome            String
-  documentoFiscal String       @map("documento_fiscal") @unique
-  tipoPessoa      TipoPessoa   @map("tipo_pessoa")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
+  documentoFiscal String   @map("documento_fiscal") @unique
+  tipoPessoa      TipoPessoa @map("tipo_pessoa")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   contasAcesso       ContaAcesso[]
   perfis             UsuarioPerfil[]
@@ -72,11 +76,11 @@ model UsuarioPerfil {
 }
 
 model ExtratoPontos {
-  id         Int      @id @default(autoincrement()) @map("ponto_id")
-  usuarioId  Int      @map("usuario_id")
+  id        Int      @id @default(autoincrement()) @map("ponto_id")
+  usuarioId Int      @map("usuario_id")
   quantidade Int
-  motivo     String
-  createdAt  DateTime @default(now()) @map("created_at")
+  motivo    String
+  createdAt DateTime @default(now()) @map("created_at")
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
 
@@ -98,7 +102,12 @@ model Oferta {
   categoriaId    Int      @map("categoria_id")
   titulo         String
   descricao      String?
-  propriedades   String?  // JSON salvo como string em SQLite
+  
+  // --- CAMPO ESSENCIAL ADICIONADO ---
+  tipo           TipoOferta @map("tipo") 
+  // ---------------------------------
+
+  propriedades   String?  // JSON salvo como string (JSON.stringify)
   ativa          Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
 
@@ -144,8 +153,7 @@ model ConexaoUsuario {
 model Transacao {
   id        Int      @id @default(autoincrement()) @map("transacao_id")
   conexaoId Int      @map("conexao_id")
-  // Valor armazenado em centavos como Int para evitar problemas de precisão
-  valor     Int
+  valor     Int      // Valor em centavos (R$ 10,00 = 1000)
   descricao String?
   createdAt DateTime @default(now()) @map("created_at")
 
