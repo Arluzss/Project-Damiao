@@ -44,6 +44,7 @@ class ProfileService {
       usuarioAtualizado = await prisma.usuario.findUnique({ where: { id: userId } });
     }
 
+    let emailAtualizado = null;
     if (dados.email) {
       // atualizar a primeira conta de acesso vinculada
       const conta = await prisma.contaAcesso.findFirst({ where: { usuarioId: userId } });
@@ -53,11 +54,23 @@ class ProfileService {
         if (existente && existente.id !== conta.id) {
           throw new Error('Email já está em uso');
         }
-        await prisma.contaAcesso.update({ where: { id: conta.id }, data: { email: dados.email } });
+        const contaAtualizada = await prisma.contaAcesso.update({ 
+          where: { id: conta.id }, 
+          data: { email: dados.email } 
+        });
+        emailAtualizado = contaAtualizada.email;
       }
+    } else {
+      // buscar email atual
+      const conta = await prisma.contaAcesso.findFirst({ where: { usuarioId: userId } });
+      emailAtualizado = conta?.email || null;
     }
 
-    return { id: usuarioAtualizado.id, nome: usuarioAtualizado.nome };
+    return { 
+      id: usuarioAtualizado.id, 
+      nome: usuarioAtualizado.nome,
+      email: emailAtualizado
+    };
   }
 
   async getUserCourses(userId) {

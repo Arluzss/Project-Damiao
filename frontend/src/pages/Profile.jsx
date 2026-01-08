@@ -14,12 +14,13 @@ import { Toaster } from "../components/ui/Sonner";
 import "./Profile.css";
 
 export function Profile() {
-  const { user, updateUser } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     nome: user?.nome || "",
     email: user?.email || "",
   });
+  const [saving, setSaving] = useState(false);
 
   if (!user) {
     return (
@@ -37,10 +38,17 @@ export function Profile() {
     );
   }
 
-  const handleSave = () => {
-    updateUser(editData);
-    setIsEditing(false);
-    toast.success("Perfil atualizado com sucesso!");
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateProfile(editData);
+      setIsEditing(false);
+      toast.success("Perfil atualizado com sucesso!");
+    } catch (err) {
+      toast.error(err.message || "Erro ao atualizar perfil");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const userTypeLabel = {
@@ -108,8 +116,8 @@ export function Profile() {
                           onChange={(e) => setEditData({ ...editData, email: e.target.value })}
                         />
                       </div>
-                      <Button onClick={handleSave} className="profile-save-button">
-                        Salvar Alterações
+                      <Button onClick={handleSave} className="profile-save-button" disabled={saving}>
+                        {saving ? "Salvando..." : "Salvar Alterações"}
                       </Button>
                     </div>
                   ) : (

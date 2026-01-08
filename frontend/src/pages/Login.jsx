@@ -10,7 +10,6 @@ export function Login() {
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("student");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -60,19 +59,6 @@ export function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="type">Tipo de Conta</label>
-                  <select
-                    id="type"
-                    value={userType}
-                    onChange={(e) => setUserType(e.target.value)}
-                  >
-                    <option value="student">Estudante</option>
-                    <option value="entrepreneur">Microempreendedor</option>
-                    <option value="company">Empresa</option>
-                  </select>
                 </div>
 
                 {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>}

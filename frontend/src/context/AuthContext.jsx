@@ -181,9 +181,37 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
+
+  const updateProfile = async (dados) => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao atualizar perfil');
+      
+      // Atualizar o estado do usuário
+      setUser((prev) => {
+        const next = { 
+          ...prev, 
+          nome: dados.nome || dados.name || prev.nome,
+          email: dados.email || prev.email
+        };
+        try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+        return next;
+      });
+      
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
   
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile, updateUser }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile, updateUser, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
