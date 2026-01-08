@@ -119,7 +119,7 @@ export function PersonalityTest() {
     );
   }
 
-  if (user.type === "company") {
+  if (user.tipo === "company") {
     return (
       <div className="test-page">
         <main className="test-main">

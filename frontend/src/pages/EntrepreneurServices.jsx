@@ -88,7 +88,7 @@ export function EntrepreneurServices() {
     );
   }
 
-  if (user.type !== "entrepreneur") {
+  if (user.tipo !== "entrepreneur") {
     return (
       <div className="page-container">
         <Header />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom"; //adção para o funcionamento do botao da linha 262
 
@@ -25,6 +25,8 @@ export function Companies() {
   const { user, authFetch } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [myDemands, setMyDemands] = useState([]);
+  const [loadingDemands, setLoadingDemands] = useState(false);
   const [formData, setFormData] = useState({
     titulo: "",
     descricao: "",
@@ -34,6 +36,28 @@ export function Companies() {
       deadline: "",
     },
   });
+
+  useEffect(() => {
+    if (user?.tipo === "company") {
+      loadMyDemands();
+    }
+  }, [user]);
+
+  async function loadMyDemands() {
+    setLoadingDemands(true);
+    try {
+      const res = await authFetch('/ofertas?tipo=DEMANDA');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao buscar demandas');
+      // Filtrar apenas as demandas criadas por este usuário
+      const filtered = data.filter(d => d.autorUsuarioId === user?.id);
+      setMyDemands(filtered);
+    } catch (err) {
+      console.error('Erro ao carregar demandas:', err);
+    } finally {
+      setLoadingDemands(false);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -78,6 +102,7 @@ export function Companies() {
         },
       });
       setShowForm(false);
+      loadMyDemands(); // Recarregar lista de demandas
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Erro ao publicar demanda");
@@ -135,7 +160,7 @@ export function Companies() {
             </Card>
           </div>
 
-          {user?.type === "company" ? (
+          {user?.tipo === "company" ? (
             <section>
               <div className="section-header">
                 <h2>Minhas Demandas</h2>
@@ -269,13 +294,54 @@ export function Companies() {
                 </Card>
               )}
 
-              <Card>
-                <CardContent className="empty-state">
-                  <Building2 size={64} />
-                  <p>Nenhuma demanda publicada ainda.</p>
-                  <span>Clique em "Nova Demanda" para começar.</span>
-                </CardContent>
-              </Card>
+              {loadingDemands ? (
+                <Card>
+                  <CardContent className="empty-state">
+                    <p>Carregando demandas...</p>
+                  </CardContent>
+                </Card>
+              ) : myDemands.length === 0 ? (
+                <Card>
+                  <CardContent className="empty-state">
+                    <Building2 size={64} />
+                    <p>Nenhuma demanda publicada ainda.</p>
+                    <span>Clique em "Nova Demanda" para começar.</span>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="demands-list">
+                  {myDemands.map((demand) => (
+                    <Card key={demand.id}>
+                      <CardHeader>
+                        <CardTitle>{demand.titulo}</CardTitle>
+                        <CardDescription>{demand.descricao}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="demand-info">
+                          {demand.propriedades?.budget && (
+                            <div>
+                              <strong>Orçamento:</strong> {demand.propriedades.budget}
+                            </div>
+                          )}
+                          {demand.propriedades?.deadline && (
+                            <div>
+                              <strong>Prazo:</strong> {demand.propriedades.deadline}
+                            </div>
+                          )}
+                          {demand.categoria && (
+                            <div>
+                              <strong>Categoria:</strong> {demand.categoria.nome}
+                            </div>
+                          )}
+                          <div>
+                            <strong>Status:</strong> {demand.ativa ? '🟢 Ativa' : '🔴 Inativa'}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </section>
           ) : (
             <Card className="cta-card">

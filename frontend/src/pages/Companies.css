@@ -106,6 +106,24 @@
   color: #6b7280;
 }
 
+.demands-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.demand-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.demand-info strong {
+  color: #111827;
+  margin-right: 0.5rem;
+}
+
 .cta-card {
   background: linear-gradient(135deg, #2563eb, #06b6d4);
   color: #fff;

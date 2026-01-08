@@ -186,6 +186,27 @@
 }
 
 /* ===== Demandas ===== */
+.demand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.demand-header > div {
+  flex: 1;
+}
+
+.company-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
 .demand-footer {
   display: flex;
   flex-direction: column;
@@ -201,6 +222,26 @@
 .demand-footer button {
   margin-top: 0.75rem;
   width: 100%;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-state svg {
+  margin-bottom: 1rem;
+  color: #9ca3af;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: #6b7280;
 }
 
 /* ===== Responsividade ===== */
