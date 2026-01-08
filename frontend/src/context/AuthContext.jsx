@@ -20,7 +20,28 @@ export function AuthProvider({ children }) {
       if (stored) setUser(JSON.parse(stored));
     }
   }, [token, user]);
+  // Buscar pontos quando usuário faz login
+  useEffect(() => {
+    if (user && token && user.damiao === undefined) {
+      loadUserPoints();
+    }
+  }, [user, token]);
 
+  const loadUserPoints = async () => {
+    try {
+      const res = await authFetch('/moedas', { method: 'GET' });
+      const data = await res.json();
+      if (res.ok && typeof data.total === 'number') {
+        setUser((prev) => {
+          const next = { ...(prev || {}), damiao: data.total };
+          try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+          return next;
+        });
+      }
+    } catch (err) {
+      console.error('Erro ao carregar pontos:', err);
+    }
+  };
   const login = async (identifier, senha) => {
     setLoading(true);
     try {
@@ -93,6 +114,16 @@ export function AuthProvider({ children }) {
       const res = await authFetch('/moedas', { method: 'GET' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Falha ao buscar pontos');
+      
+      // Atualizar o estado do usuário com os pontos
+      if (typeof data.total === 'number') {
+        setUser((prev) => {
+          const next = { ...(prev || {}), damiao: data.total };
+          try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+          return next;
+        });
+      }
+      
       return data;
     } finally {
       setLoading(false);

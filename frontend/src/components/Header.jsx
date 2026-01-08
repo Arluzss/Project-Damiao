@@ -58,7 +58,7 @@ function Header() {
               <>
                 <div className="coins">
                   <Coins />
-                  <span>{user.damiao} Damiões</span>
+                  <span>{user.damiao ?? 0} Damiões</span>
                 </div>
 
                 <Link to="/perfil">
