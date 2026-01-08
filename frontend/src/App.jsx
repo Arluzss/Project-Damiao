@@ -48,7 +48,7 @@ function App() {
         <Route path="/teste-perfil" element={<PersonalityTest/>}/> 
         <Route path="/avaliacoes" element={<Feedback/>} /> 
         <Route path="/meus-servicos" element={<EntrepreneurServices />}/>
-        
+       
       </Routes>
     </>
   );
