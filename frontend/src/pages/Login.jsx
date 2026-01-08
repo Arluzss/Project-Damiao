@@ -1,100 +1,92 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { useAuth } from '../context/AuthContext';
-import { Header } from '../components/Header';
-import './Login.css';
+import { useState } from "react"; 
+import { Link, useNavigate } from "react-router-dom"; 
+import { useAuth } from "../context/AuthContext"; 
+import "./Login.css";
 
-export function Login() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('student');
+export function Login() { 
+  const navigate = useNavigate(); 
+  const { login } = useAuth(); 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    login(email, password, userType);
-    
-    // Redireciona para o dashboard específico do tipo de usuário
-    if (userType === 'student') {
-      navigate('/dashboard/estudante');
-    } else if (userType === 'entrepreneur') {
-      navigate('/dashboard/microempreendedor');
-    } else if (userType === 'company') {
-      navigate('/dashboard/empresa');
-    }
-  };
+  const [identifier, setIdentifier] = useState(""); 
+  const [password, setPassword] = useState(""); 
+  const [error, setError] = useState(""); 
 
-  return (
-    <div className="login-container">
-      <Header />
+  const handleSubmit = async (e) => { 
+    e.preventDefault(); 
+    setError(""); 
+
+    try { 
+      const user = await login(identifier, password);
       
-      <main className="login-main">
-        <div className="login-content">
-          <div className="login-card">
-            <div className="card-header">
-              <h1 className="card-title">Entrar na Plataforma</h1>
-              <p className="card-description">
-                Acesse sua conta e continue sua jornada
-              </p>
-            </div>
-            <div className="card-content">
-              <form onSubmit={handleSubmit} className="login-form">
-                <div className="form-group">
-                  <label htmlFor="email" className="form-label">E-mail</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="form-input"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
+      // Redireciona para o dashboard específico do tipo de usuário
+      if (user.tipo_pessoa === "student") {
+        navigate("/dashboard/estudante");
+      } else if (user.tipo_pessoa === "entrepreneur") {
+        navigate("/dashboard/microempreendedor");
+      } else if (user.tipo_pessoa === "company") {
+        navigate("/dashboard/empresa");
+      } else {
+        // Fallback caso o tipo não seja identificado
+        navigate('/perfil');
+      }
+    } catch (err) { 
+      setError(err.message || 'Falha no login'); 
+    } 
+  };  
 
-                <div className="form-group">
-                  <label htmlFor="password" className="form-label">Senha</label>
-                  <input
-                    id="password"
-                    type="password"
-                    className="form-input"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
+  return ( 
+    <div className="login-page"> 
+      <main className="login-main"> 
+        <div className="login-container"> 
+          <div className="login-card"> 
+            <div className="login-card-header"> 
+              <h1>Entrar na Plataforma</h1> 
+              <p>Acesse sua conta e continue sua jornada</p> 
+            </div> 
 
-                <div className="form-group">
-                  <label htmlFor="type" className="form-label">Tipo de Conta</label>
-                  <select 
-                    id="type"
-                    className="form-select" 
-                    value={userType} 
-                    onChange={(e) => setUserType(e.target.value)}
-                  >
-                    <option value="student">Estudante</option>
-                    <option value="entrepreneur">Microempreendedor</option>
-                    <option value="company">Empresa</option>
-                  </select>
-                </div>
+            <div className="login-card-content"> 
+              <form onSubmit={handleSubmit}> 
+                <div className="form-group"> 
+                  <label htmlFor="identifier">E-mail ou CPF/CNPJ</label> 
+                  <input 
+                    id="identifier" 
+                    type="text" 
+                    placeholder="seu@email.com ou CPF/CNPJ" 
+                    value={identifier} 
+                    onChange={(e) => setIdentifier(e.target.value)} 
+                    required 
+                  /> 
+                </div> 
 
-                <button type="submit" className="btn-submit">
-                  Entrar
-                </button>
+                <div className="form-group"> 
+                  <label htmlFor="password">Senha</label> 
+                  <input 
+                    id="password" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    required 
+                  /> 
+                </div> 
 
-                <p className="form-footer">
-                  Não tem uma conta?{' '}
-                  <Link to="/register" className="form-link">
-                    Cadastre-se
-                  </Link>
-                </p>
-              </form>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
+                {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>} 
+
+                <button type="submit" className="btn-login"> 
+                  Entrar 
+                </button> 
+
+                <p className="register-link"> 
+                  Não tem uma conta?{" "} 
+                  <Link to="/registro">Cadastre-se</Link> 
+                </p> 
+              </form> 
+            </div> 
+          </div> 
+        </div> 
+      </main> 
+    </div> 
+  ); 
+} 
+
+export default Login;
