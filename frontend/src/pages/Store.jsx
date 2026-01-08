@@ -18,27 +18,28 @@ import { Toaster } from "../components/ui/Sonner";
 import "./Store.css";
 
 const prizes = [
-  { id: "1", name: "Vale-Presente Amazon R$ 50", cost: 500, category: "voucher", image: "🎁" },
-  { id: "2", name: "Fone de Ouvido Bluetooth", cost: 800, category: "product", image: "🎧" },
-  { id: "3", name: "Mochila Executiva", cost: 600, category: "product", image: "🎒" },
+  { id: "vale_amazon_50", name: "Vale-Presente Amazon R$ 50", cost: 500, category: "voucher", image: "🎁" },
+  { id: "fone_bluetooth", name: "Fone de Ouvido Bluetooth", cost: 800, category: "product", image: "🎧" },
+  { id: "mochila_executiva", name: "Mochila Executiva", cost: 600, category: "product", image: "🎒" },
 ];
 
 const discounts = [
-  { id: "1", partner: "Livraria Cultura", discount: "20% de desconto", cost: 200, image: "📚" },
-  { id: "2", partner: "iFood", discount: "R$ 25 de desconto", cost: 250, image: "🍕" },
-  { id: "3", partner: "Academia FitLife", discount: "1 mês grátis", cost: 400, image: "💪" },
+  { id: "desconto_livraria", partner: "Livraria Cultura", discount: "20% de desconto", cost: 200, image: "📚" },
+  { id: "desconto_ifood", partner: "iFood", discount: "R$ 25 de desconto", cost: 250, image: "🍕" },
+  { id: "desconto_academia", partner: "Academia FitLife", discount: "1 mês grátis", cost: 400, image: "💪" },
 ];
 
 const mentorships = [
-  { id: "1", topic: "Carreira em Tecnologia", mentor: "João Silva - CTO na Tech Corp", duration: "1h", cost: 300, image: "💻" },
-  { id: "2", topic: "Empreendedorismo Digital", mentor: "Maria Santos - CEO StartupHub", duration: "1h", cost: 350, image: "🚀" },
-  { id: "3", topic: "Marketing e Vendas", mentor: "Pedro Costa - Dir. Marketing", duration: "1h", cost: 300, image: "📈" },
+  { id: "mentoria_carreira", topic: "Carreira em Tecnologia", mentor: "João Silva - CTO na Tech Corp", duration: "1h", cost: 300, image: "💻" },
+  { id: "mentoria_empreendedorismo", topic: "Empreendedorismo Digital", mentor: "Maria Santos - CEO StartupHub", duration: "1h", cost: 350, image: "🚀" },
+  { id: "mentoria_marketing", topic: "Marketing e Vendas", mentor: "Pedro Costa - Dir. Marketing", duration: "1h", cost: 300, image: "📈" },
 ];
 
 export function Store() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, authFetch } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  function handlePurchase(itemName, cost) {
+  async function handlePurchase(itemId, itemName, cost) {
     if (!user) {
       toast.error("Faça login para usar a loja");
       return;
@@ -51,8 +52,28 @@ export function Store() {
       return;
     }
 
-    updateUser({ damiao: currentDamiao - cost });
-    toast.success(`${itemName} resgatado com sucesso!`);
+    setLoading(true);
+    try {
+      const res = await authFetch('/loja/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId })
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao resgatar item');
+      }
+
+      // Atualizar saldo com o valor retornado do backend
+      updateUser({ damiao: data.totalAfter });
+      toast.success(`${itemName} resgatado com sucesso!`);
+    } catch (err) {
+      toast.error(err.message || 'Erro ao resgatar item');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -104,10 +125,10 @@ export function Store() {
                     </CardHeader>
                     <CardContent>
                       <Button
-                        onClick={() => handlePurchase(prize.name, prize.cost)}
-                        disabled={!user || user.damiao < prize.cost}
+                        onClick={() => handlePurchase(prize.id, prize.name, prize.cost)}
+                        disabled={!user || user.damiao < prize.cost || loading}
                       >
-                        {!user || user.damiao < prize.cost ? "Damiões Insuficientes" : "Resgatar"}
+                        {loading ? "Processando..." : (!user || user.damiao < prize.cost ? "Damiões Insuficientes" : "Resgatar")}
                       </Button>
                     </CardContent>
                   </Card>
@@ -131,10 +152,10 @@ export function Store() {
                     </CardHeader>
                     <CardContent>
                       <Button
-                        onClick={() => handlePurchase(`Desconto ${discount.partner}`, discount.cost)}
-                        disabled={!user || user.damiao < discount.cost}
+                        onClick={() => handlePurchase(discount.id, `Desconto ${discount.partner}`, discount.cost)}
+                        disabled={!user || user.damiao < discount.cost || loading}
                       >
-                        {!user || user.damiao < discount.cost ? "Damiões Insuficientes" : "Resgatar"}
+                        {loading ? "Processando..." : (!user || user.damiao < discount.cost ? "Damiões Insuficientes" : "Resgatar")}
                       </Button>
                     </CardContent>
                   </Card>
@@ -163,10 +184,10 @@ export function Store() {
                     </CardHeader>
                     <CardContent>
                       <Button
-                        onClick={() => handlePurchase(`Mentoria ${mentorship.topic}`, mentorship.cost)}
-                        disabled={!user || user.damiao < mentorship.cost}
+                        onClick={() => handlePurchase(mentorship.id, `Mentoria ${mentorship.topic}`, mentorship.cost)}
+                        disabled={!user || user.damiao < mentorship.cost || loading}
                       >
-                        {!user || user.damiao < mentorship.cost ? "Damiões Insuficientes" : "Agendar"}
+                        {loading ? "Processando..." : (!user || user.damiao < mentorship.cost ? "Damiões Insuficientes" : "Agendar")}
                       </Button>
                     </CardContent>
                   </Card>

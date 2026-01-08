@@ -57,11 +57,12 @@ const highlights = [
 ];
 
 export function Feedback() {
-  const { user, updateUser } = useAuth();
+  const { user, addPoints } = useAuth();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       toast.error("Faça login para enviar feedback");
@@ -73,12 +74,25 @@ export function Feedback() {
       return;
     }
 
-    // Recompensa de 25 Damiões por feedback
-    const currentDamiao = user.damiao || 0;
-    updateUser({ damiao: currentDamiao + 25 });
-    toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
-    setRating(0);
-    setComment("");
+    setSending(true);
+    try {
+      // Adicionar pontos via backend (com proteção anti-abuso)
+      await addPoints('feedback');
+      toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
+      setRating(0);
+      setComment("");
+    } catch (err) {
+      // Se for limite diário, ainda mostra sucesso no feedback mas avisa sobre pontos
+      if (err.message && err.message.includes('Limite')) {
+        toast.warning("Feedback enviado! (Limite diário de pontos atingido)");
+        setRating(0);
+        setComment("");
+      } else {
+        toast.error(err.message || "Erro ao enviar feedback");
+      }
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -144,9 +158,9 @@ export function Feedback() {
                     <Button
                       type="submit"
                       className="submit-button"
-                      disabled={!user}
+                      disabled={!user || sending}
                     >
-                      {user ? "Enviar Feedback" : "Faça login para avaliar"}
+                      {sending ? "Enviando..." : (user ? "Enviar Feedback" : "Faça login para avaliar")}
                     </Button>
                   </form>
                 </CardContent>

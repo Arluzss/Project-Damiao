@@ -94,7 +94,7 @@ const results = {
 
 export function PersonalityTest() {
   const navigate = useNavigate();
-  const { user, updateUser } = useAuth();
+  const { user, addPoints } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
@@ -168,7 +168,7 @@ export function PersonalityTest() {
     }
   };
 
-  const calculateResult = () => {
+  const calculateResult = async () => {
     const counts = {};
     answers.forEach((answer) => {
       counts[answer] = (counts[answer] || 0) + 1;
@@ -182,9 +182,17 @@ export function PersonalityTest() {
     setShowResult(true);
 
     // Recompensa de 50 Damiões por completar o teste
-    const currentDamiao = user.damiao || 0;
-    updateUser({ damiao: currentDamiao + 50 });
-    toast.success("Teste concluído! Você ganhou 50 Damiões 🎉");
+    try {
+      await addPoints('teste_personalidade');
+      toast.success("Teste concluído! Você ganhou 50 Damiões 🎉");
+    } catch (err) {
+      // Mostrar resultado mesmo se falhar ao adicionar pontos
+      if (err.message && err.message.includes('Limite')) {
+        toast.info("Teste concluído! (Você já recebeu pontos por este teste hoje)");
+      } else {
+        toast.warning("Teste concluído! (Erro ao adicionar pontos)");
+      }
+    }
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;

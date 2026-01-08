@@ -4,7 +4,8 @@ class MoedaService {
     constructor() {
         this.VALORES_POR_MOTIVO = {
             feedback: { valor: 25, descricao: 'Feedback enviado' },
-            cadastro_completo: { valor: 50, descricao: 'Perfil completado' }
+            cadastro_completo: { valor: 50, descricao: 'Perfil completado' },
+            teste_personalidade: { valor: 50, descricao: 'Teste de Personalidade concluído' }
         };
     }
 
