@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Coins, User, LogOut } from "lucide-react";
 import "./Header.css";
 import { Button } from "./ui/button";
@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 function Header() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
 
@@ -68,7 +69,14 @@ function Header() {
                   </Button>
                 </Link>
 
-                <Button variant="ghost" size="sm" onClick={logout}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    logout();
+                    navigate('/entrar');
+                  }}
+                >
                   <LogOut />
                 </Button>
               </>

@@ -1,0 +1,260 @@
+/* Container Principal */
+.entrepreneur-dashboard-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.entrepreneur-dashboard-main {
+  padding: 2rem 1rem;
+}
+
+.entrepreneur-dashboard-content {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+/* Welcome Section */
+.welcome-section {
+  margin-bottom: 2rem;
+}
+
+.welcome-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.welcome-description {
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Stats Card Header */
+.stats-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+
+.stats-card-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Stats Icons */
+.stats-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.stats-icon-cyan {
+  color: #0891b2;
+}
+
+.stats-icon-blue {
+  color: #2563eb;
+}
+
+/* Stats Content */
+.stats-number {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.stats-text {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Section */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Quick Actions Grid */
+.quick-actions-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Action Links */
+.action-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Action Cards */
+.action-card {
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Action Icons */
+.action-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.action-icon-cyan {
+  color: #0891b2;
+}
+
+.action-icon-blue {
+  color: #2563eb;
+}
+
+.action-icon-purple {
+  color: #9333ea;
+}
+
+.action-icon-green {
+  color: #16a34a;
+}
+
+/* Services Grid */
+.services-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Buttons */
+.manage-services-button {
+  background-color: #0891b2;
+}
+
+.manage-services-button:hover {
+  background-color: #0e7490;
+}
+
+.service-button {
+  width: 100%;
+  background-color: #0891b2;
+}
+
+.service-button:hover {
+  background-color: #0e7490;
+}
+
+/* Opportunities Grid */
+.opportunities-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .opportunities-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Opportunity Info */
+.opportunity-info {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.opportunity-info:last-of-type {
+  margin-bottom: 1rem;
+}
+
+/* Opportunity Button */
+.opportunity-button {
+  width: 100%;
+  background-color: #2563eb;
+}
+
+.opportunity-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsividade Mobile */
+@media (max-width: 640px) {
+  .entrepreneur-dashboard-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .opportunities-grid {
+    grid-template-columns: 1fr;
+  }
+}

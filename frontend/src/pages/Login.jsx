@@ -16,34 +16,34 @@ export function Login() {
     setError(""); 
 
     try { 
-      console.log('=== 📝 INICIANDO LOGIN ===');
+      console.log('===  INICIANDO LOGIN ===');
       const data = await login(identifier, password);
-      console.log('=== 🎯 LOGIN RETORNOU ===');
+      console.log('===  LOGIN RETORNOU ===');
       console.log('Dados completos:', data);
       
       // Tenta diferentes variações do campo tipo
       const tipoPessoa = data?.tipo || data?.tipo_pessoa || data?.type;
-      console.log('🏷️ Tipo detectado:', tipoPessoa);
+      console.log(' Tipo detectado:', tipoPessoa);
       
       // Aguarda um pouco antes de redirecionar
       await new Promise(resolve => setTimeout(resolve, 200));
       
       // Redireciona para o dashboard específico do tipo de usuário
       if (tipoPessoa === "student") {
-        console.log('✅ Redirecionando para /dashboard/estudante');
+        console.log(' Redirecionando para /dashboard/estudante');
         navigate("/dashboard/estudante");
       } else if (tipoPessoa === "entrepreneur") {
-        console.log('✅ Redirecionando para /dashboard/microempreendedor');
-        navigate("/dashboard/microempreendedor");
+        console.log(' Redirecionando para /dashboard/empreendedor');
+        navigate("/dashboard/empreendedor");
       } else if (tipoPessoa === "company") {
-        console.log('✅ Redirecionando para /dashboard/empresa');
+        console.log(' Redirecionando para /dashboard/empresa');
         navigate("/dashboard/empresa");
       } else {
-        console.log('⚠️ Tipo não identificado:', tipoPessoa);
+        console.log(' Tipo não identificado:', tipoPessoa);
         navigate('/perfil');
       }
     } catch (err) { 
-      console.error('❌ Erro no login:', err);
+      console.error(' Erro no login:', err);
       setError(err.message || 'Falha no login'); 
     } 
   };  

@@ -12,6 +12,7 @@ import { PersonalityTest } from "./pages/PersonalityTest";
 import {Feedback} from "./pages/Feedback";
 import { EntrepreneurServices } from "./pages/EntrepreneurServices";
 import {StudentDashboard} from "./pages/StudentDashboard";
+import {EntrepreneurDashboard} from"./pages/EntrepreneurDashboard"
 import { useAuth } from "./context/AuthContext";
 
 // Componente que redireciona usuários logados para seus respectivos dashboards
@@ -55,6 +56,7 @@ function App() {
         <Route path="/avaliacoes" element={<Feedback/>} /> 
         <Route path="/meus-servicos" element={<EntrepreneurServices />} />
         <Route path="/dashboard/estudante" element={<StudentDashboard/>} /> 
+        <Route path="/dashboard/empreendedor" element={<EntrepreneurDashboard/>}/> 
         
       </Routes>
     </>
