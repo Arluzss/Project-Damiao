@@ -26,41 +26,59 @@ function Header() {
             <Link className={isActive("/") ? "active" : ""} to="/">
               Início
             </Link>
-            <Link className={isActive("/cursos") ? "active" : ""} to="/cursos">
-              Cursos
-            </Link>
-            <Link
-              className={isActive("/microempreendedores") ? "active" : ""}
-              to="/microempreendedores"
-            >
-              Microempreendedores
-            </Link>
-            <Link className={isActive("/empresas") ? "active" : ""} to="/empresas">
-              Empresas
-            </Link>
+            
+            {/* Cursos: apenas para estudantes e microempreendedores */}
+            {(!user || user.tipo === "student" || user.tipo === "entrepreneur") && (
+              <Link className={isActive("/cursos") ? "active" : ""} to="/cursos">
+                Cursos
+              </Link>
+            )}
+            
+            {/* Microempreendedores: apenas para microempreendedores */}
+            {(!user || user.tipo === "entrepreneur") && (
+              <Link
+                className={isActive("/empreendedores") ? "active" : ""}
+                to="/empreendedores"
+              >
+                Microempreendedores
+              </Link>
+            )}
+            
+            {/* Empresas: para empresas e microempreendedores */}
+            {(!user || user.tipo === "company" || user.tipo === "entrepreneur") && (
+              <Link className={isActive("/empresas") ? "active" : ""} to="/empresas">
+                Empresas
+              </Link>
+            )}
 
-            {user && (
-              <>
-                <Link className={isActive("/loja") ? "active" : ""} to="/loja">
-                  Loja
-                </Link>
-                <Link
-                  className={isActive("/avaliacoes") ? "active" : ""}
-                  to="/avaliacoes"
-                >
-                  Avaliações
-                </Link>
-              </>
+            {/* Loja: apenas para usuários autenticados (estudantes e microempreendedores) */}
+            {user && (user.tipo === "student" || user.tipo === "entrepreneur") && (
+              <Link className={isActive("/loja") ? "active" : ""} to="/loja">
+                Loja
+              </Link>
+            )}
+            
+            {/* Avaliações: apenas para estudantes */}
+            {user && user.tipo === "student" && (
+              <Link
+                className={isActive("/avaliacoes") ? "active" : ""}
+                to="/avaliacoes"
+              >
+                Avaliações
+              </Link>
             )}
           </nav>
 
           <div className="actions">
             {user ? (
               <>
-                <div className="coins">
-                  <Coins />
-                  <span>{user.damiao ?? 0} Damiões</span>
-                </div>
+                {/* Damiões: apenas para estudantes e microempreendedores */}
+                {(user.tipo === "student" || user.tipo === "entrepreneur") && (
+                  <div className="coins">
+                    <Coins />
+                    <span>{user.damiao ?? 0} Damiões</span>
+                  </div>
+                )}
 
                 <Link to="/perfil">
                   <Button variant="ghost" size="sm">

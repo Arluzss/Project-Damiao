@@ -14,6 +14,7 @@ import { EntrepreneurServices } from "./pages/EntrepreneurServices";
 import {StudentDashboard} from "./pages/StudentDashboard";
 import {EntrepreneurDashboard} from"./pages/EntrepreneurDashboard"
 import { useAuth } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Componente que redireciona usuários logados para seus respectivos dashboards
 function HomeRoute() {
@@ -43,20 +44,109 @@ function App() {
     <>
       <Header />
       <Routes>
-        {/* Home redireciona usuários logados para seus dashboards */}
+        {/* Rotas públicas */}
         <Route path="/" element={<HomeRoute />} />
         <Route path="/registro" element={<Register/>} />
         <Route path="/entrar" element={<Login/>} />  
-        <Route path="/microempreendedores" element={<Entrepreneurs/>} /> 
-        <Route path="/empresas" element={<Companies/>} /> 
-        <Route path="/cursos" element={<Courses/>} />
-        <Route path="/perfil" element={<Profile/>} />
-        <Route path="/loja" element={<Store/>} />
-        <Route path="/teste-perfil" element={<PersonalityTest/>} /> 
-        <Route path="/avaliacoes" element={<Feedback/>} /> 
-        <Route path="/meus-servicos" element={<EntrepreneurServices />} />
-        <Route path="/dashboard/estudante" element={<StudentDashboard/>} /> 
-        <Route path="/dashboard/empreendedor" element={<EntrepreneurDashboard/>}/> 
+        
+        {/* Rota apenas para Microempreendedores */}
+        <Route 
+          path="/empreendedores" 
+          element={
+            <ProtectedRoute allowedRoles={["entrepreneur"]}>
+              <Entrepreneurs/>
+            </ProtectedRoute>
+          } 
+        /> 
+        
+        {/* Rotas para Empresas e Microempreendedores */}
+        <Route 
+          path="/empresas" 
+          element={
+            <ProtectedRoute allowedRoles={["company", "entrepreneur"]}>
+              <Companies/>
+            </ProtectedRoute>
+          } 
+        /> 
+        
+        {/* Rotas para Estudantes e Microempreendedores */}
+        <Route 
+          path="/cursos" 
+          element={
+            <ProtectedRoute allowedRoles={["student", "entrepreneur"]}>
+              <Courses/>
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Rotas para todos usuários autenticados */}
+        <Route 
+          path="/perfil" 
+          element={
+            <ProtectedRoute allowedRoles={["student", "entrepreneur", "company"]}>
+              <Profile/>
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Rotas para Estudantes e Microempreendedores */}
+        <Route 
+          path="/loja" 
+          element={
+            <ProtectedRoute allowedRoles={["student", "entrepreneur"]}>
+              <Store/>
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Rota apenas para Estudantes */}
+        <Route 
+          path="/teste-perfil" 
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <PersonalityTest/>
+            </ProtectedRoute>
+          } 
+        /> 
+        
+        {/* Rota apenas para Estudantes */}
+        <Route 
+          path="/avaliacoes" 
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <Feedback/>
+            </ProtectedRoute>
+          } 
+        /> 
+        
+        {/* Rota apenas para Microempreendedores */}
+        <Route 
+          path="/meus-servicos" 
+          element={
+            <ProtectedRoute allowedRoles={["entrepreneur"]}>
+              <EntrepreneurServices />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Dashboards específicos por role */}
+        <Route 
+          path="/dashboard/estudante" 
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <StudentDashboard/>
+            </ProtectedRoute>
+          } 
+        /> 
+        
+        <Route 
+          path="/dashboard/empreendedor" 
+          element={
+            <ProtectedRoute allowedRoles={["entrepreneur"]}>
+              <EntrepreneurDashboard/>
+            </ProtectedRoute>
+          } 
+        /> 
         
       </Routes>
     </>
