@@ -103,7 +103,7 @@ export function EntrepreneurDashboard() {
                     <FileText className="action-icon action-icon-blue" />
                     <CardTitle>Demandas</CardTitle>
                     <CardDescription>
-                      Veja oportunidades publicadas por empresas
+                      Veja oportunidades publicadas
                     </CardDescription>
                   </CardHeader>
                 </Card>

@@ -77,7 +77,7 @@ export function StudentDashboard() {
                     <GraduationCap className="icon-large icon-blue" />
                     <CardTitle>Meus Cursos</CardTitle>
                     <CardDescription>
-                      Acesse seus cursos e continue aprendendo
+                      Acesse seus cursos
                     </CardDescription>
                   </CardHeader>
                 </Card>
@@ -118,62 +118,6 @@ export function StudentDashboard() {
                   </CardHeader>
                 </Card>
               </Link>
-            </div>
-          </div>
-
-          {/* Featured Courses */}
-          <div className="section">
-            <div className="section-header">
-              <h2 className="section-title">Cursos Recomendados</h2>
-              <Link to="/cursos">
-                <Button variant="outline">Ver Todos</Button>
-              </Link>
-            </div>
-            <div className="courses-grid">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Introdução ao Marketing Digital</CardTitle>
-                  <CardDescription>12 aulas • 8 horas</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="course-description">
-                    Aprenda os fundamentos do marketing digital e como aplicá-los.
-                  </p>
-                  <Button className="btn-course">
-                    Iniciar Curso
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestão Financeira Pessoal</CardTitle>
-                  <CardDescription>10 aulas • 6 horas</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="course-description">
-                    Controle suas finanças e planeje seu futuro financeiro.
-                  </p>
-                  <Button className="btn-course">
-                    Iniciar Curso
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Desenvolvimento Web Básico</CardTitle>
-                  <CardDescription>15 aulas • 10 horas</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="course-description">
-                    Crie seus primeiros sites com HTML, CSS e JavaScript.
-                  </p>
-                  <Button className="btn-course">
-                    Iniciar Curso
-                  </Button>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
