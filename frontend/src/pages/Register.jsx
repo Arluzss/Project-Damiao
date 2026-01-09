@@ -22,7 +22,7 @@ import "./Register.css";
 
 export function Register() { 
   const navigate = useNavigate(); 
-  const { register } = useAuth(); 
+  const { register, login } = useAuth(); 
 
   const [name, setName] = useState(""); 
   const [email, setEmail] = useState(""); 
@@ -59,16 +59,22 @@ export function Register() {
         senha: password,  
         email  
       }); 
-      
-      alert("Cadastro realizado com sucesso! Faça login para continuar."); 
-      
-      // Redireciona para o dashboard específico do tipo de usuário
-      if (userType === "student") {
-        navigate("/dashboard/estudante");
-      } else if (userType === "entrepreneur") {
-        navigate("/dashboard/microempreendedor");
-      } else if (userType === "company") {
-        navigate("/dashboard/empresa");
+
+      // Tenta logar automaticamente após o cadastro
+      try {
+        await login(documento, password);
+
+        if (userType === "student") {
+          navigate("/dashboard/estudante");
+        } else if (userType === "entrepreneur") {
+          navigate("/dashboard/microempreendedor");
+        } else if (userType === "company") {
+          navigate("/dashboard/empresa");
+        }
+      } catch (loginErr) {
+        console.error('Falha no auto-login:', loginErr);
+        alert("Cadastro realizado com sucesso! Faça login para continuar.");
+        navigate("/entrar");
       }
     } catch (err) { 
       alert(err.message || "Erro ao cadastrar"); 

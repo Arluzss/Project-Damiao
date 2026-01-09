@@ -72,7 +72,7 @@ export function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Link to="/microempreendedores">
+                  <Link to="/empreendedores">
                     <Button className="btn-cyan full">
                       Sou Microempreendedor
                     </Button>
