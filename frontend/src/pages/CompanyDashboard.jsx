@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Building2, FileText, Users, TrendingUp, PlusCircle, Search, BarChart } from "lucide-react";
+import { Building2, FileText, TrendingUp, PlusCircle, Search, Users } from "lucide-react";
 import "./CompanyDashboard.css";
 
 export function CompanyDashboard() {
@@ -62,19 +62,8 @@ export function CompanyDashboard() {
                 <FileText className="stats-icon stats-icon-blue" />
               </CardHeader>
               <CardContent>
-                <div className="stats-number">5</div>
+                <div className="stats-number">0</div>
                 <p className="stats-text">Em andamento</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="stats-card-header">
-                <CardTitle className="stats-card-title">Propostas Recebidas</CardTitle>
-                <Users className="stats-icon stats-icon-cyan" />
-              </CardHeader>
-              <CardContent>
-                <div className="stats-number">12</div>
-                <p className="stats-text">Aguardando análise</p>
               </CardContent>
             </Card>
 
@@ -84,19 +73,8 @@ export function CompanyDashboard() {
                 <TrendingUp className="stats-icon stats-icon-green" />
               </CardHeader>
               <CardContent>
-                <div className="stats-number">23</div>
+                <div className="stats-number">0</div>
                 <p className="stats-text">Total histórico</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="stats-card-header">
-                <CardTitle className="stats-card-title">Avaliação Média</CardTitle>
-                <BarChart className="stats-icon stats-icon-yellow" />
-              </CardHeader>
-              <CardContent>
-                <div className="stats-number">4.8</div>
-                <p className="stats-text">De 5.0 estrelas</p>
               </CardContent>
             </Card>
           </div>
@@ -105,21 +83,6 @@ export function CompanyDashboard() {
           <div className="section">
             <h2 className="section-title">Acesso Rápido</h2>
             <div className="quick-actions-grid">
-              <Card className="action-card action-card-featured">
-                <CardHeader>
-                  <PlusCircle className="action-icon action-icon-blue" />
-                  <CardTitle>Publicar Demanda</CardTitle>
-                  <CardDescription>
-                    Crie uma nova demanda de serviço
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Link to="/empresas">
-                      <Button className="action-button">Nova Demanda</Button>
-                    </Link>
-                </CardContent>
-              </Card>
-
               <Link to="/microempreendedores" className="action-link">
                 <Card className="action-card">
                   <CardHeader>
@@ -143,16 +106,6 @@ export function CompanyDashboard() {
                   </CardHeader>
                 </Card>
               </Link>
-
-              <Card className="action-card">
-                <CardHeader>
-                  <Users className="action-icon action-icon-green" />
-                  <CardTitle>Propostas</CardTitle>
-                  <CardDescription>
-                    Analise propostas recebidas
-                  </CardDescription>
-                </CardHeader>
-              </Card>
             </div>
           </div>
 
