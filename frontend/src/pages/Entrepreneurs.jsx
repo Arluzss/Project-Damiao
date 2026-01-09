@@ -11,7 +11,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/Badge";
 import {Tabs,TabsContent,TabsList,TabsTrigger,} from "../components/ui/Tabs";
-import {Briefcase,MapPin,Star,Building2,DollarSign,MessageCircle,Instagram,Linkedin,} from "lucide-react";
+import {MapPin,Building2,DollarSign,MessageCircle,Instagram,Linkedin,} from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
 
@@ -164,11 +164,6 @@ export function Entrepreneurs() {
                       <CardDescription>
                         {e.service}
                       </CardDescription>
-
-                      <div className="rating">
-                        <Star size={16} />
-                        {e.rating}
-                      </div>
                     </CardHeader>
 
                     <CardContent>
@@ -180,10 +175,6 @@ export function Entrepreneurs() {
                         <span>
                           <MapPin size={14} />
                           {e.location}
-                        </span>
-                        <span>
-                          <Briefcase size={14} />
-                          {e.projects} projetos
                         </span>
                         <span>
                           <DollarSign size={14} />

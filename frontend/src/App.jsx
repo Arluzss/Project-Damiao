@@ -49,35 +49,10 @@ function App() {
         <Route path="/registro" element={<Register/>} />
         <Route path="/entrar" element={<Login/>} />  
         
-        {/* Rota apenas para Microempreendedores */}
-        <Route 
-          path="/empreendedores" 
-          element={
-            <ProtectedRoute allowedRoles={["entrepreneur"]}>
-              <Entrepreneurs/>
-            </ProtectedRoute>
-          } 
-        /> 
-        
-        {/* Rotas para Empresas e Microempreendedores */}
-        <Route 
-          path="/empresas" 
-          element={
-            <ProtectedRoute allowedRoles={["company", "entrepreneur"]}>
-              <Companies/>
-            </ProtectedRoute>
-          } 
-        /> 
-        
-        {/* Rotas para Estudantes e Microempreendedores */}
-        <Route 
-          path="/cursos" 
-          element={
-            <ProtectedRoute allowedRoles={["student", "entrepreneur"]}>
-              <Courses/>
-            </ProtectedRoute>
-          } 
-        />
+        {/* Rotas públicas - acessíveis sem login */}
+        <Route path="/empreendedores" element={<Entrepreneurs/>} /> 
+        <Route path="/empresas" element={<Companies/>} /> 
+        <Route path="/cursos" element={<Courses/>} />
         
         {/* Rotas para todos usuários autenticados */}
         <Route 
