@@ -19,12 +19,12 @@ export function EntrepreneurDashboard() {
 
   // Verifica se o usuário tem permissão para acessar este dashboard
   useEffect(() => {
-    if (user && user.tipo_pessoa !== "entrepreneur") {
+    if (user && user.tipo !== "entrepreneur") {
       // Redireciona para o dashboard correto baseado no tipo de usuário
-      if (user.tipo_pessoa === "student") {
+      if (user.tipo === "student") {
         navigate("/dashboard/estudante");
-      } else if (user.tipo_pessoa === "company") {
-        navigate("/dashboard/empresa");
+      } else if (user.tipo === "company") {
+        navigate("/");
       }
     }
   }, [user, navigate]);
@@ -77,17 +77,6 @@ export function EntrepreneurDashboard() {
               <CardContent>
                 <div className="stats-number">{user?.services?.length || 0}</div>
                 <p className="stats-text">Serviços cadastrados</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="stats-card-header">
-                <CardTitle className="stats-card-title">Visualizações</CardTitle>
-                <Eye className="stats-icon stats-icon-blue" />
-              </CardHeader>
-              <CardContent>
-                <div className="stats-number">{user?.views || 24}</div>
-                <p className="stats-text">Nos últimos 7 dias</p>
               </CardContent>
             </Card>
           </div>
@@ -187,71 +176,6 @@ export function EntrepreneurDashboard() {
                 </CardContent>
               </Card>
             )}
-          </div>
-
-          {/* Recent Opportunities */}
-          <div className="section">
-            <div className="section-header">
-              <h2 className="section-title">Oportunidades Recentes</h2>
-              <Link to="/empresas">
-                <Button variant="outline">Ver Todas</Button>
-              </Link>
-            </div>
-            <div className="opportunities-grid">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Desenvolvimento de Site Institucional</CardTitle>
-                  <CardDescription>Tech Solutions LTDA</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="opportunity-info">
-                    <strong>Categoria:</strong> Desenvolvimento Web
-                  </p>
-                  <p className="opportunity-info">
-                    <strong>Orçamento:</strong> R$ 3.000 - R$ 5.000
-                  </p>
-                  <Button className="opportunity-button">
-                    Ver Detalhes
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestão de Redes Sociais</CardTitle>
-                  <CardDescription>Marketing Pro</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="opportunity-info">
-                    <strong>Categoria:</strong> Marketing Digital
-                  </p>
-                  <p className="opportunity-info">
-                    <strong>Orçamento:</strong> R$ 1.500/mês
-                  </p>
-                  <Button className="opportunity-button">
-                    Ver Detalhes
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Design de Logo e Identidade Visual</CardTitle>
-                  <CardDescription>StartUp Inovadora</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="opportunity-info">
-                    <strong>Categoria:</strong> Design Gráfico
-                  </p>
-                  <p className="opportunity-info">
-                    <strong>Orçamento:</strong> R$ 800 - R$ 1.500
-                  </p>
-                  <Button className="opportunity-button">
-                    Ver Detalhes
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
       </main>
