@@ -75,9 +75,9 @@ export function StudentDashboard() {
                 <Card className="card-hover">
                   <CardHeader>
                     <GraduationCap className="icon-large icon-blue" />
-                    <CardTitle>Meus Cursos</CardTitle>
+                    <CardTitle>Cursos</CardTitle>
                     <CardDescription>
-                      Acesse seus cursos
+                      Se inscreva em cursos
                     </CardDescription>
                   </CardHeader>
                 </Card>
