@@ -16,6 +16,8 @@ import {EntrepreneurDashboard} from"./pages/EntrepreneurDashboard"
 import { useAuth } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
+import {CompanyDashboard} from './pages/CompanyDashboard';
+
 // Componente que redireciona usuários logados para seus respectivos dashboards
 function HomeRoute() {
   const { user } = useAuth();
@@ -68,7 +70,7 @@ function App() {
         <Route 
           path="/loja" 
           element={
-            <ProtectedRoute allowedRoles={["student", "entrepreneur"]}>
+            <ProtectedRoute allowedRoles={["student", "entrepreneur", "company"]}>
               <Store/>
             </ProtectedRoute>
           } 
@@ -88,7 +90,7 @@ function App() {
         <Route 
           path="/avaliacoes" 
           element={
-            <ProtectedRoute allowedRoles={["student"]}>
+            <ProtectedRoute allowedRoles={["student", "company"]}>
               <Feedback/>
             </ProtectedRoute>
           } 
@@ -122,9 +124,22 @@ function App() {
             </ProtectedRoute>
           } 
         /> 
+
+        {/* Dashboard da Empresa - ADICIONADO */}
+        <Route 
+          path="/dashboard/empresa" 
+          element={
+            <ProtectedRoute allowedRoles={["company"]}>
+              <CompanyDashboard/>
+            </ProtectedRoute>
+          } 
+        />
         
+        {/* Rota 404 - Não encontrado */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
+      
   );
 }
 

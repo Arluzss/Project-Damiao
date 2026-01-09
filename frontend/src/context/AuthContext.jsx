@@ -58,29 +58,35 @@ export function AuthProvider({ children }) {
       });
 
       const data = await res.json();
-      console.log('🔍 Resposta do servidor:', data);
+      console.log(' Resposta do servidor:', data);
       
       if (!res.ok) throw new Error(data.error || 'Falha no login');
 
       // Trata diferentes formatos de resposta
       const userData = data.usuario || data.user || data;
-      console.log('👤 Dados do usuário processados:', userData);
-      console.log('🔑 Chaves disponíveis:', Object.keys(userData || {}));
+      // Normaliza o campo de tipo para suportar 'tipo' ou 'tipo_pessoa'
+      const normalizedUser = {
+        ...(userData || {}),
+        tipo: userData?.tipo || userData?.tipo_pessoa,
+        tipo_pessoa: userData?.tipo_pessoa || userData?.tipo,
+      };
+      console.log(' Dados do usuário processados:', normalizedUser);
+      console.log(' Chaves disponíveis:', Object.keys(normalizedUser || {}));
       
       // Log detalhado de cada chave e valor
-      console.log('📋 Detalhes das chaves:');
+      console.log(' Detalhes das chaves:');
       Object.keys(userData || {}).forEach(key => {
         console.log(`  - ${key}: ${userData[key]}`);
       });
       
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
-      // Atualiza o estado
+      localStorage.setItem('user', JSON.stringify(normalizedUser));
+
+      // Atualiza o estado com usuário normalizado
       setToken(data.token);
-      setUser(userData);
-      
-      console.log('✅ Login bem-sucedido. Tipo:', userData?.tipo);
+      setUser(normalizedUser);
+
+      console.log(' Login bem-sucedido. Tipo:', normalizedUser?.tipo);
 
       // Aguarda o estado ser atualizado
       await new Promise(resolve => setTimeout(resolve, 150));
@@ -199,8 +205,13 @@ export function AuthProvider({ children }) {
       if (!res.ok) throw new Error(data?.error || 'Falha ao buscar perfil');
 
       const userData = data.usuario ?? data;
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+      const normalizedUser = {
+        ...(userData || {}),
+        tipo: userData?.tipo || userData?.tipo_pessoa,
+        tipo_pessoa: userData?.tipo_pessoa || userData?.tipo,
+      };
+      setUser(normalizedUser);
+      localStorage.setItem('user', JSON.stringify(normalizedUser));
       if (!token) setToken(currentToken);
       return userData;
     } finally {

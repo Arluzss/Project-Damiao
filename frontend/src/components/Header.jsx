@@ -34,8 +34,8 @@ function Header() {
               </Link>
             )}
             
-            {/* Microempreendedores: apenas para microempreendedores */}
-            {(!user || user.tipo === "entrepreneur") && (
+            {/* Microempreendedores: visível para público, microempreendedores e empresas */}
+            {(!user || user.tipo === "entrepreneur" || user.tipo === "company") && (
               <Link
                 className={isActive("/empreendedores") ? "active" : ""}
                 to="/empreendedores"
@@ -51,15 +51,15 @@ function Header() {
               </Link>
             )}
 
-            {/* Loja: apenas para usuários autenticados (estudantes e microempreendedores) */}
-            {user && (user.tipo === "student" || user.tipo === "entrepreneur") && (
+            {/* Loja: disponível para estudantes, microempreendedores e empresas */}
+            {user && (user.tipo === "student" || user.tipo === "entrepreneur" || user.tipo === "company") && (
               <Link className={isActive("/loja") ? "active" : ""} to="/loja">
                 Loja
               </Link>
             )}
             
             {/* Avaliações: apenas para estudantes */}
-            {user && user.tipo === "student" && (
+            {user && (user.tipo === "student" || user.tipo === "company") && (
               <Link
                 className={isActive("/avaliacoes") ? "active" : ""}
                 to="/avaliacoes"
@@ -72,8 +72,8 @@ function Header() {
           <div className="actions">
             {user ? (
               <>
-                {/* Damiões: apenas para estudantes e microempreendedores */}
-                {(user.tipo === "student" || user.tipo === "entrepreneur") && (
+                {/* Damiões: disponível para estudantes, microempreendedores e empresas */}
+                {(user.tipo === "student" || user.tipo === "entrepreneur" || user.tipo === "company") && (
                   <div className="coins">
                     <Coins />
                     <span>{user.damiao ?? 0} Damiões</span>
