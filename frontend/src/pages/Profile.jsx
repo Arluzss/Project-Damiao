@@ -161,7 +161,7 @@ export function Profile() {
                               <Badge variant="outline">Em Andamento</Badge>
                             </div>
                             <Progress value={45} className="profile-course-progress" />
-                            <p className="profile-course-percentage">45% concluído</p>
+                            <p className="profile-course-percentage">0% concluído</p>
                           </div>
                         ))}
                       </div>

@@ -1,14 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Building2, FileText, TrendingUp, PlusCircle, Search, Users } from "lucide-react";
+import { toast } from "sonner";
+import { Toaster } from "../components/ui/Sonner";
 import "./CompanyDashboard.css";
 
 export function CompanyDashboard() {
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   const navigate = useNavigate();
+  const [demands, setDemands] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Verifica se o usuário está autenticado
   useEffect(() => {
@@ -29,6 +33,31 @@ export function CompanyDashboard() {
     }
   }, [user, navigate]);
 
+  // Carregar demandas da empresa
+  useEffect(() => {
+    if (user?.tipo === "company") {
+      loadDemands();
+    }
+  }, [user?.id, user?.tipo]);
+
+  async function loadDemands() {
+    setLoading(true);
+    try {
+      const res = await authFetch('/ofertas?tipo=DEMANDA');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro ao carregar demandas');
+      
+      // Filtrar apenas demandas da empresa logada
+      const minhasDemandas = data.filter(d => d.autorUsuarioId === user.id);
+      setDemands(minhasDemandas);
+    } catch (err) {
+      console.error('Erro ao carregar demandas:', err);
+      toast.error('Erro ao carregar demandas');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Exibe loading enquanto verifica autenticação
   if (!user) {
     return (
@@ -42,7 +71,7 @@ export function CompanyDashboard() {
 
   return (
     <div className="company-dashboard-container">
-     
+      <Toaster />
       
       <main className="company-dashboard-main">
         <div className="company-dashboard-content">
@@ -62,7 +91,7 @@ export function CompanyDashboard() {
                 <FileText className="stats-icon stats-icon-blue" />
               </CardHeader>
               <CardContent>
-                <div className="stats-number">0</div>
+                <div className="stats-number">{demands.length}</div>
                 <p className="stats-text">Em andamento</p>
               </CardContent>
             </Card>
@@ -112,7 +141,7 @@ export function CompanyDashboard() {
           {/* Active Demands */}
           <div className="section">
             <div className="section-header">
-              <h2 className="section-title">Demandas Ativas</h2>
+              <h2 className="section-title">Minhas Demandas</h2>
               <Link to="/empresas">
                 <Button className="new-demand-button">
                   <PlusCircle className="button-icon" />
@@ -120,121 +149,53 @@ export function CompanyDashboard() {
                 </Button>
               </Link>
             </div>
-            <div className="demands-grid">
+            {loading ? (
               <Card>
-                <CardHeader>
-                  <div className="demand-header">
-                    <div>
-                      <CardTitle>Desenvolvimento de Site Institucional</CardTitle>
-                      <CardDescription>Publicado há 3 dias</CardDescription>
-                    </div>
-                    <span className="badge badge-active">
-                      Ativa
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="demand-info">
-                    <strong>Categoria:</strong> Desenvolvimento Web
-                  </p>
-                  <p className="demand-info">
-                    <strong>Orçamento:</strong> R$ 3.000 - R$ 5.000
-                  </p>
-                  <p className="demand-info-proposals">
-                    <strong>Propostas:</strong> 8 recebidas
-                  </p>
-                  <Button className="demand-button" variant="outline">
-                    Ver Propostas
-                  </Button>
+                <CardContent style={{ padding: '2rem', textAlign: 'center' }}>
+                  <p>Carregando demandas...</p>
                 </CardContent>
               </Card>
-
+            ) : demands.length === 0 ? (
               <Card>
-                <CardHeader>
-                  <div className="demand-header">
-                    <div>
-                      <CardTitle>Gestão de Redes Sociais</CardTitle>
-                      <CardDescription>Publicado há 1 semana</CardDescription>
-                    </div>
-                    <span className="badge badge-active">
-                      Ativa
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="demand-info">
-                    <strong>Categoria:</strong> Marketing Digital
-                  </p>
-                  <p className="demand-info">
-                    <strong>Orçamento:</strong> R$ 1.500/mês
-                  </p>
-                  <p className="demand-info-proposals">
-                    <strong>Propostas:</strong> 4 recebidas
-                  </p>
-                  <Button className="demand-button" variant="outline">
-                    Ver Propostas
-                  </Button>
+                <CardContent style={{ padding: '2rem', textAlign: 'center' }}>
+                  <Building2 size={64} style={{ margin: '0 auto 1rem', color: '#9ca3af' }} />
+                  <p>Você ainda não criou nenhuma demanda.</p>
+                  <Link to="/empresas">
+                    <Button style={{ marginTop: '1rem' }}>Criar Primeira Demanda</Button>
+                  </Link>
                 </CardContent>
               </Card>
-            </div>
-          </div>
-
-          {/* Recent Proposals */}
-          <div className="section">
-            <h2 className="section-title">Propostas Recentes</h2>
-            <Card>
-              <CardContent className="proposals-content">
-                <div className="proposals-list">
-                  <div className="proposal-item">
-                    <div className="proposal-info">
-                      <div className="proposal-avatar proposal-avatar-blue">
-                        <Users className="proposal-avatar-icon" />
+            ) : (
+              <div className="demands-grid">
+                {demands.map((demand) => (
+                  <Card key={demand.id}>
+                    <CardHeader>
+                      <div className="demand-header">
+                        <div>
+                          <CardTitle>{demand.titulo}</CardTitle>
+                        </div>
+                        <span className={`badge ${demand.ativa ? 'badge-active' : 'badge-inactive'}`}>
+                          {demand.ativa ? 'Ativa' : 'Inativa'}
+                        </span>
                       </div>
-                      <div>
-                        <h3 className="proposal-name">João Silva - Web Designer</h3>
-                        <p className="proposal-description">Proposta para: Design de Logo</p>
-                      </div>
-                    </div>
-                    <div className="proposal-actions">
-                      <Button size="sm" variant="outline">Ver Detalhes</Button>
-                      <Button size="sm" className="proposal-accept-button">Aceitar</Button>
-                    </div>
-                  </div>
-
-                  <div className="proposal-item">
-                    <div className="proposal-info">
-                      <div className="proposal-avatar proposal-avatar-cyan">
-                        <Users className="proposal-avatar-icon" />
-                      </div>
-                      <div>
-                        <h3 className="proposal-name">Maria Santos - Desenvolvedora</h3>
-                        <p className="proposal-description">Proposta para: Site Institucional</p>
-                      </div>
-                    </div>
-                    <div className="proposal-actions">
-                      <Button size="sm" variant="outline">Ver Detalhes</Button>
-                      <Button size="sm" className="proposal-accept-button">Aceitar</Button>
-                    </div>
-                  </div>
-
-                  <div className="proposal-item proposal-item-last">
-                    <div className="proposal-info">
-                      <div className="proposal-avatar proposal-avatar-purple">
-                        <Users className="proposal-avatar-icon" />
-                      </div>
-                      <div>
-                        <h3 className="proposal-name">Carlos Oliveira - Social Media</h3>
-                        <p className="proposal-description">Proposta para: Gestão de Redes Sociais</p>
-                      </div>
-                    </div>
-                    <div className="proposal-actions">
-                      <Button size="sm" variant="outline">Ver Detalhes</Button>
-                      <Button size="sm" className="proposal-accept-button">Aceitar</Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="demand-description">{demand.descricao}</p>
+                      {demand.categoria && (
+                        <p className="demand-info">
+                          <strong>Categoria:</strong> {demand.categoria.nome}
+                        </p>
+                      )}
+                      {demand.propriedades?.budget && (
+                        <p className="demand-info">
+                          <strong>Orçamento:</strong> {demand.propriedades.budget}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>

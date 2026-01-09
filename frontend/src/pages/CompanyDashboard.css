@@ -243,19 +243,20 @@
   color: #15803d;
 }
 
+/* Demand Description */
+.demand-description {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
 /* Demand Info */
 .demand-info {
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: #4b5563;
   margin-bottom: 0.5rem;
-}
-
-.demand-info-proposals {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  color: #4b5563;
-  margin-bottom: 1rem;
 }
 
 /* Demand Button */

@@ -24,7 +24,7 @@ const entrepreneurs = [
     service: "Design Gráfico",
     description:
       "Criação de identidades visuais, logos e materiais de marketing",
-    location: "São Paulo, SP",
+    location: "Igarassu, PE",
     rating: 4.9,
     projects: 45,
     price: "R$ 500 - R$ 2.000",
@@ -38,7 +38,7 @@ const entrepreneurs = [
     service: "Desenvolvimento Web",
     description:
       "Sites responsivos, lojas virtuais e aplicativos web",
-    location: "Rio de Janeiro, RJ",
+    location: "Igarassu, PE",
     rating: 4.8,
     projects: 32,
     price: "R$ 1.500 - R$ 5.000",
@@ -52,7 +52,7 @@ const entrepreneurs = [
     service: "Marketing Digital",
     description:
       "Gestão de redes sociais, campanhas e estratégias de conteúdo",
-    location: "Belo Horizonte, MG",
+    location: "Igarassu, PE",
     rating: 4.7,
     projects: 28,
     price: "R$ 800 - R$ 3.000",
