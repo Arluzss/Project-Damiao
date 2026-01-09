@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "sonner";
 
 import {
   Card,
@@ -53,11 +54,13 @@ const categories = [
 
 export function EntrepreneurServices() {
   const navigate = useNavigate();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, authFetch } = useAuth();
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingServices, setLoadingServices] = useState(true);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -75,6 +78,43 @@ export function EntrepreneurServices() {
     linkedin: user?.linkedin || "",
   });
 
+  // Carregar serviços ao montar
+  useEffect(() => {
+    if (user?.tipo === "entrepreneur") {
+      loadServices();
+    }
+  }, [user?.id, user?.tipo]);
+
+  async function loadServices() {
+    setLoadingServices(true);
+    try {
+      const res = await authFetch('/ofertas?tipo=SERVICO');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro ao carregar serviços');
+      
+      // Filtrar apenas serviços do usuário
+      const meus = data.filter(s => s.autorUsuarioId === user.id);
+      
+      // Converter para formato do frontend
+      const converted = meus.map(s => ({
+        id: s.id,
+        title: s.titulo,
+        description: s.descricao,
+        category: s.propriedades?.category || s.categoria?.nome || '',
+        location: s.propriedades?.location || '',
+        availability: s.propriedades?.availability || '',
+        isRemote: s.propriedades?.isRemote || false
+      }));
+      
+      setServices(converted);
+    } catch (err) {
+      console.error('Erro ao carregar serviços:', err);
+      toast.error('Erro ao carregar serviços');
+    } finally {
+      setLoadingServices(false);
+    }
+  }
+
   if (!user) {
     return (
       <div className="page-container">
@@ -88,10 +128,9 @@ export function EntrepreneurServices() {
     );
   }
 
-  if (user.type !== "entrepreneur") {
+  if (user.tipo !== "entrepreneur") {
     return (
       <div className="page-container">
-        <Header />
         <main className="center-box">
           <Briefcase size={80} className="icon-muted" />
           <h1>Acesso restrito a microempreendedores</h1>
@@ -102,46 +141,109 @@ export function EntrepreneurServices() {
     );
   }
 
-  function handleSubmitService(e) {
+  async function handleSubmitService(e) {
     e.preventDefault();
+    setLoading(true);
 
-    if (editingId) {
-      setServices(
-        services.map((s) =>
-          s.id === editingId ? { ...formData, id: editingId } : s
-        )
-      );
-      toast.success("Serviço atualizado com sucesso!");
-      setEditingId(null);
-    } else {
-      setServices([
-        ...services,
-        { id: Date.now().toString(), ...formData },
-      ]);
-      toast.success("Serviço cadastrado com sucesso!");
+    try {
+      const payload = {
+        titulo: formData.title,
+        descricao: formData.description,
+        tipo: "SERVICO",
+        categoriaId: 1, // Categoria genérica, pode melhorar depois
+        propriedades: {
+          category: formData.category,
+          location: formData.location,
+          availability: formData.availability,
+          isRemote: formData.isRemote
+        },
+        ativa: true
+      };
+
+      if (editingId) {
+        // Editar serviço
+        const res = await authFetch(`/ofertas/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Erro ao atualizar serviço');
+        }
+        
+        toast.success("Serviço atualizado com sucesso!");
+        setEditingId(null);
+      } else {
+        // Criar novo serviço
+        payload.autorUsuarioId = user.id;
+        
+        const res = await authFetch('/ofertas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Erro ao cadastrar serviço');
+        }
+        
+        toast.success("Serviço cadastrado com sucesso!");
+      }
+
+      // Limpar formulário e recarregar lista
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        location: "",
+        availability: "",
+        isRemote: false,
+      });
+      
+      setShowForm(false);
+      await loadServices();
+      
+    } catch (err) {
+      toast.error(err.message || 'Erro ao salvar serviço');
+    } finally {
+      setLoading(false);
     }
-
-    setFormData({
-      title: "",
-      description: "",
-      category: "",
-      location: "",
-      availability: "",
-      isRemote: false,
-    });
-
-    setShowForm(false);
   }
 
   function handleEdit(service) {
-    setFormData(service);
+    setFormData({
+      title: service.title,
+      description: service.description,
+      category: service.category,
+      location: service.location,
+      availability: service.availability,
+      isRemote: service.isRemote
+    });
     setEditingId(service.id);
     setShowForm(true);
   }
 
-  function handleDelete(id) {
-    setServices(services.filter((s) => s.id !== id));
-    toast.success("Serviço removido com sucesso!");
+  async function handleDelete(id) {
+    if (!confirm('Tem certeza que deseja excluir este serviço?')) return;
+    
+    try {
+      const res = await authFetch(`/ofertas/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Erro ao excluir serviço');
+      }
+      
+      setServices(services.filter((s) => s.id !== id));
+      toast.success("Serviço removido com sucesso!");
+    } catch (err) {
+      toast.error(err.message || 'Erro ao excluir serviço');
+    }
   }
 
   function handleSaveContacts() {
@@ -283,8 +385,8 @@ export function EntrepreneurServices() {
                     </div>
 
                     <div className="form-actions">
-                      <Button type="submit">
-                        {editingId ? "Atualizar" : "Cadastrar"}
+                      <Button type="submit" disabled={loading}>
+                        {loading ? "Salvando..." : (editingId ? "Atualizar" : "Cadastrar")}
                       </Button>
                       <Button
                         type="button"
@@ -299,6 +401,22 @@ export function EntrepreneurServices() {
               </Card>
             )}
 
+            {loadingServices ? (
+              <Card>
+                <CardContent style={{ padding: '2rem', textAlign: 'center' }}>
+                  <p>Carregando serviços...</p>
+                </CardContent>
+              </Card>
+            ) : services.length === 0 ? (
+              <Card>
+                <CardContent style={{ padding: '2rem', textAlign: 'center' }}>
+                  <Briefcase size={48} style={{ opacity: 0.3, margin: '0 auto 1rem' }} />
+                  <p>Nenhum serviço cadastrado ainda.</p>
+                  <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>Clique em "Novo Serviço" para começar.</p>
+                </CardContent>
+              </Card>
+            ) : null}
+            
             {services.map((service) => (
               <Card key={service.id}>
                 <CardHeader className="service-header">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -12,24 +12,55 @@ import { Toaster } from "../components/ui/Sonner";
 import "./Feedback.css";
 
 const feedbackData = [
-  { id: "1", user: "Carlos Oliveira", course: "Desenvolvimento Web Full Stack", rating: 5, comment: "Excelente curso! Os professores são muito capacitados e o conteúdo é muito prático.", date: "10/12/2024" },
-  { id: "2", user: "Ana Paula", course: "Gestão de Negócios", rating: 5, comment: "Transformou completamente minha visão sobre gestão. Recomendo muito!", date: "08/12/2024" },
-  { id: "3", user: "Roberto Silva", course: "Design Gráfico e UX/UI", rating: 4, comment: "Muito bom! Aprendi bastante sobre Figma e UX. Poderia ter mais exercícios práticos.", date: "05/12/2024" },
+  {
+    id: "1",
+    user: "Carlos Oliveira",
+    course: "Desenvolvimento Web Full Stack",
+    rating: 5,
+    comment: "Excelente curso! Os professores são muito capacitados e o conteúdo é muito prático.",
+    date: "10/12/2024",
+  },
+  {
+    id: "2",
+    user: "Ana Paula",
+    course: "Gestão de Negócios",
+    rating: 5,
+    comment: "Transformou completamente minha visão sobre gestão. Recomendo muito!",
+    date: "08/12/2024",
+  },
+  {
+    id: "3",
+    user: "Roberto Silva",
+    course: "Design Gráfico e UX/UI",
+    rating: 4,
+    comment: "Muito bom! Aprendi bastante sobre Figma e UX. Poderia ter mais exercícios práticos.",
+    date: "05/12/2024",
+  },
 ];
 
 const highlights = [
-  { name: "Maria Fernanda", achievement: "Melhor aluna em Desenvolvimento Web", damiao: 500 },
-  { name: "Lucas Mendes", achievement: "100% de frequência - 3 meses", damiao: 300 },
-  { name: "Juliana Costa", achievement: "Primeiro projeto entregue", damiao: 250 },
+  {
+    name: "Maria Fernanda",
+    achievement: "Melhor aluna em Desenvolvimento Web",
+    damiao: 500,
+  },
+  {
+    name: "Lucas Mendes",
+    achievement: "100% de frequência - 3 meses",
+    damiao: 300,
+  },
+  {
+    name: "Juliana Costa",
+    achievement: "Primeiro projeto entregue",
+    damiao: 250,
+  },
 ];
 
 export function Feedback() {
-  const { user, updateUser } = useAuth();
-  const { authFetch, addPoints } = useAuth();
+  const { user, addPoints } = useAuth();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [conexaoId, setConexaoId] = useState("");
-  const [avaliadoUsuarioId, setAvaliadoUsuarioId] = useState("");
+  const [sending, setSending] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,84 +68,74 @@ export function Feedback() {
       toast.error("Faça login para enviar feedback");
       return;
     }
+
     if (rating === 0) {
       toast.error("Selecione uma nota");
       return;
     }
 
+    setSending(true);
     try {
-      if (conexaoId && avaliadoUsuarioId) {
-        const res = await authFetch('/feedback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            conexaoId: Number(conexaoId),
-            avaliadoUsuarioId: Number(avaliadoUsuarioId),
-            nota: rating,
-            comentario: comment
-          })
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao enviar feedback');
-      }
-
+      // Adicionar pontos via backend (com proteção anti-abuso)
       await addPoints('feedback');
-
-      
-      if (typeof updateUser === 'function' && user && typeof user.damiao === 'number') {
-        updateUser({ damiao: user.damiao + 25 });
-      }
-
-      toast.success('Feedback enviado! Você ganhou 25 Damiões 🎉');
+      toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
       setRating(0);
-      setComment('');
-      setConexaoId('');
-      setAvaliadoUsuarioId('');
+      setComment("");
     } catch (err) {
-      toast.error(err.message || 'Erro ao enviar feedback');
+      // Se for limite diário, ainda mostra sucesso no feedback mas avisa sobre pontos
+      if (err.message && err.message.includes('Limite')) {
+        toast.warning("Feedback enviado! (Limite diário de pontos atingido)");
+        setRating(0);
+        setComment("");
+      } else {
+        toast.error(err.message || "Erro ao enviar feedback");
+      }
+    } finally {
+      setSending(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="feedback-page">
       <Toaster />
 
-      <main className="py-12 px-4">
+      <main className="feedback-main">
         <div className="feedback-container">
-          <div className="mb-12 feedback-header">
-            <h1 className="text-4xl mb-4 text-gray-900">Avaliações e Destaques</h1>
-            <p className="text-xl text-gray-600">
+          <div className="feedback-header">
+            <h1 className="feedback-title">Avaliações e Destaques</h1>
+            <p className="feedback-subtitle">
               Compartilhe sua experiência e inspire outros alunos. Reconheça quem se destaca!
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="md:col-span-2 space-y-6">
-              
+          <div className="feedback-grid">
+            <div className="feedback-main-content">
+              {/* Submit Feedback */}
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-blue-600" />
+                  <div className="card-header-title">
+                    <MessageSquare className="card-icon card-icon-blue" />
                     <CardTitle>Enviar Avaliação</CardTitle>
                   </div>
-                  <CardDescription>Avalie sua experiência e ganhe 25 Damiões</CardDescription>
+                  <CardDescription>
+                    Avalie sua experiência e ganhe 25 Damiões
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
+                  <form onSubmit={handleSubmit} className="feedback-form">
+                    <div className="form-group">
                       <Label>Sua Nota</Label>
-                      <div className="flex gap-2">
+                      <div className="star-rating">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
                             type="button"
                             onClick={() => setRating(star)}
-                            className="transition-transform hover:scale-110"
+                            className="star-button"
                           >
                             <Star
-                              className={`w-8 h-8 ${
-                                star <= rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
+                              className={`star-icon ${
+                                star <= rating ? "star-filled" : "star-empty"
                               }`}
                             />
                           </button>
@@ -122,7 +143,7 @@ export function Feedback() {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="form-group">
                       <Label htmlFor="comment">Seu Comentário</Label>
                       <Textarea
                         id="comment"
@@ -134,33 +155,40 @@ export function Feedback() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={!user}>
-                      {user ? "Enviar Feedback" : "Faça login para avaliar"}
+                    <Button
+                      type="submit"
+                      className="submit-button"
+                      disabled={!user || sending}
+                    >
+                      {sending ? "Enviando..." : (user ? "Enviar Feedback" : "Faça login para avaliar")}
                     </Button>
                   </form>
                 </CardContent>
               </Card>
 
-              
+              {/* Recent Feedback */}
               <div>
-                <h2 className="text-2xl mb-4 text-gray-900">Avaliações Recentes</h2>
-                <div className="space-y-4">
+                <h2 className="section-title">Avaliações Recentes</h2>
+                <div className="feedback-list">
                   {feedbackData.map((feedback) => (
                     <Card key={feedback.id}>
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-3">
+                      <CardContent className="feedback-card-content">
+                        <div className="feedback-card-header">
                           <div>
-                            <p className="text-gray-900 mb-1">{feedback.user}</p>
-                            <p className="text-sm text-gray-500">{feedback.course}</p>
+                            <p className="feedback-user">{feedback.user}</p>
+                            <p className="feedback-course">{feedback.course}</p>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="feedback-stars">
                             {[...Array(feedback.rating)].map((_, i) => (
-                              <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <Star
+                                key={i}
+                                className="star-small star-filled"
+                              />
                             ))}
                           </div>
                         </div>
-                        <p className="text-gray-700 mb-2">{feedback.comment}</p>
-                        <p className="text-xs text-gray-400">{feedback.date}</p>
+                        <p className="feedback-comment">{feedback.comment}</p>
+                        <p className="feedback-date">{feedback.date}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -168,65 +196,40 @@ export function Feedback() {
               </div>
             </div>
 
-            
-            <div className="space-y-6">
-              
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-yellow-500" />
-                    <CardTitle>Destaques do Mês</CardTitle>
-                  </div>
-                  <CardDescription>Alunos com melhor desempenho</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {highlights.map((highlight, index) => (
-                      <div key={index} className="border-b pb-4 last:border-0 last:pb-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-gray-900">{highlight.name}</p>
-                            <p className="text-sm text-gray-600">{highlight.achievement}</p>
-                          </div>
-                        </div>
-                        <Badge className="bg-cyan-100 text-cyan-800">+{highlight.damiao} Damiões</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Sidebar */}
+            <div className="feedback-sidebar">
 
-              
+              {/* Stats */}
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-green-600" />
+                  <div className="card-header-title">
+                    <TrendingUp className="card-icon card-icon-green" />
                     <CardTitle>Estatísticas</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-gray-500">Avaliação Média</p>
-                      <div className="flex items-center gap-2">
-                        <div className="flex">
+                  <div className="stats-list">
+                    <div className="stat-item">
+                      <p className="stat-label">Avaliação Média</p>
+                      <div className="stat-rating">
+                        <div className="stat-stars">
                           {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                            <Star
+                              key={i}
+                              className="star-small star-filled"
+                            />
                           ))}
                         </div>
-                        <span className="text-xl">4.8</span>
+                        <span className="stat-value">4.8</span>
                       </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Total de Avaliações</p>
-                      <p className="text-2xl text-gray-900">247</p>
+                    <div className="stat-item">
+                      <p className="stat-label">Total de Avaliações</p>
+                      <p className="stat-number">247</p>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Satisfação Geral</p>
-                      <p className="text-2xl text-green-600">96%</p>
+                    <div className="stat-item">
+                      <p className="stat-label">Satisfação Geral</p>
+                      <p className="stat-number stat-success">96%</p>
                     </div>
                   </div>
                 </CardContent>
@@ -234,24 +237,25 @@ export function Feedback() {
             </div>
           </div>
 
-          <Card className="mt-8 bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
-            <CardContent className="py-8">
-              <h2 className="text-2xl mb-4">Seu Feedback é Importante!</h2>
-              <p className="text-blue-100 mb-4">
-                As avaliações e sugestões dos alunos nos ajudam a melhorar continuamente a qualidade dos cursos e serviços oferecidos. Participe e ganhe recompensas!
+          <Card className="info-banner">
+            <CardContent className="info-banner-content">
+              <h2 className="info-banner-title">Seu Feedback é Importante!</h2>
+              <p className="info-banner-text">
+                As avaliações e sugestões dos alunos nos ajudam a melhorar continuamente a
+                qualidade dos cursos e serviços oferecidos. Participe e ganhe recompensas!
               </p>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-white/10 rounded-lg p-4">
-                  <p className="text-2xl mb-1">+25</p>
-                  <p className="text-sm">Damiões por avaliação</p>
+              <div className="info-banner-grid">
+                <div className="info-banner-item">
+                  <p className="info-banner-value">+25</p>
+                  <p className="info-banner-label">Damiões por avaliação</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <p className="text-2xl mb-1">100%</p>
-                  <p className="text-sm">Anônimo se preferir</p>
+                <div className="info-banner-item">
+                  <p className="info-banner-value">100%</p>
+                  <p className="info-banner-label">Anônimo se preferir</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <p className="text-2xl mb-1">✓</p>
-                  <p className="text-sm">Melhoria contínua</p>
+                <div className="info-banner-item">
+                  <p className="info-banner-value">✓</p>
+                  <p className="info-banner-label">Melhoria contínua</p>
                 </div>
               </div>
             </CardContent>

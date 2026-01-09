@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { Link } from "react-router-dom"; //adção para o funcionamento do botao da linha 262
+
 
 import { useAuth } from "../context/AuthContext";
 import {
@@ -19,27 +22,93 @@ import { Toaster } from "../components/ui/Sonner";
 import "./Companies.css";
 
 export function Companies() {
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [myDemands, setMyDemands] = useState([]);
+  const [loadingDemands, setLoadingDemands] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    budget: "",
-    deadline: "",
-    category: "",
-  });
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    toast.success("Demanda publicada com sucesso!");
-    setFormData({
-      title: "",
-      description: "",
+    titulo: "",
+    descricao: "",
+    categoriaId: "",
+    propriedades: {
       budget: "",
       deadline: "",
-      category: "",
-    });
-    setShowForm(false);
+    },
+  });
+
+  useEffect(() => {
+    if (user?.tipo === "company") {
+      loadMyDemands();
+    }
+  }, [user]);
+
+  async function loadMyDemands() {
+    setLoadingDemands(true);
+    try {
+      const res = await authFetch('/ofertas?tipo=DEMANDA');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao buscar demandas');
+      // Filtrar apenas as demandas criadas por este usuário
+      const filtered = data.filter(d => d.autorUsuarioId === user?.id);
+      setMyDemands(filtered);
+    } catch (err) {
+      console.error('Erro ao carregar demandas:', err);
+    } finally {
+      setLoadingDemands(false);
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    
+    if (!user) {
+      toast.error("Faça login para publicar demandas");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        autorUsuarioId: user.id,
+        categoriaId: parseInt(formData.categoriaId) || 1,
+        titulo: formData.titulo,
+        descricao: formData.descricao,
+        tipo: "DEMANDA",
+        propriedades: {
+          budget: formData.propriedades.budget,
+          deadline: formData.propriedades.deadline,
+        },
+        ativa: true,
+      };
+
+      const res = await authFetch("/ofertas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Falha ao publicar demanda");
+
+      toast.success("Demanda publicada com sucesso!");
+      setFormData({
+        titulo: "",
+        descricao: "",
+        categoriaId: "",
+        propriedades: {
+          budget: "",
+          deadline: "",
+        },
+      });
+      setShowForm(false);
+      loadMyDemands(); // Recarregar lista de demandas
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Erro ao publicar demanda");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -91,7 +160,7 @@ export function Companies() {
             </Card>
           </div>
 
-          {user?.type === "company" ? (
+          {user?.tipo === "company" ? (
             <section>
               <div className="section-header">
                 <h2>Minhas Demandas</h2>
@@ -116,14 +185,14 @@ export function Companies() {
                   <CardContent>
                     <form onSubmit={handleSubmit} className="form">
                       <div className="field">
-                        <Label htmlFor="title">Título do Projeto</Label>
+                        <Label htmlFor="titulo">Título do Projeto</Label>
                         <Input
-                          id="title"
-                          value={formData.title}
+                          id="titulo"
+                          value={formData.titulo}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              title: e.target.value,
+                              titulo: e.target.value,
                             })
                           }
                           required
@@ -131,15 +200,15 @@ export function Companies() {
                       </div>
 
                       <div className="field">
-                        <Label htmlFor="description">Descrição</Label>
+                        <Label htmlFor="descricao">Descrição</Label>
                         <Textarea
-                          id="description"
+                          id="descricao"
                           rows={4}
-                          value={formData.description}
+                          value={formData.descricao}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              description: e.target.value,
+                              descricao: e.target.value,
                             })
                           }
                           required
@@ -148,14 +217,35 @@ export function Companies() {
 
                       <div className="grid-3">
                         <div className="field">
-                          <Label htmlFor="budget">Orçamento</Label>
+                          <Label htmlFor="categoriaId">Categoria</Label>
                           <Input
-                            id="budget"
-                            value={formData.budget}
+                            id="categoriaId"
+                            type="number"
+                            placeholder="ID da categoria"
+                            value={formData.categoriaId}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                budget: e.target.value,
+                                categoriaId: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+
+                        <div className="field">
+                          <Label htmlFor="budget">Orçamento</Label>
+                          <Input
+                            id="budget"
+                            placeholder="R$ 2.500"
+                            value={formData.propriedades.budget}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                propriedades: {
+                                  ...formData.propriedades,
+                                  budget: e.target.value,
+                                },
                               })
                             }
                             required
@@ -166,26 +256,15 @@ export function Companies() {
                           <Label htmlFor="deadline">Prazo</Label>
                           <Input
                             id="deadline"
-                            value={formData.deadline}
+                            placeholder="30 dias"
+                            value={formData.propriedades.deadline}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                deadline: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-
-                        <div className="field">
-                          <Label htmlFor="category">Categoria</Label>
-                          <Input
-                            id="category"
-                            value={formData.category}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                category: e.target.value,
+                                propriedades: {
+                                  ...formData.propriedades,
+                                  deadline: e.target.value,
+                                },
                               })
                             }
                             required
@@ -194,13 +273,18 @@ export function Companies() {
                       </div>
 
                       <div className="form-actions">
-                        <Button type="submit" className="btn-primary">
-                          Publicar Demanda
+                        <Button 
+                          type="submit" 
+                          className="btn-primary"
+                          disabled={loading}
+                        >
+                          {loading ? "Publicando..." : "Publicar Demanda"}
                         </Button>
                         <Button
                           type="button"
                           variant="outline"
                           onClick={() => setShowForm(false)}
+                          disabled={loading}
                         >
                           Cancelar
                         </Button>
@@ -210,13 +294,54 @@ export function Companies() {
                 </Card>
               )}
 
-              <Card>
-                <CardContent className="empty-state">
-                  <Building2 size={64} />
-                  <p>Nenhuma demanda publicada ainda.</p>
-                  <span>Clique em "Nova Demanda" para começar.</span>
-                </CardContent>
-              </Card>
+              {loadingDemands ? (
+                <Card>
+                  <CardContent className="empty-state">
+                    <p>Carregando demandas...</p>
+                  </CardContent>
+                </Card>
+              ) : myDemands.length === 0 ? (
+                <Card>
+                  <CardContent className="empty-state">
+                    <Building2 size={64} />
+                    <p>Nenhuma demanda publicada ainda.</p>
+                    <span>Clique em "Nova Demanda" para começar.</span>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="demands-list">
+                  {myDemands.map((demand) => (
+                    <Card key={demand.id}>
+                      <CardHeader>
+                        <CardTitle>{demand.titulo}</CardTitle>
+                        <CardDescription>{demand.descricao}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="demand-info">
+                          {demand.propriedades?.budget && (
+                            <div>
+                              <strong>Orçamento:</strong> {demand.propriedades.budget}
+                            </div>
+                          )}
+                          {demand.propriedades?.deadline && (
+                            <div>
+                              <strong>Prazo:</strong> {demand.propriedades.deadline}
+                            </div>
+                          )}
+                          {demand.categoria && (
+                            <div>
+                              <strong>Categoria:</strong> {demand.categoria.nome}
+                            </div>
+                          )}
+                          <div>
+                            <strong>Status:</strong> {demand.ativa ? '🟢 Ativa' : '🔴 Inativa'}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </section>
           ) : (
             <Card className="cta-card">
@@ -251,9 +376,15 @@ export function Companies() {
                     </div>
                   </div>
 
-                  <Button className="btn-light" size="lg">
-                    Cadastrar Empresa
+                   {/* Alteraçao nessa parte do codigo  */}
+
+                  {/* ---------------------------------------- */}
+                  <Button asChild className="btn-light" size="lg">
+                     <Link to="/registro">Cadastrar Empresa</Link>
                   </Button>
+
+                  {/* ---------------------------------------- */}
+
                 </div>
               </CardContent>
             </Card>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   Card,
@@ -10,7 +11,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/Badge";
 import {Tabs,TabsContent,TabsList,TabsTrigger,} from "../components/ui/Tabs";
-import {Briefcase,MapPin,Star,Building2,DollarSign,MessageCircle,Instagram,Linkedin,} from "lucide-react";
+import {MapPin,Building2,DollarSign,MessageCircle,Instagram,Linkedin,} from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
 
@@ -61,22 +62,34 @@ const entrepreneurs = [
   },
 ];
 
-const demands = [
-  {
-    id: "1",
-    company: "Tech Solutions Ltda",
-    title: "Desenvolvimento de Landing Page",
-    description:
-      "Precisamos de uma landing page moderna e responsiva",
-    budget: "R$ 2.500",
-    deadline: "30 dias",
-    category: "Desenvolvimento Web",
-  },
-];
-
 export function Entrepreneurs() {
   const { user } = useAuth();
+  const location = useLocation();
   const [applied, setApplied] = useState([]);
+  const [demands, setDemands] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(location.state?.tab || "services");
+
+  useEffect(() => {
+    let mounted = true;
+    const loadDemands = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/ofertas?tipo=DEMANDA');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao buscar demandas');
+        if (mounted) setDemands(data || []);
+      } catch (err) {
+        console.error('Erro ao carregar demandas:', err);
+        toast.error('Erro ao carregar demandas');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadDemands();
+    return () => { mounted = false; };
+  }, []);
 
   function handleApply(id, title) {
     if (!user) {
@@ -84,7 +97,7 @@ export function Entrepreneurs() {
       return;
     }
 
-    if (user.type !== "entrepreneur") {
+    if (user.tipo !== "entrepreneur") {
       toast.error("Apenas microempreendedores podem se candidatar");
       return;
     }
@@ -128,8 +141,8 @@ export function Entrepreneurs() {
             </p>
           </header>
 
-          <Tabs defaultValue="services">
-            <TabsList className="tabs-list">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="entrepreneurs-tabs-list">
               <TabsTrigger value="services">
                 Profissionais
               </TabsTrigger>
@@ -151,11 +164,6 @@ export function Entrepreneurs() {
                       <CardDescription>
                         {e.service}
                       </CardDescription>
-
-                      <div className="rating">
-                        <Star size={16} />
-                        {e.rating}
-                      </div>
                     </CardHeader>
 
                     <CardContent>
@@ -167,10 +175,6 @@ export function Entrepreneurs() {
                         <span>
                           <MapPin size={14} />
                           {e.location}
-                        </span>
-                        <span>
-                          <Briefcase size={14} />
-                          {e.projects} projetos
                         </span>
                         <span>
                           <DollarSign size={14} />
@@ -213,37 +217,64 @@ export function Entrepreneurs() {
             </TabsContent>
 
             <TabsContent value="demands">
-              {demands.map((d) => (
-                <Card key={d.id}>
-                  <CardHeader>
-                    <CardTitle>{d.title}</CardTitle>
-                    <Badge>{d.category}</Badge>
-                    <CardDescription>
-                      {d.description}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="demand-footer">
-                    <div>
-                      <strong>Orçamento:</strong> {d.budget}
-                    </div>
-                    <div>
-                      <strong>Prazo:</strong> {d.deadline}
-                    </div>
-
-                    <Button
-                      onClick={() =>
-                        handleApply(d.id, d.title)
-                      }
-                      disabled={applied.includes(d.id)}
-                    >
-                      {applied.includes(d.id)
-                        ? "Candidatura Enviada"
-                        : "Candidatar-se"}
-                    </Button>
+              {loading ? (
+                <Card>
+                  <CardContent className="empty-state">
+                    <p>Carregando demandas...</p>
                   </CardContent>
                 </Card>
-              ))}
+              ) : demands.length === 0 ? (
+                <Card>
+                  <CardContent className="empty-state">
+                    <Building2 size={64} />
+                    <p>Nenhuma demanda disponível no momento.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                demands.map((d) => (
+                  <Card key={d.id}>
+                    <CardHeader>
+                      <div className="demand-header">
+                        <div>
+                          <CardTitle>{d.titulo}</CardTitle>
+                          <CardDescription className="company-name">
+                            <Building2 size={14} />
+                            {d.autor?.nome || 'Empresa'}
+                          </CardDescription>
+                        </div>
+                        {d.categoria && <Badge>{d.categoria.nome}</Badge>}
+                      </div>
+                      <CardDescription>
+                        {d.descricao}
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="demand-footer">
+                      {d.propriedades?.budget && (
+                        <div>
+                          <strong>Orçamento:</strong> {d.propriedades.budget}
+                        </div>
+                      )}
+                      {d.propriedades?.deadline && (
+                        <div>
+                          <strong>Prazo:</strong> {d.propriedades.deadline}
+                        </div>
+                      )}
+
+                      <Button
+                        onClick={() =>
+                          handleApply(d.id, d.titulo)
+                        }
+                        disabled={applied.includes(d.id)}
+                      >
+                        {applied.includes(d.id)
+                          ? "Candidatura Enviada"
+                          : "Candidatar-se"}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </TabsContent>
           </Tabs>
         </div>

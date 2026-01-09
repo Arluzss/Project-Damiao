@@ -3,24 +3,51 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('user'));
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true); // Começa como true para carregar do localStorage
 
-  const [token, setToken] = useState(() => localStorage.getItem('token') || null);
-  const [loading, setLoading] = useState(false);
-
+  // Carrega o estado inicial do localStorage quando o componente monta
   useEffect(() => {
-    if (token && !user) {
-      const stored = localStorage.getItem('user');
-      if (stored) setUser(JSON.parse(stored));
+    try {
+      const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('token');
+      
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      if (storedToken) {
+        setToken(storedToken);
+      }
+    } catch (e) {
+      console.error('Erro ao carregar dados do localStorage:', e);
+    } finally {
+      setLoading(false);
     }
-  }, [token, user]);
+  }, []);
 
+  // Buscar pontos quando usuário faz login
+  useEffect(() => {
+    if (user && token && user.damiao === undefined) {
+      loadUserPoints();
+    }
+  }, [user, token]);
+
+  const loadUserPoints = async () => {
+    try {
+      const res = await authFetch('/moedas', { method: 'GET' });
+      const data = await res.json();
+      if (res.ok && typeof data.total === 'number') {
+        setUser((prev) => {
+          const next = { ...(prev || {}), damiao: data.total };
+          try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+          return next;
+        });
+      }
+    } catch (err) {
+      console.error('Erro ao carregar pontos:', err);
+    }
+  };
   const login = async (identifier, senha) => {
     setLoading(true);
     try {
@@ -31,12 +58,37 @@ export function AuthProvider({ children }) {
       });
 
       const data = await res.json();
+      console.log('🔍 Resposta do servidor:', data);
+      
       if (!res.ok) throw new Error(data.error || 'Falha no login');
 
+      // Trata diferentes formatos de resposta
+      const userData = data.usuario || data.user || data;
+      console.log('👤 Dados do usuário processados:', userData);
+      console.log('🔑 Chaves disponíveis:', Object.keys(userData || {}));
+      
+      // Log detalhado de cada chave e valor
+      console.log('📋 Detalhes das chaves:');
+      Object.keys(userData || {}).forEach(key => {
+        console.log(`  - ${key}: ${userData[key]}`);
+      });
+      
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Atualiza o estado
       setToken(data.token);
+      setUser(userData);
+      
+      console.log('✅ Login bem-sucedido. Tipo:', userData?.tipo);
 
-      return data;
+      // Aguarda o estado ser atualizado
+      await new Promise(resolve => setTimeout(resolve, 150));
+      
+      return userData;
+    } catch (err) {
+      console.error(' Erro no login:', err);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -88,6 +140,16 @@ export function AuthProvider({ children }) {
       const res = await authFetch('/moedas', { method: 'GET' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Falha ao buscar pontos');
+      
+      // Atualizar o estado do usuário com os pontos
+      if (typeof data.total === 'number') {
+        setUser((prev) => {
+          const next = { ...(prev || {}), damiao: data.total };
+          try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+          return next;
+        });
+      }
+      
       return data;
     } finally {
       setLoading(false);
@@ -145,9 +207,37 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
+
+  const updateProfile = async (dados) => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Falha ao atualizar perfil');
+      
+      // Atualizar o estado do usuário
+      setUser((prev) => {
+        const next = { 
+          ...prev, 
+          nome: dados.nome || dados.name || prev.nome,
+          email: dados.email || prev.email
+        };
+        try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
+        return next;
+      });
+      
+      return data;
+    } finally {
+      setLoading(false);
+    }
+  };
   
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile, updateUser }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, authFetch, getPoints, addPoints, profile, updateUser, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

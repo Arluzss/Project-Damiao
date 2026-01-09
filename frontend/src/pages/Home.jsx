@@ -72,7 +72,7 @@ export function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Link to="/microempreendedores">
+                  <Link to="/empreendedores">
                     <Button className="btn-cyan full">
                       Sou Microempreendedor
                     </Button>
@@ -136,7 +136,7 @@ export function Home() {
                 Cadastre-se gratuitamente e comece hoje mesmo.
               </p>
                 <br/>
-              <Link to="/resgistro">
+              <Link to="/registro">
                 <Button size="lg" className="btn-primary">
                   Criar Conta Gratuita
                 </Button>
