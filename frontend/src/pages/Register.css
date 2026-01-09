@@ -86,6 +86,54 @@
   font-weight: 500;
 }
 
+/* PASSWORD INPUT WRAPPER */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  padding-right: 3rem !important; /* Espaço para o botão do olho */
+}
+
+/* PASSWORD TOGGLE BUTTON */
+.password-toggle-button {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+
+.password-toggle-button:hover {
+  color: #374151;
+}
+
+.password-toggle-button:focus {
+  outline: none;
+  color: #2563eb;
+}
+
+.password-toggle-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* PASSWORD ICON */
+.password-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 /* BUTTON */
 .register-button {
   width: 100%;
@@ -118,4 +166,31 @@
 
 .register-footer a:hover {
   text-decoration: underline;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 640px) {
+  .register-main {
+    padding: 2rem 1rem;
+  }
+
+  .register-container {
+    max-width: 100%;
+  }
+}
+
+/* ANIMAÇÃO SUAVE DOS CAMPOS QUE APARECEM/DESAPARECEM */
+.form-group {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
