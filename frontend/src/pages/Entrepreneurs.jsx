@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   Card,
@@ -63,9 +64,11 @@ const entrepreneurs = [
 
 export function Entrepreneurs() {
   const { user } = useAuth();
+  const location = useLocation();
   const [applied, setApplied] = useState([]);
   const [demands, setDemands] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(location.state?.tab || "services");
 
   useEffect(() => {
     let mounted = true;
@@ -138,7 +141,7 @@ export function Entrepreneurs() {
             </p>
           </header>
 
-          <Tabs defaultValue="services">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="entrepreneurs-tabs-list">
               <TabsTrigger value="services">
                 Profissionais
