@@ -33,8 +33,8 @@ function Header() {
               </Link>
             )}
             
-            {/* Microempreendedores: visível para público, microempreendedores e empresas */}
-            {(!user || user.tipo === "entrepreneur" || user.tipo === "company") && (
+            {/* Microempreendedores: visível para público, estudantes, microempreendedores e empresas */}
+            {(!user || user.tipo === "student" || user.tipo === "entrepreneur" || user.tipo === "company") && (
               <Link
                 className={isActive("/empreendedores") ? "active" : ""}
                 to="/empreendedores"
@@ -43,7 +43,7 @@ function Header() {
               </Link>
             )}
             
-            {/* Empresas: apenas para empresas (removido microempreendedor) */}
+            {/* Empresas: apenas para empresas */}
             {(!user || user.tipo === "company") && (
               <Link className={isActive("/empresas") ? "active" : ""} to="/empresas">
                 Empresas
