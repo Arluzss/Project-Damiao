@@ -12,7 +12,6 @@ function Header() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    
     <header className="header">
       <div className="header-container">
         <div className="header-content">
@@ -44,8 +43,8 @@ function Header() {
               </Link>
             )}
             
-            {/* Empresas: para empresas e microempreendedores */}
-            {(!user || user.tipo === "company" || user.tipo === "entrepreneur") && (
+            {/* Empresas: apenas para empresas (removido microempreendedor) */}
+            {(!user || user.tipo === "company") && (
               <Link className={isActive("/empresas") ? "active" : ""} to="/empresas">
                 Empresas
               </Link>
