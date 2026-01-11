@@ -18,6 +18,7 @@ import {
   SelectTrigger, 
   SelectValue, 
 } from "../components/ui/Select"; 
+import { Eye, EyeOff } from "lucide-react"; // ← Import dos ícones
 import "./Register.css"; 
 
 export function Register() { 
@@ -31,6 +32,12 @@ export function Register() {
   const [cpf, setCpf] = useState(""); 
   const [cnpj, setCnpj] = useState(""); 
   const [phone, setPhone] = useState(""); 
+  const [showPassword, setShowPassword] = useState(false); // ← Estado para mostrar/ocultar senha
+
+  // Função para alternar visibilidade da senha
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   async function handleSubmit(e) { 
     e.preventDefault(); 
@@ -172,16 +179,32 @@ export function Register() {
                   /> 
                 </div> 
 
+                {/* Campo de senha com botão de mostrar/ocultar */}
                 <div className="form-group"> 
                   <Label htmlFor="password">Senha</Label> 
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="••••••••" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                  /> 
+                  <div className="password-input-wrapper">
+                    <Input 
+                      id="password" 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)} 
+                      required 
+                      className="password-input"
+                    /> 
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="password-toggle-button"
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    >
+                      {showPassword ? (
+                        <Eye className="password-icon" />
+                      ) : (
+                        <EyeOff className="password-icon" />
+                      )}
+                    </button>
+                  </div>
                 </div> 
 
                 <Button type="submit" className="register-button"> 
