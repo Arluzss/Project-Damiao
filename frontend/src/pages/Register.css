@@ -194,3 +194,17 @@
     transform: translateY(0);
   }
 }
+.register-page {
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(
+      rgba(249, 250, 251, 0.7),
+      rgba(249, 250, 251, 0.7)
+    ),
+    url("../assets/register-bg.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

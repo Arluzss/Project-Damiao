@@ -1,7 +1,7 @@
 import { useState } from "react"; 
 import { Link, useNavigate } from "react-router-dom"; 
 import { useAuth } from "../context/AuthContext"; 
-import { Eye, EyeOff } from "lucide-react"; // ← Import dos ícones
+import { Eye, EyeOff } from "lucide-react"; 
 import "./Login.css";
 
 export function Login() { 
@@ -54,7 +54,7 @@ export function Login() {
       setError(err.message || 'Falha no login'); 
     } 
   };  
-
+  
   return ( 
     <div className="login-page"> 
       <main className="login-main"> 
