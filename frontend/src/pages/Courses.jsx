@@ -25,6 +25,13 @@ export function Courses() {
   const [fetchedCourses, setFetchedCourses] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Sincroniza estado enrolled quando user.courses mudar
+  useEffect(() => {
+    if (user?.courses) {
+      setEnrolled(user.courses);
+    }
+  }, [user?.courses]);
+
   useEffect(() => {
     let mounted = true;
     const load = async () => {

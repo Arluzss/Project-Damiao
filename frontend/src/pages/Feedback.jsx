@@ -165,35 +165,6 @@ export function Feedback() {
                   </form>
                 </CardContent>
               </Card>
-
-              {/* Recent Feedback */}
-              <div>
-                <h2 className="section-title">Avaliações Recentes</h2>
-                <div className="feedback-list">
-                  {feedbackData.map((feedback) => (
-                    <Card key={feedback.id}>
-                      <CardContent className="feedback-card-content">
-                        <div className="feedback-card-header">
-                          <div>
-                            <p className="feedback-user">{feedback.user}</p>
-                            <p className="feedback-course">{feedback.course}</p>
-                          </div>
-                          <div className="feedback-stars">
-                            {[...Array(feedback.rating)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className="star-small star-filled"
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <p className="feedback-comment">{feedback.comment}</p>
-                        <p className="feedback-date">{feedback.date}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Sidebar */}
