@@ -17,9 +17,8 @@ function Header() {
         <div className="header-content">
           <Link to="/" className="brand">
             <div className="brand-logo">
-              <span>D</span>
+              <img src="/logo.png" alt="Damião Logo" className="logo-image" />
             </div>
-            <span className="brand-name">Damião</span>
           </Link>
           <nav className="nav">
             <Link className={isActive("/") ? "active" : ""} to="/">
