@@ -9,7 +9,7 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/Badge";
-import { Clock, MapPin, Calendar, Award, Star, Users } from "lucide-react";
+import { Clock, MapPin, Calendar, Award, Star, Users, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
 
@@ -103,6 +103,20 @@ export function Courses() {
                 </CardHeader>
 
                 <CardContent>
+                  {(course.propriedades?.fullDescription || course.fullDescription) && (
+                    <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                      <div className="flex items-start gap-2 mb-3">
+                        <BookOpen className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <h3 className="text-sm text-gray-700 uppercase tracking-wider">
+                          Sobre o Curso
+                        </h3>
+                      </div>
+                      <p className="text-gray-700 leading-relaxed text-sm">
+                        {course.propriedades?.fullDescription || course.fullDescription}
+                      </p>
+                    </div>
+                  )}
+
                   <div className="course-info-grid">
                     <div>
                       <h3>Informações do Curso</h3>
@@ -121,11 +135,6 @@ export function Courses() {
                           ))}
                         </div>
                       </div>
-
-                      <h4>Horários:</h4>
-                      {(course.propriedades?.times || course.times || []).map((time) => (
-                        <p key={time}>• {time}</p>
-                      ))}
                     </div>
 
                     <div>
@@ -137,14 +146,6 @@ export function Courses() {
                           </Badge>
                         ))}
                       </div>
-
-                      <h3>Benefícios</h3>
-                      {(course.propriedades?.benefits || course.benefits || []).map((benefit) => (
-                        <div key={benefit} className="benefit-item">
-                          <Award size={16} />
-                          <span>{benefit}</span>
-                        </div>
-                      ))}
                     </div>
                   </div>
 

@@ -88,6 +88,10 @@
   flex-wrap: wrap;
 }
 
+.course-shifts span{
+  margin-bottom: 0;
+}
+
 .course-tags {
   display: flex;
   flex-wrap: wrap;
