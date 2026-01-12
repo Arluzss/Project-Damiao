@@ -43,7 +43,7 @@ function Header() {
               </Link>
             )}
             
-            {/* Empresas: apenas para empresas (removido microempreendedor) */}
+            {/* Empresas: apenas para empresas */}
             {(!user || user.tipo === "company") && (
               <Link className={isActive("/empresas") ? "active" : ""} to="/empresas">
                 Empresas

@@ -9,14 +9,19 @@
 
 .login-container {
   max-width: 420px;
-  margin: 0 auto;
+
+  /* 🔽 ALTERAÇÃO AQUI */
+  /* Antes: margin: 0 auto; */
+  /* Agora: adicionamos margem superior para descer o container */
+  margin: 5rem auto 0;
 }
 
 /* CARD */
 .login-card {
   background-color: #ffffff;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .login-card-header {
@@ -87,7 +92,7 @@
 }
 
 .password-input {
-  padding-right: 3rem !important; /* Espaço para o botão do olho */
+  padding-right: 3rem !important;
 }
 
 /* PASSWORD TOGGLE BUTTON */
@@ -199,3 +204,20 @@
     font-size: 1.25rem;
   }
 }
+
+.login-page {
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(
+      rgba(249, 250, 251, 0.75),
+      rgba(249, 250, 251, 0.75)
+    ),
+    url("../assets/login-bg.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
