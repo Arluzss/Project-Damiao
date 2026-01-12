@@ -437,3 +437,18 @@
 .profile-test-button:hover {
   background-color: #7e22ce;
 }
+
+.profile-page {
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(
+      rgba(249, 250, 251, 0.7),
+      rgba(249, 250, 251, 0.477)
+    ),
+    url("../assets/teste.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
