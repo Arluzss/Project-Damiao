@@ -180,3 +180,19 @@
 .btn-course:hover {
   background-color: #1d4ed8;
 }
+.dashboard-container {
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(
+      rgba(249, 250, 251, 0.7),
+      rgba(249, 250, 251, 0.477)
+    ),
+    url("../assets/student-dashboard-emblem.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
