@@ -59,6 +59,7 @@
 
 .section.light {
   background: #ffffff;
+  margin-bottom: 0;
 }
 
 .section-title {
@@ -166,4 +167,18 @@
   color: #9ca3af;
   text-align: center;
   padding: 32px;
+}
+.home {
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(
+      rgba(243, 244, 246, 0.93),
+      rgba(243, 244, 246, 0.93)
+    ),
+    url("../assets/home-background.png");
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }

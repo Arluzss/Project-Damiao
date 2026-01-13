@@ -12,15 +12,13 @@ function Header() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    
     <header className="header">
       <div className="header-container">
         <div className="header-content">
           <Link to="/" className="brand">
             <div className="brand-logo">
-              <span>D</span>
+              <img src="/logo.png" alt="Damião Logo" className="logo-image" />
             </div>
-            <span className="brand-name">Damião</span>
           </Link>
           <nav className="nav">
             <Link className={isActive("/") ? "active" : ""} to="/">
@@ -34,8 +32,8 @@ function Header() {
               </Link>
             )}
             
-            {/* Microempreendedores: apenas para microempreendedores */}
-            {(!user || user.tipo === "entrepreneur") && (
+            {/* Microempreendedores: visível para público, estudantes, microempreendedores e empresas */}
+            {(!user || user.tipo === "student" || user.tipo === "entrepreneur" || user.tipo === "company") && (
               <Link
                 className={isActive("/empreendedores") ? "active" : ""}
                 to="/empreendedores"
@@ -44,22 +42,22 @@ function Header() {
               </Link>
             )}
             
-            {/* Empresas: para empresas e microempreendedores */}
-            {(!user || user.tipo === "company" || user.tipo === "entrepreneur") && (
+            {/* Empresas: apenas para empresas */}
+            {(!user || user.tipo === "company") && (
               <Link className={isActive("/empresas") ? "active" : ""} to="/empresas">
                 Empresas
               </Link>
             )}
 
-            {/* Loja: apenas para usuários autenticados (estudantes e microempreendedores) */}
-            {user && (user.tipo === "student" || user.tipo === "entrepreneur") && (
+            {/* Loja: disponível para estudantes, microempreendedores e empresas */}
+            {user && (user.tipo === "student" || user.tipo === "entrepreneur" || user.tipo === "company") && (
               <Link className={isActive("/loja") ? "active" : ""} to="/loja">
                 Loja
               </Link>
             )}
             
             {/* Avaliações: apenas para estudantes */}
-            {user && user.tipo === "student" && (
+            {user && (user.tipo === "student" || user.tipo === "company") && (
               <Link
                 className={isActive("/avaliacoes") ? "active" : ""}
                 to="/avaliacoes"
@@ -72,8 +70,8 @@ function Header() {
           <div className="actions">
             {user ? (
               <>
-                {/* Damiões: apenas para estudantes e microempreendedores */}
-                {(user.tipo === "student" || user.tipo === "entrepreneur") && (
+                {/* Damiões: disponível para estudantes, microempreendedores e empresas */}
+                {(user.tipo === "student" || user.tipo === "entrepreneur" || user.tipo === "company") && (
                   <div className="coins">
                     <Coins />
                     <span>{user.damiao ?? 0} Damiões</span>

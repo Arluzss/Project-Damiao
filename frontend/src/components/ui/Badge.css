@@ -52,6 +52,7 @@
   background-color: transparent;
   color: var(--foreground);
   border-color: var(--border);
+  margin: 0;
 }
 
 .badge-outline:hover {

@@ -1,0 +1,409 @@
+/* Container Principal */
+.company-dashboard-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+/* Loading Container */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.125rem;
+  color: #4b5563;
+}
+
+.company-dashboard-main {
+  padding: 2rem 1rem;
+}
+
+.company-dashboard-content {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+/* Welcome Section */
+.welcome-section {
+  margin-bottom: 2rem;
+}
+
+.welcome-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.welcome-description {
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+/* Stats Grid - 2 colunas */
+.stats-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Stats Card Header */
+.stats-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+
+.stats-card-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Stats Icons */
+.stats-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.stats-icon-blue {
+  color: #2563eb;
+}
+
+.stats-icon-cyan {
+  color: #0891b2;
+}
+
+.stats-icon-green {
+  color: #16a34a;
+}
+
+.stats-icon-yellow {
+  color: #ca8a04;
+}
+
+/* Stats Content */
+.stats-number {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.stats-text {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Section */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Quick Actions Grid */
+.quick-actions-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Action Links */
+.action-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Action Cards */
+.action-card {
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Featured Action Card (Publicar Demanda) */
+.action-card-featured {
+  border: 2px solid #bfdbfe;
+  background-color: #eff6ff;
+}
+
+/* Action Icons */
+.action-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.action-icon-blue {
+  color: #2563eb;
+}
+
+.action-icon-cyan {
+  color: #0891b2;
+}
+
+.action-icon-purple {
+  color: #9333ea;
+}
+
+.action-icon-green {
+  color: #16a34a;
+}
+
+/* Action Button */
+.action-button {
+  width: 100%;
+  background-color: #2563eb;
+}
+
+.action-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* New Demand Button */
+.new-demand-button {
+  background-color: #2563eb;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.new-demand-button:hover {
+  background-color: #1d4ed8;
+}
+
+.button-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Demands Grid */
+.demands-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .demands-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Demand Header */
+.demand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Badge */
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-active {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+/* Demand Description */
+.demand-description {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+/* Demand Info */
+.demand-info {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+/* Demand Button */
+.demand-button {
+  width: 100%;
+}
+
+/* Proposals Content */
+.proposals-content {
+  padding: 1.5rem;
+}
+
+.proposals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Proposal Item */
+.proposal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.proposal-item-last {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.proposal-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Proposal Avatar */
+.proposal-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.proposal-avatar-blue {
+  background-color: #dbeafe;
+}
+
+.proposal-avatar-cyan {
+  background-color: #cffafe;
+}
+
+.proposal-avatar-purple {
+  background-color: #f3e8ff;
+}
+
+.proposal-avatar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.proposal-avatar-blue .proposal-avatar-icon {
+  color: #2563eb;
+}
+
+.proposal-avatar-cyan .proposal-avatar-icon {
+  color: #0891b2;
+}
+
+.proposal-avatar-purple .proposal-avatar-icon {
+  color: #9333ea;
+}
+
+/* Proposal Text */
+.proposal-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.proposal-description {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Proposal Actions */
+.proposal-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.proposal-accept-button {
+  background-color: #2563eb;
+}
+
+.proposal-accept-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsividade Mobile */
+@media (max-width: 640px) {
+  .company-dashboard-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .demands-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .proposal-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .proposal-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .proposal-actions button {
+    width: 100%;
+  }
+}

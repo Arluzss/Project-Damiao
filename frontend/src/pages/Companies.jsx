@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-
-import { Link } from "react-router-dom"; //adção para o funcionamento do botao da linha 262
-
-
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   Card,
@@ -15,7 +12,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Textarea } from "../components/ui/Textarea";
-import { Building2, Plus, CheckCircle } from "lucide-react";
+import { Building2, Plus, CheckCircle, Edit, Trash2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
 
@@ -27,6 +24,9 @@ export function Companies() {
   const [loading, setLoading] = useState(false);
   const [myDemands, setMyDemands] = useState([]);
   const [loadingDemands, setLoadingDemands] = useState(false);
+  const [editingDemand, setEditingDemand] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [demandToDelete, setDemandToDelete] = useState(null);
   const [formData, setFormData] = useState({
     titulo: "",
     descricao: "",
@@ -49,13 +49,68 @@ export function Companies() {
       const res = await authFetch('/ofertas?tipo=DEMANDA');
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Falha ao buscar demandas');
-      // Filtrar apenas as demandas criadas por este usuário
       const filtered = data.filter(d => d.autorUsuarioId === user?.id);
       setMyDemands(filtered);
     } catch (err) {
       console.error('Erro ao carregar demandas:', err);
     } finally {
       setLoadingDemands(false);
+    }
+  }
+
+  function handleEditDemand(demand) {
+    setEditingDemand(demand);
+    setFormData({
+      titulo: demand.titulo,
+      descricao: demand.descricao,
+      categoriaId: demand.categoriaId?.toString() || "",
+      propriedades: {
+        budget: demand.propriedades?.budget || "",
+        deadline: demand.propriedades?.deadline || "",
+      },
+    });
+    setShowForm(true);
+  }
+
+  function handleCancelEdit() {
+    setEditingDemand(null);
+    setFormData({
+      titulo: "",
+      descricao: "",
+      categoriaId: "",
+      propriedades: {
+        budget: "",
+        deadline: "",
+      },
+    });
+    setShowForm(false);
+  }
+
+  function handleOpenDeleteModal(demand) {
+    setDemandToDelete(demand);
+    setShowDeleteModal(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!demandToDelete) return;
+
+    try {
+      const res = await authFetch(`/ofertas/${demandToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Falha ao excluir demanda");
+      }
+
+      toast.success("Demanda excluída com sucesso!");
+      setMyDemands(myDemands.filter(d => d.id !== demandToDelete.id));
+      setShowDeleteModal(false);
+      setDemandToDelete(null);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Erro ao excluir demanda");
     }
   }
 
@@ -82,30 +137,27 @@ export function Companies() {
         ativa: true,
       };
 
-      const res = await authFetch("/ofertas", {
-        method: "POST",
+      const url = editingDemand 
+        ? `/ofertas/${editingDemand.id}` 
+        : "/ofertas";
+      
+      const method = editingDemand ? "PUT" : "POST";
+
+      const res = await authFetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Falha ao publicar demanda");
+      if (!res.ok) throw new Error(data.error || "Falha ao salvar demanda");
 
-      toast.success("Demanda publicada com sucesso!");
-      setFormData({
-        titulo: "",
-        descricao: "",
-        categoriaId: "",
-        propriedades: {
-          budget: "",
-          deadline: "",
-        },
-      });
-      setShowForm(false);
-      loadMyDemands(); // Recarregar lista de demandas
+      toast.success(editingDemand ? "Demanda atualizada com sucesso!" : "Demanda publicada com sucesso!");
+      handleCancelEdit();
+      loadMyDemands();
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Erro ao publicar demanda");
+      toast.error(err.message || "Erro ao salvar demanda");
     } finally {
       setLoading(false);
     }
@@ -113,7 +165,6 @@ export function Companies() {
 
   return (
     <div className="companies-page">
-      
       <Toaster />
 
       <main className="companies-main">
@@ -166,7 +217,12 @@ export function Companies() {
                 <h2>Minhas Demandas</h2>
                 <Button
                   className="btn-primary"
-                  onClick={() => setShowForm(!showForm)}
+                  onClick={() => {
+                    if (!showForm) {
+                      handleCancelEdit();
+                    }
+                    setShowForm(!showForm);
+                  }}
                 >
                   <Plus size={16} />
                   Nova Demanda
@@ -176,7 +232,9 @@ export function Companies() {
               {showForm && (
                 <Card className="form-card">
                   <CardHeader>
-                    <CardTitle>Publicar Nova Demanda</CardTitle>
+                    <CardTitle>
+                      {editingDemand ? "Editar Demanda" : "Publicar Nova Demanda"}
+                    </CardTitle>
                     <CardDescription>
                       Preencha os detalhes do serviço que você precisa
                     </CardDescription>
@@ -278,12 +336,12 @@ export function Companies() {
                           className="btn-primary"
                           disabled={loading}
                         >
-                          {loading ? "Publicando..." : "Publicar Demanda"}
+                          {loading ? "Salvando..." : (editingDemand ? "Atualizar Demanda" : "Publicar Demanda")}
                         </Button>
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setShowForm(false)}
+                          onClick={handleCancelEdit}
                           disabled={loading}
                         >
                           Cancelar
@@ -311,10 +369,17 @@ export function Companies() {
               ) : (
                 <div className="demands-list">
                   {myDemands.map((demand) => (
-                    <Card key={demand.id}>
+                    <Card key={demand.id} className="demand-card">
                       <CardHeader>
-                        <CardTitle>{demand.titulo}</CardTitle>
-                        <CardDescription>{demand.descricao}</CardDescription>
+                        <div className="demand-header">
+                          <div>
+                            <CardTitle>{demand.titulo}</CardTitle>
+                            <CardDescription>{demand.descricao}</CardDescription>
+                          </div>
+                          <span className={`demand-status ${demand.ativa ? 'active' : 'inactive'}`}>
+                            {demand.ativa ? '🟢 Ativa' : '🔴 Inativa'}
+                          </span>
+                        </div>
                       </CardHeader>
                       <CardContent>
                         <div className="demand-info">
@@ -333,9 +398,25 @@ export function Companies() {
                               <strong>Categoria:</strong> {demand.categoria.nome}
                             </div>
                           )}
-                          <div>
-                            <strong>Status:</strong> {demand.ativa ? '🟢 Ativa' : '🔴 Inativa'}
-                          </div>
+                        </div>
+
+                        <div className="demand-actions">
+                          <Button
+                            variant="outline"
+                            className="btn-edit"
+                            onClick={() => handleEditDemand(demand)}
+                          >
+                            <Edit size={16} />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="btn-delete"
+                            onClick={() => handleOpenDeleteModal(demand)}
+                          >
+                            <Trash2 size={16} />
+                            Excluir
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -376,21 +457,49 @@ export function Companies() {
                     </div>
                   </div>
 
-                   {/* Alteraçao nessa parte do codigo  */}
-
-                  {/* ---------------------------------------- */}
                   <Button asChild className="btn-light" size="lg">
-                     <Link to="/registro">Cadastrar Empresa</Link>
+                    <Link to="/registro">Cadastrar Empresa</Link>
                   </Button>
-
-                  {/* ---------------------------------------- */}
-
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
       </main>
+
+      {/* Modal de Confirmação de Exclusão */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <AlertCircle className="modal-icon-warning" />
+              <h3 className="modal-title">Confirmar Exclusão</h3>
+            </div>
+            <div className="modal-body">
+              <p>Tem certeza que deseja excluir a demanda:</p>
+              <p className="modal-demand-title">"{demandToDelete?.titulo}"?</p>
+              <p className="modal-warning">
+                Esta ação não pode ser desfeita e todas as propostas recebidas serão perdidas.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowDeleteModal(false)}
+                className="modal-btn-cancel"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleConfirmDelete}
+                className="modal-btn-confirm"
+              >
+                Sim, Excluir
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

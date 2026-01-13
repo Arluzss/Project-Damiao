@@ -1,6 +1,7 @@
 import { useState } from "react"; 
 import { Link, useNavigate } from "react-router-dom"; 
 import { useAuth } from "../context/AuthContext"; 
+import { Eye, EyeOff } from "lucide-react"; 
 import "./Login.css";
 
 export function Login() { 
@@ -10,6 +11,12 @@ export function Login() {
   const [identifier, setIdentifier] = useState(""); 
   const [password, setPassword] = useState(""); 
   const [error, setError] = useState(""); 
+  const [showPassword, setShowPassword] = useState(false); // ← Estado para mostrar/ocultar senha
+
+  // Função para alternar visibilidade da senha
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e) => { 
     e.preventDefault(); 
@@ -47,7 +54,7 @@ export function Login() {
       setError(err.message || 'Falha no login'); 
     } 
   };  
-
+  
   return ( 
     <div className="login-page"> 
       <main className="login-main"> 
@@ -72,19 +79,35 @@ export function Login() {
                   /> 
                 </div> 
 
+                {/* Campo de senha com botão de mostrar/ocultar */}
                 <div className="form-group"> 
                   <label htmlFor="password">Senha</label> 
-                  <input 
-                    id="password" 
-                    type="password" 
-                    placeholder="••••••••" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                  /> 
+                  <div className="password-input-wrapper">
+                    <input 
+                      id="password" 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)} 
+                      required 
+                      className="password-input"
+                    /> 
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="password-toggle-button"
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    >
+                      {showPassword ? (
+                        <Eye className="password-icon" />
+                      ) : (
+                        <EyeOff className="password-icon" />
+                      )}
+                    </button>
+                  </div>
                 </div> 
 
-                {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>} 
+                {error && <p className="form-error">{error}</p>} 
 
                 <button type="submit" className="btn-login"> 
                   Entrar 
