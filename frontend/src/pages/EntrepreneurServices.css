@@ -137,6 +137,74 @@
   color: #334155;
 }
 
+/* ===== ESTILOS ESPECÍFICOS PARA CATEGORIA ===== */
+
+/* Select Trigger (botão que abre o dropdown) */
+.form [role="combobox"] {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form [role="combobox"]:hover {
+  border-color: #2563eb;
+}
+
+.form [role="combobox"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Dropdown de categorias (listbox) */
+.form [role="listbox"] {
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-top: 4px;
+  padding: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+}
+
+/* Itens de categoria */
+.form [role="option"] {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.form [role="option"]:hover {
+  background-color: #f1f5f9;
+}
+
+/* Item selecionado */
+.form [role="option"][aria-selected="true"] {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* Placeholder do select */
+.form [role="combobox"] [data-placeholder] {
+  color: #94a3b8;
+}
+
 /* ===== Sidebar ===== */
 .sidebar {
   display: flex;
@@ -216,3 +284,4 @@
     order: -1;
   }
 }
+
