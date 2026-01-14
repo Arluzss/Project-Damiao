@@ -45,6 +45,18 @@ class MoedaService {
             if (jaRecebeuHoje) throw new Error('Limite diário para este motivo atingido');
         }
 
+        // anti-abuso: teste_personalidade somente 1 vez (NUNCA)
+        if (motivoChave === 'teste_personalidade') {
+            const jaRecebeu = await prisma.extratoPontos.findFirst({
+                where: {
+                    usuarioId,
+                    motivo: config.descricao
+                }
+            });
+
+            if (jaRecebeu) throw new Error('Pontos por teste de personalidade já foram concedidos anteriormente');
+        }
+
         const entry = await prisma.extratoPontos.create({
             data: {
                 usuarioId,

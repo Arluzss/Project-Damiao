@@ -250,8 +250,8 @@ export function PersonalityTest() {
           } else {
             const data = await res.json();
             console.log("⚠️ Erro na resposta:", data);
-            if (data.error && data.error.includes('Limite')) {
-              toast.info("Você já recebeu pontos por este teste hoje");
+            if (data.error && (data.error.includes('Limite') || data.error.includes('já foram concedidos'))) {
+              toast.info("Teste concluído! (Pontos já foram concedidos anteriormente)");
             } else {
               toast.error(data.error || "Erro ao adicionar pontos");
             }

@@ -63,16 +63,28 @@ export function Store() {
         body: JSON.stringify({ itemId })
       });
 
-      const data = await res.json();
+      // Verificar se a resposta tem conteúdo antes de tentar fazer parse do JSON
+      const text = await res.text();
+      let data;
+      
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (jsonError) {
+        console.error("Erro ao fazer parse do JSON:", text);
+        throw new Error('Resposta inválida do servidor');
+      }
       
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao resgatar item');
       }
 
       // Atualizar saldo com o valor retornado do backend
-      updateUser({ damiao: data.totalAfter });
+      if (data.totalAfter !== undefined) {
+        updateUser({ damiao: data.totalAfter });
+      }
       toast.success(`${itemName} resgatado com sucesso!`);
     } catch (err) {
+      console.error("Erro na compra:", err);
       toast.error(err.message || 'Erro ao resgatar item');
     } finally {
       setLoading(false);

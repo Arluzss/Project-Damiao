@@ -27,26 +27,26 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
     async redeeItem(usuarioId, itemId) {
         const item = this.CATALOGO[itemId];
 
-        if(!item) throw new Error('Item não encontrado no catálogo'); // 1 validação de existencia de item 
+        if(!item) throw new Error('Item não encontrado no catálogo');
 
-        const saldoAtual = await moedasService.getTotalPoints(usuarioId); // 2 serve para calcular saldo atual 
+        // getTotalPoints retorna { total, extrato }, então precisamos acessar .total
+        const { total: saldoAtual } = await moedasService.getTotalPoints(usuarioId);
 
         if (saldoAtual < item.custo) {
-            throw new Error('Saldo insuficiente para este resgate'); // 4 É uma transação atômica. FOi utilizado  $transaction ara garantir que, se algo falhar, nada seja gravado
-            
+            throw new Error('Saldo insuficiente para este resgate');
         }
 
         return await prisma.$transaction(async (tx) => {
 
-            const lancamento = await tx.extratoPontos.create({ // serve para criar lançamento negativo no extrato 
+            const lancamento = await tx.extratoPontos.create({
                 data: {
                     usuarioId,
-                    quantidade: -item.custo, // será valor negativo para débito
+                    quantidade: -item.custo, // valor negativo para débito
                     motivo: `Resgate: ${item.nome}`
                 }
             });
 
-            const agregacao = await tx.extratoPontos.aggregate({ //vai calcular saldo final atualizado
+            const agregacao = await tx.extratoPontos.aggregate({
                 where: {usuarioId},
                 _sum: {quantidade: true}
             });
@@ -54,7 +54,7 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
             const totalAfter = agregacao._sum.quantidade || 0;
 
             return {
-                sucess: true,
+                success: true, // Corrigido de 'sucess' para 'success'
                 item: item.nome,
                 debited: item.custo,
                 totalAfter
