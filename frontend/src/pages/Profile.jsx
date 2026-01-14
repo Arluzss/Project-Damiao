@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
@@ -72,6 +72,31 @@ export function Profile() {
   const getCourseName = (courseId) => {
     return courseNames[courseId] || `Curso #${courseId}`;
   };
+
+  const [fetchedCourses, setFetchedCourses] = useState([]);
+  const [coursesLoading, setCoursesLoading] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      setCoursesLoading(true);
+      try {
+        const res = await fetch('/ofertas?tipo=CURSO');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao buscar cursos');
+        if (mounted) setFetchedCourses(data || []);
+      } catch (err) {
+        console.error('Erro ao carregar cursos:', err);
+      } finally {
+        if (mounted) setCoursesLoading(false);
+      }
+    };
+
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  const enrolledCourses = fetchedCourses.filter((c) => user.courses?.includes(String(c.id)));
 
   return (
     <div className="profile-page">
@@ -168,20 +193,29 @@ export function Profile() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {user.courses && user.courses.length > 0 ? (
-                      <div className="profile-courses-list">
-                        {user.courses.map((courseId) => (
-                          <div key={courseId} className="profile-course-item">
-                            <div className="profile-course-header">
-                              <h3 className="profile-course-title">{getCourseName(courseId)}</h3>
-                              <Badge variant="outline">Em Andamento</Badge>
+                      {user.courses && user.courses.length > 0 ? (
+                        <div className="profile-courses-list">
+                          {(fetchedCourses.length > 0 ? enrolledCourses.map((course) => (
+                            <div key={course.id} className="profile-course-item">
+                              <div className="profile-course-header">
+                                <h3 className="profile-course-title">{course.titulo || course.title}</h3>
+                                <Badge variant="outline">Em Andamento</Badge>
+                              </div>
+                              <Progress value={0} className="profile-course-progress" />
+                              <p className="profile-course-percentage">0% concluído</p>
                             </div>
-                            <Progress value={0} className="profile-course-progress" />
-                            <p className="profile-course-percentage">0% concluído</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
+                          )) : user.courses.map((courseId) => (
+                            <div key={courseId} className="profile-course-item">
+                              <div className="profile-course-header">
+                                <h3 className="profile-course-title">{getCourseName(courseId)}</h3>
+                                <Badge variant="outline">Em Andamento</Badge>
+                              </div>
+                              <Progress value={0} className="profile-course-progress" />
+                              <p className="profile-course-percentage">0% concluído</p>
+                            </div>
+                          )))}
+                        </div>
+                      ) : (
                       <div className="profile-empty-state">
                         <GraduationCap className="profile-empty-icon" />
                         <p>Você ainda não está inscrito em nenhum curso</p>

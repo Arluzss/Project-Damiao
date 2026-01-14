@@ -26,6 +26,11 @@ class MoedaService {
     }
 
     async addPoints(usuarioId, motivoChave, detalhes = {}) {
+        // Validar usuarioId
+        if (!usuarioId || typeof usuarioId !== 'number') {
+            throw new Error('Usuário não identificado');
+        }
+
         const config = this.VALORES_POR_MOTIVO[motivoChave];
         if (!config) return null;
 

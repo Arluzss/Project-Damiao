@@ -25,7 +25,6 @@ class MoedaController {
 
             return res.status(201).json(resultado);
         } catch (error) {
-            const isAbuse = error.message && (error.message.includes('Limite') || error.message.includes('já recebeu'));
             return res.status(isAbuse ? 400 : 500).json({ error: error.message || 'Erro interno' });
         }
     }

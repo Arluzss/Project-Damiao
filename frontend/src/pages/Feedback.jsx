@@ -12,61 +12,7 @@ import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
 import "./Feedback.css";
 
-const availableCourses = [
-  { id: "1", name: "Desenvolvimento Web Full Stack" },
-  { id: "2", name: "Gestão de Negócios" },
-  { id: "3", name: "Design Gráfico e UX/UI" },
-  { id: "4", name: "Marketing Digital" },
-  { id: "5", name: "Programação Python" },
-  { id: "6", name: "Gestão Financeira" },
-  { id: "7", name: "Fotografia Profissional" },
-  { id: "8", name: "Empreendedorismo Digital" },
-];
-
-const feedbackData = [
-  {
-    id: "1",
-    user: "Carlos Oliveira",
-    course: "Desenvolvimento Web Full Stack",
-    rating: 5,
-    comment: "Excelente curso! Os professores são muito capacitados e o conteúdo é muito prático.",
-    date: "10/12/2024",
-  },
-  {
-    id: "2",
-    user: "Ana Paula",
-    course: "Gestão de Negócios",
-    rating: 5,
-    comment: "Transformou completamente minha visão sobre gestão. Recomendo muito!",
-    date: "08/12/2024",
-  },
-  {
-    id: "3",
-    user: "Roberto Silva",
-    course: "Design Gráfico e UX/UI",
-    rating: 4,
-    comment: "Muito bom! Aprendi bastante sobre Figma e UX. Poderia ter mais exercícios práticos.",
-    date: "05/12/2024",
-  },
-];
-
-const highlights = [
-  {
-    name: "Maria Fernanda",
-    achievement: "Melhor aluna em Desenvolvimento Web",
-    damiao: 500,
-  },
-  {
-    name: "Lucas Mendes",
-    achievement: "100% de frequência - 3 meses",
-    damiao: 300,
-  },
-  {
-    name: "Juliana Costa",
-    achievement: "Primeiro projeto entregue",
-    damiao: 250,
-  },
-];
+// Dados estáticos removidos — cursos agora vêm da API `/ofertas?tipo=CURSO`.
 
 export function Feedback() {
   const { user, authFetch, updateUser } = useAuth();
@@ -76,24 +22,63 @@ export function Feedback() {
   const [comment, setComment] = useState("");
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [fetchedCourses, setFetchedCourses] = useState([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
 
-  // Carregar cursos inscritos do usuário
+  // Buscar lista de cursos disponíveis (ofertas)
   useEffect(() => {
-    if (user?.courses && user.courses.length > 0) {
-      // Se o usuário tem cursos no contexto
-      const userCourses = user.courses.map(courseId => 
-        availableCourses.find(c => c.id === courseId.toString())
-      ).filter(Boolean);
+    let mounted = true;
+    const load = async () => {
+      setCoursesLoading(true);
+      try {
+        const res = await authFetch('/ofertas?tipo=CURSO');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao buscar cursos');
+        if (mounted) setFetchedCourses(data || []);
+      } catch (err) {
+        console.error('Erro ao carregar ofertas:', err);
+      } finally {
+        if (mounted) setCoursesLoading(false);
+      }
+    };
+
+    load();
+    return () => { mounted = false; };
+  }, [authFetch]);
+
+  // Atualizar cursos inscritos com base nos cursos buscados e no usuário
+  useEffect(() => {
+    const userCourseIds = new Set((user?.courses || []).map(String));
+
+    // Se conseguimos buscar cursos, filtra pelos inscritos do usuário
+    if (userCourseIds.size > 0) {
+      if (fetchedCourses && fetchedCourses.length > 0) {
+        const userCourses = fetchedCourses
+          .filter((c) => userCourseIds.has(String(c.id)))
+          .map((c) => ({
+            id: String(c.id),
+            name: c.titulo || c.title || c.propriedades?.titulo || `Curso #${c.id}`,
+          }));
+
+        setEnrolledCourses(userCourses);
+        setLoading(false);
+        return;
+      }
+
+      // Fallback mínimo quando não há fetch: construir nomes genéricos a partir do id
+      const userCourses = (user.courses || []).map((courseId) => ({
+        id: String(courseId),
+        name: `Curso #${courseId}`,
+      }));
       setEnrolledCourses(userCourses);
       setLoading(false);
-    } else {
-      // Simulação de cursos inscritos (pode ser substituído por chamada API)
-      // Por enquanto, mostra os primeiros 3 cursos como exemplo
-      const mockEnrolledCourses = availableCourses.slice(0, 3);
-      setEnrolledCourses(mockEnrolledCourses);
-      setLoading(false);
+      return;
     }
-  }, [user]);
+
+    // Nenhum curso inscrito
+    setEnrolledCourses([]);
+    setLoading(false);
+  }, [user, fetchedCourses]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

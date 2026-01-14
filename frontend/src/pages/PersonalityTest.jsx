@@ -215,19 +215,10 @@ export function PersonalityTest() {
     if (showResult && result && !hasAddedPointsRef.current) {
       hasAddedPointsRef.current = true;
       
-      // Verificar se é a primeira vez que faz o teste (só dá pontos na primeira vez)
-      const isFirstTime = !user.perfilProfissional;
-      
-      if (!isFirstTime) {
-        console.log("🔄 Usuário já fez o teste anteriormente, não ganhará pontos novamente");
-        toast.info("Teste concluído! (Você já recebeu pontos por este teste anteriormente)");
-        return;
-      }
-      
-      // Chamar a API diretamente sem usar addPoints do AuthContext
+      // Chamar a API diretamente - o backend verificará se é a primeira vez
       setTimeout(async () => {
         try {
-          console.log("🚀 Chamando API /moedas para adicionar pontos (primeira vez)...");
+          console.log("🚀 Chamando API /moedas para adicionar pontos...");
           const res = await authFetch('/moedas', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -250,8 +241,8 @@ export function PersonalityTest() {
           } else {
             const data = await res.json();
             console.log("⚠️ Erro na resposta:", data);
-            if (data.error && (data.error.includes('Limite') || data.error.includes('já foram concedidos'))) {
-              toast.info("Teste concluído! (Pontos já foram concedidos anteriormente)");
+            if (data.error && (data.error.includes('já recebeu') || data.error.includes('anteriormente'))) {
+              toast.info("Teste concluído! Você já recebeu pontos por este teste anteriormente.");
             } else {
               toast.error(data.error || "Erro ao adicionar pontos");
             }
@@ -262,7 +253,7 @@ export function PersonalityTest() {
         }
       }, 1500);
     }
-  }, [showResult, result, authFetch, updateUser, user.perfilProfissional]);
+  }, [showResult, result, authFetch, updateUser]);
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
