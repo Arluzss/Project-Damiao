@@ -46,6 +46,9 @@ const categories = [
   "Design",
   "Educação",
   "Serviços",
+  "Alimentação",
+  "Serviços Gerais",
+  "Consultoria",
 ];
 
 // Mapeamento de categorias do frontend para IDs do banco
@@ -54,7 +57,10 @@ const categoryToId = {
   "Marketing": 2,
   "Design": 3,
   "Educação": 4,
-  "Serviços": 5
+  "Serviços": 5,
+  "Alimentação": 6,
+  "Serviços Gerais": 7,
+  "Consultoria": 8
 };
 
 export function EntrepreneurServices() {
