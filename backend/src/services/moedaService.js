@@ -25,27 +25,31 @@ class MoedaService {
         return { total, extrato };
     }
 
-    async addPoints(usuarioId, motivoChave) {
+    async addPoints(usuarioId, motivoChave, detalhes = {}) {
         const config = this.VALORES_POR_MOTIVO[motivoChave];
         if (!config) return null;
 
-        // anti-abuso: feedback somente 1 vez por dia
+        // anti-abuso: feedback por curso (uma vez por curso)
         if (motivoChave === 'feedback') {
-            const hoje = new Date();
-            hoje.setHours(0, 0, 0, 0);
+            const cursoId = detalhes.cursoId;
+            if (!cursoId) {
+                throw new Error('cursoId é obrigatório para feedback');
+            }
 
-            const jaRecebeuHoje = await prisma.extratoPontos.findFirst({
+            const motivoCompleto = `${config.descricao} - Curso ${cursoId}`;
+            const jaRecebeu = await prisma.extratoPontos.findFirst({
                 where: {
                     usuarioId,
-                    motivo: config.descricao,
-                    createdAt: { gte: hoje }
+                    motivo: motivoCompleto
                 }
             });
 
-            if (jaRecebeuHoje) throw new Error('Limite diário para este motivo atingido');
+            if (jaRecebeu) {
+                throw new Error(`Você já recebeu pontos por avaliar este curso`);
+            }
         }
 
-        // anti-abuso: teste_personalidade somente 1 vez (NUNCA)
+        // anti-abuso: teste_personalidade somente 1 vez (NUNCA mais)
         if (motivoChave === 'teste_personalidade') {
             const jaRecebeu = await prisma.extratoPontos.findFirst({
                 where: {
@@ -54,14 +58,22 @@ class MoedaService {
                 }
             });
 
-            if (jaRecebeu) throw new Error('Pontos por teste de personalidade já foram concedidos anteriormente');
+            if (jaRecebeu) {
+                throw new Error(`Você já recebeu pontos por teste de personalidade anteriormente`);
+            }
+        }
+
+        // Adicionar curso ao motivo se for feedback
+        let motivoFinal = config.descricao;
+        if (motivoChave === 'feedback' && detalhes.cursoId) {
+            motivoFinal = `${config.descricao} - Curso ${detalhes.cursoId}`;
         }
 
         const entry = await prisma.extratoPontos.create({
             data: {
                 usuarioId,
                 quantidade: config.valor,
-                motivo: config.descricao
+                motivo: motivoFinal
             }
         });
 

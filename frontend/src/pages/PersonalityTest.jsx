@@ -220,7 +220,7 @@ export function PersonalityTest() {
       
       if (!isFirstTime) {
         console.log("🔄 Usuário já fez o teste anteriormente, não ganhará pontos novamente");
-        toast.info("Teste concluído! (Pontos são dados apenas na primeira vez)");
+        toast.info("Teste concluído! (Você já recebeu pontos por este teste anteriormente)");
         return;
       }
       

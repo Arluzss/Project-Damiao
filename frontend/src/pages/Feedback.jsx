@@ -69,7 +69,7 @@ const highlights = [
 ];
 
 export function Feedback() {
-  const { user, addPoints } = useAuth();
+  const { user, authFetch, updateUser } = useAuth();
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [rating, setRating] = useState(0);
@@ -114,16 +114,31 @@ export function Feedback() {
 
     setSending(true);
     try {
-      // Adicionar pontos via backend (com proteção anti-abuso)
-      await addPoints('feedback');
-      toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
+      // Adicionar pontos via backend passando o cursoId
+      const res = await authFetch('/moedas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motivo: 'feedback', cursoId: selectedCourse })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.total !== undefined) {
+          updateUser({ damiao: data.total });
+        }
+        toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Erro ao adicionar pontos');
+      }
+      
       setSelectedCourse("");
       setRating(0);
       setComment("");
     } catch (err) {
-      // Se for limite diário, ainda mostra sucesso no feedback mas avisa sobre pontos
-      if (err.message && err.message.includes('Limite')) {
-        toast.warning("Feedback enviado! (Limite diário de pontos atingido)");
+      // Se já recebeu pontos para este curso específico
+      if (err.message && err.message.includes('já recebeu')) {
+        toast.warning("Feedback enviado! (Você já recebeu pontos por este curso)");
         setSelectedCourse("");
         setRating(0);
         setComment("");
@@ -157,7 +172,7 @@ export function Feedback() {
                   <CardTitle>Enviar Avaliação</CardTitle>
                 </div>
                 <CardDescription>
-                  Avalie sua experiência e ganhe 25 Damiões
+                  Avalie sua experiência e ganhe 25 Damiões por curso
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -245,7 +260,7 @@ export function Feedback() {
               <div className="info-banner-grid">
                 <div className="info-banner-item">
                   <p className="info-banner-value">+25</p>
-                  <p className="info-banner-label">Damiões por avaliação</p>
+                  <p className="info-banner-label">Damiões por curso avaliado</p>
                 </div>
                 <div className="info-banner-item">
                   <p className="info-banner-value">100%</p>

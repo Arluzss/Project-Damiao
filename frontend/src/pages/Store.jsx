@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useAuth } from "../context/AuthContext";
 import {
@@ -17,31 +17,55 @@ import { Toaster } from "../components/ui/Sonner";
 
 import "./Store.css";
 
-const prizes = [
-  { id: "badge_pioneiro", name: "Badge de Pioneiro 🏆", cost: 50, category: "special", image: "🏆" },
-  { id: "vale_amazon_50", name: "Vale-Presente Amazon R$ 50", cost: 500, category: "voucher", image: "🎁" },
-  { id: "fone_bluetooth", name: "Fone de Ouvido Bluetooth", cost: 800, category: "product", image: "🎧" },
-  { id: "mochila_executiva", name: "Mochila Executiva", cost: 600, category: "product", image: "🎒" },
-];
-
-const discounts = [
-  { id: "desconto_livraria", partner: "Livraria Cultura", discount: "20% de desconto", cost: 200, image: "📚" },
-  { id: "desconto_ifood", partner: "iFood", discount: "R$ 25 de desconto", cost: 250, image: "🍕" },
-  { id: "desconto_academia", partner: "Academia FitLife", discount: "1 mês grátis", cost: 400, image: "💪" },
-];
-
-const mentorships = [
-  { id: "mentoria_carreira", topic: "Carreira em Tecnologia", mentor: "João Silva - CTO na Tech Corp", duration: "1h", cost: 300, image: "💻" },
-  { id: "mentoria_empreendedorismo", topic: "Empreendedorismo Digital", mentor: "Maria Santos - CEO StartupHub", duration: "1h", cost: 350, image: "🚀" },
-  { id: "mentoria_marketing", topic: "Marketing e Vendas", mentor: "Pedro Costa - Dir. Marketing", duration: "1h", cost: 300, image: "📈" },
-];
+// Mapeamento de emojis por categoria e item
+const itemIcons = {
+  'badge_pioneiro': '🏆',
+  'vale_amazon_50': '🎁',
+  'fone_bluetooth': '🎧',
+  'mochila_executiva': '🎒',
+  'desconto_livraria': '📚',
+  'desconto_ifood': '🍕',
+  'desconto_academia': '💪',
+  'mentoria_carreira': '💻',
+  'mentoria_empreendedorismo': '🚀',
+  'mentoria_marketing': '📈',
+  'ebook_empreendedor': '📖',
+  'ingresso_evento': '🎫'
+};
 
 export function Store() {
   const { user, updateUser, authFetch } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(true);
+  const [items, setItems] = useState([]);
 
   // Verifica se é empresa
   const isCompany = user?.tipo === "company";
+
+  useEffect(() => {
+    loadStoreItems();
+  }, []);
+
+  async function loadStoreItems() {
+    setLoadingItems(true);
+    try {
+      const res = await fetch('/loja');
+      const data = await res.json();
+      if (res.ok) {
+        setItems(data);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar itens da loja:', err);
+      toast.error('Erro ao carregar itens da loja');
+    } finally {
+      setLoadingItems(false);
+    }
+  }
+
+  // Filtrar itens por categoria
+  const prizes = items.filter(item => item.category === 'product' || item.category === 'special');
+  const discounts = items.filter(item => item.category === 'discount');
+  const mentorships = items.filter(item => item.category === 'mentorship');
 
   async function handlePurchase(itemId, itemName, cost) {
     if (!user) {
@@ -129,90 +153,117 @@ export function Store() {
             </TabsList>
 
             <TabsContent value="prizes">
-              <div className="grid grid-3">
-                {prizes.map((prize) => (
-                  <Card key={prize.id}>
-                    <CardHeader>
-                      <div className="emoji">{prize.image}</div>
-                      <CardTitle>{prize.name}</CardTitle>
-                      <CardDescription>
-                        <span className="cost">
-                          <Coins /> <span>{prize.cost} Damiões</span>
-                        </span>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button
-                        onClick={() => handlePurchase(prize.id, prize.name, prize.cost)}
-                        disabled={!user || user.damiao < prize.cost || loading}
-                      >
-                        {loading ? "Processando..." : (!user || user.damiao < prize.cost ? "Damiões Insuficientes" : "Resgatar")}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="discounts">
-              <div className="grid grid-3">
-                {discounts.map((discount) => (
-                  <Card key={discount.id}>
-                    <CardHeader>
-                      <div className="emoji">{discount.image}</div>
-                      <CardTitle>{discount.partner}</CardTitle>
-                      <CardDescription>
-                        <Badge>{discount.discount}</Badge>
-                        <span className="cost">
-                          <Coins /> <span>{discount.cost} Damiões</span>
-                        </span>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button
-                        onClick={() => handlePurchase(discount.id, `Desconto ${discount.partner}`, discount.cost)}
-                        disabled={!user || user.damiao < discount.cost || loading}
-                      >
-                        {loading ? "Processando..." : (!user || user.damiao < discount.cost ? "Damiões Insuficientes" : "Resgatar")}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            {/* Mentorias: oculta para empresas */}
-            {!isCompany && (
-              <TabsContent value="mentorships">
-                <div className="grid grid-2">
-                  {mentorships.map((mentorship) => (
-                    <Card key={mentorship.id}>
+              {loadingItems ? (
+                <div style={{ textAlign: 'center', padding: '3rem' }}>
+                  <p>Carregando itens...</p>
+                </div>
+              ) : prizes.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem' }}>
+                  <p>Nenhum item disponível no momento.</p>
+                </div>
+              ) : (
+                <div className="grid grid-3">
+                  {prizes.map((prize) => (
+                    <Card key={prize.id}>
                       <CardHeader>
-                        <div className="mentorship">
-                          <div className="emoji">{mentorship.image}</div>
-                          <div className="mentorship-info">
-                            <CardTitle>{mentorship.topic}</CardTitle>
-                            <CardDescription>
-                              <span>{mentorship.mentor}</span>
-                              <span className="cost">
-                                <Badge>{mentorship.duration}</Badge>
-                                <Coins /> <span>{mentorship.cost} Damiões</span>
-                              </span>
-                            </CardDescription>
-                          </div>
-                        </div>
+                        <div className="emoji">{itemIcons[prize.id] || '🎁'}</div>
+                        <CardTitle>{prize.name}</CardTitle>
+                        <CardDescription>
+                          <span className="cost">
+                            <Coins /> <span>{prize.cost} Damiões</span>
+                          </span>
+                        </CardDescription>
                       </CardHeader>
                       <CardContent>
                         <Button
-                          onClick={() => handlePurchase(mentorship.id, `Mentoria ${mentorship.topic}`, mentorship.cost)}
-                          disabled={!user || user.damiao < mentorship.cost || loading}
+                          onClick={() => handlePurchase(prize.id, prize.name, prize.cost)}
+                          disabled={!user || user.damiao < prize.cost || loading}
                         >
-                          {loading ? "Processando..." : (!user || user.damiao < mentorship.cost ? "Damiões Insuficientes" : "Agendar")}
+                          {loading ? "Processando..." : (!user || user.damiao < prize.cost ? "Damiões Insuficientes" : "Resgatar")}
                         </Button>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="discounts">
+              {loadingItems ? (
+                <div style={{ textAlign: 'center', padding: '3rem' }}>
+                  <p>Carregando descontos...</p>
+                </div>
+              ) : discounts.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem' }}>
+                  <p>Nenhum desconto disponível no momento.</p>
+                </div>
+              ) : (
+                <div className="grid grid-3">
+                  {discounts.map((discount) => (
+                    <Card key={discount.id}>
+                      <CardHeader>
+                        <div className="emoji">{itemIcons[discount.id] || '🎟️'}</div>
+                        <CardTitle>{discount.name}</CardTitle>
+                        <CardDescription>
+                          <span className="cost">
+                            <Coins /> <span>{discount.cost} Damiões</span>
+                          </span>
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Button
+                          onClick={() => handlePurchase(discount.id, discount.name, discount.cost)}
+                          disabled={!user || user.damiao < discount.cost || loading}
+                        >
+                          {loading ? "Processando..." : (!user || user.damiao < discount.cost ? "Damiões Insuficientes" : "Resgatar")}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Mentorias: oculta para empresas */}
+            {!isCompany && (
+              <TabsContent value="mentorships">
+                {loadingItems ? (
+                  <div style={{ textAlign: 'center', padding: '3rem' }}>
+                    <p>Carregando mentorias...</p>
+                  </div>
+                ) : mentorships.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '3rem' }}>
+                    <p>Nenhuma mentoria disponível no momento.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-2">
+                    {mentorships.map((mentorship) => (
+                      <Card key={mentorship.id}>
+                        <CardHeader>
+                          <div className="mentorship">
+                            <div className="emoji">{itemIcons[mentorship.id] || '🎓'}</div>
+                            <div className="mentorship-info">
+                              <CardTitle>{mentorship.name}</CardTitle>
+                              <CardDescription>
+                                <span className="cost">
+                                  <Coins /> <span>{mentorship.cost} Damiões</span>
+                                </span>
+                              </CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <Button
+                            onClick={() => handlePurchase(mentorship.id, mentorship.name, mentorship.cost)}
+                            disabled={!user || user.damiao < mentorship.cost || loading}
+                          >
+                            {loading ? "Processando..." : (!user || user.damiao < mentorship.cost ? "Damiões Insuficientes" : "Agendar")}
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
             )}
           </Tabs>

@@ -1,5 +1,15 @@
 const service = require('../services/lojaServices');
 
+exports.list = async (req, res) => {
+    try {
+        const items = await service.getAllItems();
+        return res.json(items);
+    } catch (error) {
+        console.error("❌ Erro ao listar itens:", error.message);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 exports.redeem = async (req, res) => {
     try {
         console.log("📦 Requisição de resgate recebida:", req.body);

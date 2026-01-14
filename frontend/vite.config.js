@@ -21,7 +21,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       },
-      '/loja/redeem': {
+      '/loja': {
         target: 'http://localhost:3333',
         changeOrigin: true,
         secure: false

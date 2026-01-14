@@ -5,10 +5,10 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
 
     CATALOGO = {
         // Item de Teste (barato)
-        'badge_pioneiro': {nome: 'Badge de Pioneiro 🏆', custo: 50},
+        'badge_pioneiro': {nome: 'Badge de Pioneiro', custo: 20},
         
         // Prêmios/Brindes
-        'vale_amazon_50': {nome: 'Vale-Presente Amazon R$ 50', custo: 500},
+        'vale_amazon_50': {nome: 'Vale-Presente R$ 50', custo: 500},
         'fone_bluetooth': {nome: 'Fone de Ouvido Bluetooth', custo: 800},
         'mochila_executiva': {nome: 'Mochila Executiva', custo: 600},
         
@@ -26,6 +26,25 @@ class lojaService {  // É um catálogo estático que pode ser movido para o ban
         'ebook_empreendedor': {nome: 'E-book Empreendedorismo', custo: 50},
         'ingresso_evento': {nome: 'Ingresso Workshop', custo: 200}
     };
+
+    async getAllItems() {
+        // Retorna todos os itens do catálogo com suas categorias
+        return Object.keys(this.CATALOGO).map(id => ({
+            id,
+            name: this.CATALOGO[id].nome,
+            cost: this.CATALOGO[id].custo,
+            category: this.getCategoryForItem(id)
+        }));
+    }
+
+    getCategoryForItem(itemId) {
+        if (itemId === 'badge_pioneiro') return 'special';
+        if (itemId === 'adesivo_exclusivo') return 'product';
+        if (itemId.includes('vale_') || itemId.includes('fone_') || itemId.includes('mochila_')) return 'product';
+        if (itemId.includes('desconto_')) return 'discount';
+        if (itemId.includes('mentoria_')) return 'mentorship';
+        return 'other';
+    }
 
     async redeeItem(usuarioId, itemId) {
         const item = this.CATALOGO[itemId];

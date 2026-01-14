@@ -76,11 +76,11 @@ function App() {
           } 
         />
         
-        {/* Rota apenas para Estudantes */}
+        {/* Rota para Estudantes e Microempreendedores */}
         <Route 
           path="/teste-perfil" 
           element={
-            <ProtectedRoute allowedRoles={["student"]}>
+            <ProtectedRoute allowedRoles={["student", "entrepreneur"]}>
               <PersonalityTest/>
             </ProtectedRoute>
           } 

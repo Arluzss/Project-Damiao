@@ -13,10 +13,11 @@ class MoedaController {
 
     async addPoints(req, res) {
         try {
-            const { motivo } = req.body;
+            const { motivo, cursoId } = req.body;
             const usuarioId = req.user && req.user.id;
 
-            const resultado = await moedaService.addPoints(usuarioId, motivo);
+            const detalhes = cursoId ? { cursoId } : {};
+            const resultado = await moedaService.addPoints(usuarioId, motivo, detalhes);
 
             if (!resultado) {
                 return res.status(400).json({ error: 'Motivo inválido ou não permitido.' });
@@ -24,7 +25,7 @@ class MoedaController {
 
             return res.status(201).json(resultado);
         } catch (error) {
-            const isAbuse = error.message && error.message.includes('Limite');
+            const isAbuse = error.message && (error.message.includes('Limite') || error.message.includes('já recebeu'));
             return res.status(isAbuse ? 400 : 500).json({ error: error.message || 'Erro interno' });
         }
     }
