@@ -112,7 +112,7 @@ export function CompanyDashboard() {
           <div className="section">
             <h2 className="section-title">Acesso Rápido</h2>
             <div className="quick-actions-grid">
-              <Link to="/microempreendedores" className="action-link">
+              <Link to="/empreendedores" className="action-link">
                 <Card className="action-card">
                   <CardHeader>
                     <Search className="action-icon action-icon-cyan" />

@@ -97,7 +97,7 @@ export function EntrepreneurDashboard() {
                 </Card>
               </Link>
 
-              <Link to="/microempreendedores" state={{ tab: "demands" }} className="action-link">
+              <Link to="/empreendedores" state={{ tab: "demands" }} className="action-link">
                 <Card className="action-card">
                   <CardHeader>
                     <FileText className="action-icon action-icon-blue" />

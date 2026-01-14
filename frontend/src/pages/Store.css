@@ -85,6 +85,12 @@
   border-radius: 999px;
 }
 
+/* Classe para quando há apenas 2 abas (empresas) */
+.store-tabs-list-2 {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 350px;
+}
+
 .store-tabs-list button {
   border-radius: 999px;
   transition: all 0.2s;
@@ -160,4 +166,16 @@
   border-radius: 0.5rem;
   padding: 1rem;
   text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .store-tabs-list {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .store-tabs-list-2 {
+    grid-template-columns: 1fr;
+  }
 }

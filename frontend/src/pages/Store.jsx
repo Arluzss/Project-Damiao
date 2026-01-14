@@ -39,6 +39,9 @@ export function Store() {
   const { user, updateUser, authFetch } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  // Verifica se é empresa
+  const isCompany = user?.tipo === "company";
+
   async function handlePurchase(itemId, itemName, cost) {
     if (!user) {
       toast.error("Faça login para usar a loja");
@@ -78,7 +81,6 @@ export function Store() {
 
   return (
     <div className="store-page">
-      
       <Toaster />
 
       <main className="store-main">
@@ -104,10 +106,13 @@ export function Store() {
           </header>
 
           <Tabs defaultValue="prizes" className="tabs">
-            <TabsList className="store-tabs-list">
+            <TabsList className={`store-tabs-list ${isCompany ? 'store-tabs-list-2' : ''}`}>
               <TabsTrigger value="prizes"><Gift /> Brindes</TabsTrigger>
               <TabsTrigger value="discounts"><ShoppingBag /> Descontos</TabsTrigger>
-              <TabsTrigger value="mentorships"><GraduationCap /> Mentorias</TabsTrigger>
+              {/* Mentorias: oculta para empresas */}
+              {!isCompany && (
+                <TabsTrigger value="mentorships"><GraduationCap /> Mentorias</TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="prizes">
@@ -163,37 +168,40 @@ export function Store() {
               </div>
             </TabsContent>
 
-            <TabsContent value="mentorships">
-              <div className="grid grid-2">
-                {mentorships.map((mentorship) => (
-                  <Card key={mentorship.id}>
-                    <CardHeader>
-                      <div className="mentorship">
-                        <div className="emoji">{mentorship.image}</div>
-                        <div className="mentorship-info">
-                          <CardTitle>{mentorship.topic}</CardTitle>
-                          <CardDescription>
-                            <span>{mentorship.mentor}</span>
-                            <span className="cost">
-                              <Badge>{mentorship.duration}</Badge>
-                              <Coins /> <span>{mentorship.cost} Damiões</span>
-                            </span>
-                          </CardDescription>
+            {/* Mentorias: oculta para empresas */}
+            {!isCompany && (
+              <TabsContent value="mentorships">
+                <div className="grid grid-2">
+                  {mentorships.map((mentorship) => (
+                    <Card key={mentorship.id}>
+                      <CardHeader>
+                        <div className="mentorship">
+                          <div className="emoji">{mentorship.image}</div>
+                          <div className="mentorship-info">
+                            <CardTitle>{mentorship.topic}</CardTitle>
+                            <CardDescription>
+                              <span>{mentorship.mentor}</span>
+                              <span className="cost">
+                                <Badge>{mentorship.duration}</Badge>
+                                <Coins /> <span>{mentorship.cost} Damiões</span>
+                              </span>
+                            </CardDescription>
+                          </div>
                         </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <Button
-                        onClick={() => handlePurchase(mentorship.id, `Mentoria ${mentorship.topic}`, mentorship.cost)}
-                        disabled={!user || user.damiao < mentorship.cost || loading}
-                      >
-                        {loading ? "Processando..." : (!user || user.damiao < mentorship.cost ? "Damiões Insuficientes" : "Agendar")}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
+                      </CardHeader>
+                      <CardContent>
+                        <Button
+                          onClick={() => handlePurchase(mentorship.id, `Mentoria ${mentorship.topic}`, mentorship.cost)}
+                          disabled={!user || user.damiao < mentorship.cost || loading}
+                        >
+                          {loading ? "Processando..." : (!user || user.damiao < mentorship.cost ? "Damiões Insuficientes" : "Agendar")}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+            )}
           </Tabs>
 
           <Card className="rewards-card">
