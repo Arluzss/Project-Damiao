@@ -1,12 +1,6 @@
 const authService = require('../services/authService');
 
 class AuthController { 
-    /*
-    getAll(req, res) {
-    retornar todos os feedback
-        // Implementar se necessário
-    }
-    */
     async register(req, res) {
         try {
             const { nome, documento_fiscal, tipo_pessoa, senha, email } = req.body;
