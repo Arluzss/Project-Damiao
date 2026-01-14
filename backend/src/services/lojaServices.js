@@ -4,6 +4,9 @@ const moedasService = require('./moedaService');
 class lojaService {  // É um catálogo estático que pode ser movido para o banco futuramente 
 
     CATALOGO = {
+        // Item de Teste (barato)
+        'badge_pioneiro': {nome: 'Badge de Pioneiro 🏆', custo: 50},
+        
         // Prêmios/Brindes
         'vale_amazon_50': {nome: 'Vale-Presente Amazon R$ 50', custo: 500},
         'fone_bluetooth': {nome: 'Fone de Ouvido Bluetooth', custo: 800},

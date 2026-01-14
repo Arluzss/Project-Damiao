@@ -18,6 +18,7 @@ import { Toaster } from "../components/ui/Sonner";
 import "./Store.css";
 
 const prizes = [
+  { id: "badge_pioneiro", name: "Badge de Pioneiro 🏆", cost: 50, category: "special", image: "🏆" },
   { id: "vale_amazon_50", name: "Vale-Presente Amazon R$ 50", cost: 500, category: "voucher", image: "🎁" },
   { id: "fone_bluetooth", name: "Fone de Ouvido Bluetooth", cost: 800, category: "product", image: "🎧" },
   { id: "mochila_executiva", name: "Mochila Executiva", cost: 600, category: "product", image: "🎒" },

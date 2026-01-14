@@ -57,6 +57,22 @@ export function Profile() {
     company: "Empresa",
   };
 
+  // Mapeamento de IDs de cursos para nomes
+  const courseNames = {
+    1: "Desenvolvimento Web Full Stack",
+    2: "Gestão de Negócios",
+    3: "Design Gráfico e UX/UI",
+    4: "Marketing Digital",
+    5: "Programação Python",
+    6: "Gestão Financeira",
+    7: "Fotografia Profissional",
+    8: "Empreendedorismo Digital"
+  };
+
+  const getCourseName = (courseId) => {
+    return courseNames[courseId] || `Curso #${courseId}`;
+  };
+
   return (
     <div className="profile-page">
       <Toaster />
@@ -157,10 +173,10 @@ export function Profile() {
                         {user.courses.map((courseId) => (
                           <div key={courseId} className="profile-course-item">
                             <div className="profile-course-header">
-                              <h3 className="profile-course-title">Curso #{courseId}</h3>
+                              <h3 className="profile-course-title">{getCourseName(courseId)}</h3>
                               <Badge variant="outline">Em Andamento</Badge>
                             </div>
-                            <Progress value={45} className="profile-course-progress" />
+                            <Progress value={0} className="profile-course-progress" />
                             <p className="profile-course-percentage">0% concluído</p>
                           </div>
                         ))}
