@@ -438,6 +438,53 @@
   background-color: #7e22ce;
 }
 
+/* Personality Result */
+.profile-personality-result {
+  text-align: center;
+}
+
+.profile-personality-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.profile-personality-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.profile-personality-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.profile-personality-areas {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.profile-personality-areas strong {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.profile-personality-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.profile-personality-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
 .profile-page {
   min-height: 100vh;
 

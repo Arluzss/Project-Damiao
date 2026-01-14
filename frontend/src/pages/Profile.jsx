@@ -229,18 +229,53 @@ export function Profile() {
                   <CardHeader>
                     <div className="profile-section-header">
                       <Brain className="profile-section-icon profile-section-icon-purple" />
-                      <CardTitle>Teste de Perfil</CardTitle>
+                      <CardTitle>Perfil Profissional</CardTitle>
                     </div>
-                    <CardDescription>
-                      Descubra sua área profissional ideal
-                    </CardDescription>
+                    {user.perfilProfissional ? (
+                      <CardDescription>
+                        Teste realizado em {new Date(user.perfilProfissional.dataRealizacao).toLocaleDateString('pt-BR')}
+                      </CardDescription>
+                    ) : (
+                      <CardDescription>
+                        Descubra sua área profissional ideal
+                      </CardDescription>
+                    )}
                   </CardHeader>
                   <CardContent>
-                    <Link to="/teste-perfil">
-                      <Button className="profile-test-button">
-                        Fazer Teste
-                      </Button>
-                    </Link>
+                    {user.perfilProfissional ? (
+                      <div className="profile-personality-result">
+                        <div className="profile-personality-icon">
+                          {user.perfilProfissional.icone}
+                        </div>
+                        <h3 className="profile-personality-title">
+                          {user.perfilProfissional.titulo}
+                        </h3>
+                        <p className="profile-personality-description">
+                          {user.perfilProfissional.descricao}
+                        </p>
+                        <div className="profile-personality-areas">
+                          <strong>Áreas:</strong>
+                          <div className="profile-personality-tags">
+                            {user.perfilProfissional.areas.slice(0, 2).map((area) => (
+                              <Badge key={area} variant="outline" className="profile-personality-tag">
+                                {area}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <Link to="/teste-perfil">
+                          <Button variant="outline" className="profile-test-button" size="sm">
+                            Refazer Teste
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : (
+                      <Link to="/teste-perfil">
+                        <Button className="profile-test-button">
+                          Fazer Teste
+                        </Button>
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               )}
