@@ -90,7 +90,7 @@ function App() {
         <Route 
           path="/avaliacoes" 
           element={
-            <ProtectedRoute allowedRoles={["student", "company"]}>
+            <ProtectedRoute allowedRoles={["student", "company", "entrepreneur"]}>
               <Feedback/>
             </ProtectedRoute>
           } 

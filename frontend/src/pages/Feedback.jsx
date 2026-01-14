@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
@@ -6,10 +6,22 @@ import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/Textarea";
 import { Label } from "../components/ui/Label";
 import { Badge } from "../components/ui/Badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/Select";
 import { Star, MessageSquare, TrendingUp, Award } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/Sonner";
 import "./Feedback.css";
+
+const availableCourses = [
+  { id: "1", name: "Desenvolvimento Web Full Stack" },
+  { id: "2", name: "Gestão de Negócios" },
+  { id: "3", name: "Design Gráfico e UX/UI" },
+  { id: "4", name: "Marketing Digital" },
+  { id: "5", name: "Programação Python" },
+  { id: "6", name: "Gestão Financeira" },
+  { id: "7", name: "Fotografia Profissional" },
+  { id: "8", name: "Empreendedorismo Digital" },
+];
 
 const feedbackData = [
   {
@@ -58,14 +70,40 @@ const highlights = [
 
 export function Feedback() {
   const { user, addPoints } = useAuth();
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Carregar cursos inscritos do usuário
+  useEffect(() => {
+    if (user?.courses && user.courses.length > 0) {
+      // Se o usuário tem cursos no contexto
+      const userCourses = user.courses.map(courseId => 
+        availableCourses.find(c => c.id === courseId.toString())
+      ).filter(Boolean);
+      setEnrolledCourses(userCourses);
+      setLoading(false);
+    } else {
+      // Simulação de cursos inscritos (pode ser substituído por chamada API)
+      // Por enquanto, mostra os primeiros 3 cursos como exemplo
+      const mockEnrolledCourses = availableCourses.slice(0, 3);
+      setEnrolledCourses(mockEnrolledCourses);
+      setLoading(false);
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       toast.error("Faça login para enviar feedback");
+      return;
+    }
+
+    if (!selectedCourse) {
+      toast.error("Selecione um curso");
       return;
     }
 
@@ -79,12 +117,14 @@ export function Feedback() {
       // Adicionar pontos via backend (com proteção anti-abuso)
       await addPoints('feedback');
       toast.success("Feedback enviado! Você ganhou 25 Damiões 🎉");
+      setSelectedCourse("");
       setRating(0);
       setComment("");
     } catch (err) {
       // Se for limite diário, ainda mostra sucesso no feedback mas avisa sobre pontos
       if (err.message && err.message.includes('Limite')) {
         toast.warning("Feedback enviado! (Limite diário de pontos atingido)");
+        setSelectedCourse("");
         setRating(0);
         setComment("");
       } else {
@@ -109,39 +149,65 @@ export function Feedback() {
           </div>
 
           <div className="feedback-grid">
-            <div className="feedback-main-content">
-              {/* Submit Feedback */}
-              <Card>
-                <CardHeader>
-                  <div className="card-header-title">
-                    <MessageSquare className="card-icon card-icon-blue" />
-                    <CardTitle>Enviar Avaliação</CardTitle>
-                  </div>
-                  <CardDescription>
-                    Avalie sua experiência e ganhe 25 Damiões
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="feedback-form">
-                    <div className="form-group">
-                      <Label>Sua Nota</Label>
-                      <div className="star-rating">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setRating(star)}
-                            className="star-button"
-                          >
-                            <Star
-                              className={`star-icon ${
-                                star <= rating ? "star-filled" : "star-empty"
-                              }`}
-                            />
-                          </button>
-                        ))}
-                      </div>
+            {/* Submit Feedback - Card único ocupando todo o espaço */}
+            <Card style={{ gridColumn: '1 / -1' }}>
+              <CardHeader>
+                <div className="card-header-title">
+                  <MessageSquare className="card-icon card-icon-blue" />
+                  <CardTitle>Enviar Avaliação</CardTitle>
+                </div>
+                <CardDescription>
+                  Avalie sua experiência e ganhe 25 Damiões
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="feedback-form">
+                  {loading ? (
+                    <p style={{ textAlign: 'center', padding: '2rem' }}>Carregando cursos...</p>
+                  ) : enrolledCourses.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '2rem' }}>
+                      <p>Você ainda não está inscrito em nenhum curso.</p>
+                      <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
+                        Inscreva-se em um curso para poder avaliá-lo!
+                      </p>
                     </div>
+                  ) : (
+                    <>
+                        <div className="form-group">
+                          <Label>Curso Inscrito</Label>
+                          <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o curso que deseja avaliar" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {enrolledCourses.map((course) => (
+                                <SelectItem key={course.id} value={course.id}>
+                                  {course.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="form-group">
+                          <Label>Sua Nota</Label>
+                          <div className="star-rating">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setRating(star)}
+                                className="star-button"
+                              >
+                                <Star
+                                  className={`star-icon ${
+                                    star <= rating ? "star-filled" : "star-empty"
+                                  }`}
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
 
                     <div className="form-group">
                       <Label htmlFor="comment">Seu Comentário</Label>
@@ -158,55 +224,16 @@ export function Feedback() {
                     <Button
                       type="submit"
                       className="submit-button"
-                      disabled={!user || sending}
+                      disabled={!user || sending || enrolledCourses.length === 0}
                     >
                       {sending ? "Enviando..." : (user ? "Enviar Feedback" : "Faça login para avaliar")}
                     </Button>
+                  </>
+                )}
                   </form>
                 </CardContent>
               </Card>
             </div>
-
-            {/* Sidebar */}
-            <div className="feedback-sidebar">
-
-              {/* Stats */}
-              <Card>
-                <CardHeader>
-                  <div className="card-header-title">
-                    <TrendingUp className="card-icon card-icon-green" />
-                    <CardTitle>Estatísticas</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="stats-list">
-                    <div className="stat-item">
-                      <p className="stat-label">Avaliação Média</p>
-                      <div className="stat-rating">
-                        <div className="stat-stars">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className="star-small star-filled"
-                            />
-                          ))}
-                        </div>
-                        <span className="stat-value">4.8</span>
-                      </div>
-                    </div>
-                    <div className="stat-item">
-                      <p className="stat-label">Total de Avaliações</p>
-                      <p className="stat-number">247</p>
-                    </div>
-                    <div className="stat-item">
-                      <p className="stat-label">Satisfação Geral</p>
-                      <p className="stat-number stat-success">96%</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
 
           <Card className="info-banner">
             <CardContent className="info-banner-content">

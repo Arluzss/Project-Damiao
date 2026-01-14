@@ -57,7 +57,7 @@ function Header() {
             )}
             
             {/* Avaliações: apenas para estudantes */}
-            {user && (user.tipo === "student" || user.tipo === "company") && (
+            {user && (user.tipo === "student" || user.tipo === "company" || user.tipo === "entrepreneur") && (
               <Link
                 className={isActive("/avaliacoes") ? "active" : ""}
                 to="/avaliacoes"
