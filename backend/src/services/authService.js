@@ -107,7 +107,10 @@ class AuthService {
                 id: conta.usuario.id,
                 nome: conta.usuario.nome,
                 tipo: conta.usuario.tipoPessoa,
-                email: conta.email
+                email: conta.email,
+                whatsapp: conta.usuario.whatsapp,
+                instagram: conta.usuario.instagram,
+                linkedin: conta.usuario.linkedin
             }
         };
     }

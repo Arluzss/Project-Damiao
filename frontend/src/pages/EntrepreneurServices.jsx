@@ -42,19 +42,24 @@ import "./EntrepreneurServices.css";
 
 const categories = [
   "Tecnologia",
-  "Design Gráfico",
-  "Marketing Digital",
-  "Manutenção",
-  "Consultoria",
+  "Marketing",
+  "Design",
   "Educação",
-  "Fotografia",
-  "Desenvolvimento Web",
-  "Outros",
+  "Serviços",
 ];
+
+// Mapeamento de categorias do frontend para IDs do banco
+const categoryToId = {
+  "Tecnologia": 1,
+  "Marketing": 2,
+  "Design": 3,
+  "Educação": 4,
+  "Serviços": 5
+};
 
 export function EntrepreneurServices() {
   const navigate = useNavigate();
-  const { user, updateUser, authFetch } = useAuth();
+  const { user, updateUser, authFetch, updateProfile } = useAuth();
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -69,6 +74,7 @@ export function EntrepreneurServices() {
     location: "",
     availability: "",
     isRemote: false,
+    price: "",
   });
 
   const [contactData, setContactData] = useState({
@@ -103,7 +109,8 @@ export function EntrepreneurServices() {
         category: s.propriedades?.category || s.categoria?.nome || '',
         location: s.propriedades?.location || '',
         availability: s.propriedades?.availability || '',
-        isRemote: s.propriedades?.isRemote || false
+        isRemote: s.propriedades?.isRemote || false,
+        price: s.propriedades?.price || ''
       }));
       
       setServices(converted);
@@ -146,16 +153,19 @@ export function EntrepreneurServices() {
     setLoading(true);
 
     try {
+      const categoriaId = categoryToId[formData.category] || 5; // Default: Serviços
+      
       const payload = {
         titulo: formData.title,
         descricao: formData.description,
         tipo: "SERVICO",
-        categoriaId: 1, // Categoria genérica, pode melhorar depois
+        categoriaId: categoriaId,
         propriedades: {
           category: formData.category,
           location: formData.location,
           availability: formData.availability,
-          isRemote: formData.isRemote
+          isRemote: formData.isRemote,
+          price: formData.price
         },
         ativa: true
       };
@@ -201,6 +211,7 @@ export function EntrepreneurServices() {
         location: "",
         availability: "",
         isRemote: false,
+        price: "",
       });
       
       setShowForm(false);
@@ -220,7 +231,8 @@ export function EntrepreneurServices() {
       category: service.category,
       location: service.location,
       availability: service.availability,
-      isRemote: service.isRemote
+      isRemote: service.isRemote,
+      price: service.price || ''
     });
     setEditingId(service.id);
     setShowForm(true);
@@ -246,9 +258,17 @@ export function EntrepreneurServices() {
     }
   }
 
-  function handleSaveContacts() {
-    updateUser(contactData);
-    toast.success("Contatos atualizados!");
+  async function handleSaveContacts() {
+    try {
+      await updateProfile({
+        whatsapp: contactData.whatsapp,
+        instagram: contactData.instagram,
+        linkedin: contactData.linkedin
+      });
+      toast.success("Contatos atualizados!");
+    } catch (err) {
+      toast.error(err.message || "Erro ao atualizar contatos");
+    }
   }
 
   function openWhatsApp() {
@@ -368,6 +388,18 @@ export function EntrepreneurServices() {
                         })
                       }
                       required
+                    />
+
+                    <Label>Preço</Label>
+                    <Input
+                      value={formData.price}
+                      placeholder="Ex: R$ 50 - R$ 200"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          price: e.target.value,
+                        })
+                      }
                     />
 
                     <div className="checkbox-row">

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
@@ -7,8 +7,10 @@ import { Briefcase, FileText, Award, ShoppingBag, TrendingUp, Eye } from "lucide
 import "./EntrepreneurDashboard.css";
 
 export function EntrepreneurDashboard() {
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   const navigate = useNavigate();
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
 
   // Verifica se o usuário está autenticado
   useEffect(() => {
@@ -28,6 +30,30 @@ export function EntrepreneurDashboard() {
       }
     }
   }, [user, navigate]);
+
+  // Carregar serviços do usuário
+  useEffect(() => {
+    if (user?.tipo === "entrepreneur") {
+      loadServices();
+    }
+  }, [user?.id, user?.tipo]);
+
+  async function loadServices() {
+    setLoadingServices(true);
+    try {
+      const res = await authFetch('/ofertas?tipo=SERVICO');
+      const data = await res.json();
+      if (res.ok) {
+        // Filtrar apenas serviços do usuário
+        const meus = data.filter(s => s.autorUsuarioId === user.id);
+        setServices(meus);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar serviços:', err);
+    } finally {
+      setLoadingServices(false);
+    }
+  }
 
   // Exibe loading enquanto verifica autenticação
   if (!user) {
@@ -75,7 +101,7 @@ export function EntrepreneurDashboard() {
                 <Briefcase className="stats-icon stats-icon-cyan" />
               </CardHeader>
               <CardContent>
-                <div className="stats-number">{user?.services?.length || 0}</div>
+                <div className="stats-number">{services.length}</div>
                 <p className="stats-text">Serviços cadastrados</p>
               </CardContent>
             </Card>
@@ -143,21 +169,29 @@ export function EntrepreneurDashboard() {
                 <Button className="manage-services-button">Gerenciar Serviços</Button>
               </Link>
             </div>
-            {user?.services && user.services.length > 0 ? (
+            {loadingServices ? (
+              <Card>
+                <CardContent style={{ padding: '2rem', textAlign: 'center' }}>
+                  <p>Carregando serviços...</p>
+                </CardContent>
+              </Card>
+            ) : services.length > 0 ? (
               <div className="services-grid">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Serviços cadastrados</CardTitle>
-                    <CardDescription>Você tem serviços ativos na plataforma</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link to="/meus-servicos">
-                      <Button className="service-button">
-                        Ver Meus Serviços
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                {services.map((service) => (
+                  <Card key={service.id}>
+                    <CardHeader>
+                      <CardTitle>{service.titulo}</CardTitle>
+                      <CardDescription>{service.descricao}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link to="/meus-servicos">
+                        <Button className="service-button">
+                          <Eye size={16} /> Ver Detalhes
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             ) : (
               <Card>

@@ -69,6 +69,9 @@ export function AuthProvider({ children }) {
         ...(userData || {}),
         tipo: userData?.tipo || userData?.tipo_pessoa,
         tipo_pessoa: userData?.tipo_pessoa || userData?.tipo,
+        whatsapp: userData?.whatsapp || null,
+        instagram: userData?.instagram || null,
+        linkedin: userData?.linkedin || null
       };
       console.log(' Dados do usuário processados:', normalizedUser);
       console.log(' Chaves disponíveis:', Object.keys(normalizedUser || {}));
@@ -209,6 +212,9 @@ export function AuthProvider({ children }) {
         ...(userData || {}),
         tipo: userData?.tipo || userData?.tipo_pessoa,
         tipo_pessoa: userData?.tipo_pessoa || userData?.tipo,
+        whatsapp: userData?.whatsapp || null,
+        instagram: userData?.instagram || null,
+        linkedin: userData?.linkedin || null
       };
       setUser(normalizedUser);
       localStorage.setItem('user', JSON.stringify(normalizedUser));
@@ -235,7 +241,10 @@ export function AuthProvider({ children }) {
         const next = { 
           ...prev, 
           nome: dados.nome || dados.name || prev.nome,
-          email: dados.email || prev.email
+          email: dados.email || prev.email,
+          whatsapp: dados.whatsapp !== undefined ? dados.whatsapp : prev.whatsapp,
+          instagram: dados.instagram !== undefined ? dados.instagram : prev.instagram,
+          linkedin: dados.linkedin !== undefined ? dados.linkedin : prev.linkedin
         };
         try { localStorage.setItem('user', JSON.stringify(next)); } catch (e) {}
         return next;

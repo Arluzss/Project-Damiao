@@ -8,7 +8,18 @@ class OfertaService {
 
     const ofertas = await prisma.oferta.findMany({
       where,
-      include: { autor: { select: { id: true, nome: true } }, categoria: true },
+      include: { 
+        autor: { 
+          select: { 
+            id: true, 
+            nome: true,
+            whatsapp: true,
+            instagram: true,
+            linkedin: true
+          } 
+        }, 
+        categoria: true 
+      },
       orderBy: { createdAt: 'desc' }
     });
 

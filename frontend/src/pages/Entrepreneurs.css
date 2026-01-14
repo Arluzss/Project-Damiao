@@ -123,6 +123,18 @@
   line-height: 1.4;
 }
 
+/* ===== Badge Categoria ===== */
+.category-badge {
+  margin-top: 0.5rem;
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
 /* ===== Infos ===== */
 .info {
   display: flex;

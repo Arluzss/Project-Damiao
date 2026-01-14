@@ -276,10 +276,9 @@ export function Companies() {
                       <div className="grid-3">
                         <div className="field">
                           <Label htmlFor="categoriaId">Categoria</Label>
-                          <Input
+                          <select
                             id="categoriaId"
-                            type="number"
-                            placeholder="ID da categoria"
+                            className="input-select"
                             value={formData.categoriaId}
                             onChange={(e) =>
                               setFormData({
@@ -288,7 +287,17 @@ export function Companies() {
                               })
                             }
                             required
-                          />
+                          >
+                            <option value="">Selecione uma categoria</option>
+                            <option value="1">Tecnologia</option>
+                            <option value="2">Design</option>
+                            <option value="3">Marketing</option>
+                            <option value="4">Consultoria</option>
+                            <option value="5">Serviços Gerais</option>
+                            <option value="6">Alimentação</option>
+                            <option value="7">Educação</option>
+                            <option value="8">Saúde</option>
+                          </select>
                         </div>
 
                         <div className="field">

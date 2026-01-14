@@ -25,6 +25,9 @@ class ProfileService {
       email: email || null,
       type: usuario.tipoPessoa,
       damiao,
+      whatsapp: usuario.whatsapp || null,
+      instagram: usuario.instagram || null,
+      linkedin: usuario.linkedin || null,
       courses: []
     };
   }
@@ -32,6 +35,9 @@ class ProfileService {
   async updateProfile(userId, dados) {
     const updates = {};
     if (dados.name || dados.nome) updates.nome = dados.name || dados.nome;
+    if (dados.whatsapp !== undefined) updates.whatsapp = dados.whatsapp;
+    if (dados.instagram !== undefined) updates.instagram = dados.instagram;
+    if (dados.linkedin !== undefined) updates.linkedin = dados.linkedin;
 
     let usuarioAtualizado = null;
 
@@ -69,7 +75,10 @@ class ProfileService {
     return { 
       id: usuarioAtualizado.id, 
       nome: usuarioAtualizado.nome,
-      email: emailAtualizado
+      email: emailAtualizado,
+      whatsapp: usuarioAtualizado.whatsapp,
+      instagram: usuarioAtualizado.instagram,
+      linkedin: usuarioAtualizado.linkedin
     };
   }
 

@@ -26,6 +26,9 @@ model Usuario {
   nome            String
   documentoFiscal String   @map("documento_fiscal") @unique
   tipoPessoa      TipoPessoa @map("tipo_pessoa")
+  whatsapp        String?
+  instagram       String?
+  linkedin        String?
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 

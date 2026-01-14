@@ -22,6 +22,7 @@ const entrepreneurs = [
     id: "1",
     name: "Maria Silva",
     service: "Confeiteira",
+    category: "Alimentação",
     description:"Especializada em bolos e doces para festas, eventos e encomendas.",
     location: "Igarassu, PE",
     rating: 4.9,
@@ -35,6 +36,7 @@ const entrepreneurs = [
     id: "2",
     name: "João Santos",
     service: "Barbeiro",
+    category: "Serviços Gerais",
     description:
       "Cortes masculinos, barba e acabamento profissional.",
     location: "Igarassu, PE",
@@ -49,6 +51,7 @@ const entrepreneurs = [
     id: "3",
     name: "Ana Costa",
     service: "Loja de Roupas",
+    category: "Consultoria",
     description:
       "Venda de roupas femininas, masculinas e infantis, com variedade de estilos.",
     location: "Igarassu, PE",
@@ -66,7 +69,9 @@ export function Entrepreneurs() {
   const location = useLocation();
   const [applied, setApplied] = useState([]);
   const [demands, setDemands] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingServices, setLoadingServices] = useState(false);
   const [activeTab, setActiveTab] = useState(location.state?.tab || "services");
 
   useEffect(() => {
@@ -86,7 +91,22 @@ export function Entrepreneurs() {
       }
     };
 
+    const loadServices = async () => {
+      setLoadingServices(true);
+      try {
+        const res = await fetch('/ofertas?tipo=SERVICO');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao buscar serviços');
+        if (mounted) setServices(data || []);
+      } catch (err) {
+        console.error('Erro ao carregar serviços:', err);
+      } finally {
+        if (mounted) setLoadingServices(false);
+      }
+    };
+
     loadDemands();
+    loadServices();
     return () => { mounted = false; };
   }, []);
 
@@ -123,7 +143,15 @@ export function Entrepreneurs() {
   }
 
   function openLinkedIn(url) {
-    window.open(url, "_blank");
+    if (!url) return;
+    
+    // Garantir que a URL começa com http:// ou https://
+    let fullUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      fullUrl = 'https://' + url;
+    }
+    
+    window.open(fullUrl, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -152,8 +180,9 @@ export function Entrepreneurs() {
 
             <TabsContent value="services">
               <div className="cards-grid">
+                {/* Profissionais Mock */}
                 {entrepreneurs.map((e) => (
-                  <Card key={e.id}>
+                  <Card key={`mock-${e.id}`}>
                     <CardHeader>
                       <div className="card-avatar">
                         {e.name.charAt(0)}
@@ -163,6 +192,7 @@ export function Entrepreneurs() {
                       <CardDescription>
                         {e.service}
                       </CardDescription>
+                      <Badge className="category-badge">{e.category}</Badge>
                     </CardHeader>
 
                     <CardContent>
@@ -208,6 +238,81 @@ export function Entrepreneurs() {
                         >
                           <Linkedin size={16} />
                         </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                {/* Profissionais Reais do Banco de Dados */}
+                {services.map((service) => (
+                  <Card key={`real-${service.id}`}>
+                    <CardHeader>
+                      <div className="card-avatar">
+                        {service.autor?.nome?.charAt(0) || 'M'}
+                      </div>
+
+                      <CardTitle>{service.autor?.nome || 'Microempreendedor'}</CardTitle>
+                      <CardDescription>
+                        {service.titulo}
+                      </CardDescription>
+                      {service.categoria && (
+                        <Badge className="category-badge">{service.categoria.nome}</Badge>
+                      )}
+                    </CardHeader>
+
+                    <CardContent>
+                      <p className="description">
+                        {service.descricao}
+                      </p>
+
+                      <div className="info">
+                        {service.propriedades?.location && (
+                          <span>
+                            <MapPin size={14} />
+                            {service.propriedades.location}
+                          </span>
+                        )}
+                        {service.propriedades?.price && (
+                          <span>
+                            <DollarSign size={14} />
+                            {service.propriedades.price}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="contact">
+                        {service.autor?.whatsapp && (
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              openWhatsApp(service.autor.whatsapp)
+                            }
+                          >
+                            <MessageCircle size={16} />
+                          </Button>
+                        )}
+
+                        {service.autor?.instagram && (
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              openInstagram(service.autor.instagram)
+                            }
+                          >
+                            <Instagram size={16} />
+                          </Button>
+                        )}
+
+                        {service.autor?.linkedin && (
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              openLinkedIn(service.autor.linkedin)
+                            }
+                          >
+                            <Linkedin size={16} />
+                          </Button>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
